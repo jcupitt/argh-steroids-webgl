@@ -1,7 +1,5 @@
-/* Tiny utility functions. 
+/* Misc utility functions. 
  */
-
-var gl;
 
 function randint(min, max) {
     return ((Math.random() * (1 + max - min)) | 0) + min;
@@ -10,6 +8,8 @@ function randint(min, max) {
 function rad(angle) {
     return angle * Math.PI / 180.0;
 }
+
+var gl;
 
 function initGL(canvas) {
     gl = WebGLUtils.setupWebGL(canvas);
