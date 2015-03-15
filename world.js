@@ -11,6 +11,9 @@ var World = function() {
     // number of frames since last update, can be fractional ... scale speed
     // etc. by this
     this.dt = 1;
+
+    // next alien timer
+    this.alien_time = randint(1000, 2000)
 };
 
 World.prototype.add = function(sprite) {
@@ -30,6 +33,16 @@ World.prototype.update = function() {
     this.sprites.forEach (function(sprite) { 
         sprite.update();
     });
+
+    this.sprites = this.sprites.filter(function(sprite) {
+        return !sprite.kill;
+    });
+
+    this.alien_time -= 1;
+    if (this.alien_time < 0) {
+        this.alien_time = randint(1000, 2000);
+        new Alien(this);
+    }
 
     var map_spacing = 100;
     var map_width = Math.ceil(this.width / map_spacing);
@@ -77,6 +90,7 @@ World.prototype.draw = function() {
 
     mat4.ortho(0, gl.viewportWidth, 0, gl.viewportHeight, 0.1, 100, pMatrix);
     mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, [0, 0, -1]);
 
     this.sprites.forEach (function(sprite) { 
         mvPushMatrix();
