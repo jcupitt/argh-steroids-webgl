@@ -51,7 +51,7 @@ function webGLStart() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     world = new World();
-    for (var i = 0; i < 10; i += 1) 
+    for (var i = 0; i < 20; i += 1) 
         new Asteroid(world, randint(50, 100), 2);
 
     tick();

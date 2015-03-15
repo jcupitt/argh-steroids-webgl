@@ -82,3 +82,15 @@ function createBuffer(type, data) {
 
     return buf;
 }
+
+// for clock-style arithmetic
+function wrap_around(x, limit) {
+    if (x >= limit) {
+        return x - limit;
+    }
+    else if (x < 0) {
+        return x + limit;
+    }
+    else
+        return x;
+}
