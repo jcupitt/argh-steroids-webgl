@@ -154,5 +154,50 @@ window.addEventListener('keydown', function(event) {
     Key.onKeydown(event); 
 }, false);
 
+var Mouse = {
+    onMove: function (event) {
+        console.log("Mouse.onMove");
+    },
 
+    onChange: function () {
+        console.log("Mouse.onChange");
 
+        if (document.pointerLockElement === window ||
+            document.mozPointerLockElement === window ||
+            document.webkitPointerLockElement === window) {
+            // Pointer was just locked
+            // Enable the mousemove listener
+            document.addEventListener("mousemove", mouse.onMove, false);
+        } 
+        else {
+            // Pointer was just unlocked
+            // Disable the mousemove listener
+            document.removeEventListener("mousemove", mouse.onMove, false);
+            this.unlockHook(window);
+        }
+    },
+
+    attach: function(element) {
+        var havePointerLock = 'pointerLockElement' in document ||
+            'mozPointerLockElement' in document ||
+            'webkitPointerLockElement' in document;
+
+        if (havePointerLock) {
+            element.requestPointerLock = 
+                element.requestPointerLock ||
+                element.mozRequestPointerLock ||
+                element.webkitRequestPointerLock;
+
+            // Ask the browser to lock the pointer
+            element.requestPointerLock();
+
+            // Hook pointer lock state change events
+            document.addEventListener('pointerlockchange', 
+                    Mouse.onChange, false);
+            document.addEventListener('mozpointerlockchange', 
+                    Mouse.onChange, false);
+            document.addEventListener('webkitpointerlockchange', 
+                    Mouse.onChange, false);
+        }
+    }
+};

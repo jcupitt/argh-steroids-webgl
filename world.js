@@ -78,7 +78,7 @@ World.prototype.update = function() {
     var map_width = Math.ceil(this.width / map_spacing);
     var map_height = Math.ceil(this.height / map_spacing);
 
-    world_map = new Array(map_width);
+    var world_map = new Array(map_width);
     for (var x = 0; x < map_width; x++) {
         world_map[x] = new Array(map_height);
         for (var y = 0; y < map_height; y++) {
