@@ -175,11 +175,11 @@ var Mouse = {
             0;
     },
 
-    mousedown: function() {
+    mousedown: function(event) {
         Mouse.isDown[event.button] = true;
     },
 
-    mouseup: function() {
+    mouseup: function(event) {
         delete Mouse.isDown[event.button];
     },
 
@@ -229,6 +229,19 @@ var Mouse = {
             element.onclick = function() {
                 if (!Mouse.locked) {
                     Mouse.element.requestPointerLock();
+
+                    if (Mouse.element.requestFullscreen) {
+                          Mouse.element.requestFullscreen();
+                    } 
+                    else if (Mouse.element.msRequestFullscreen) {
+                          Mouse.element.msRequestFullscreen();
+                    } 
+                    else if (Mouse.element.mozRequestFullScreen) {
+                          Mouse.element.mozRequestFullScreen();
+                    } 
+                    else if (Mouse.element.webkitRequestFullscreen) {
+                          Mouse.element.webkitRequestFullscreen();
+                    }
                 }
             }
         }

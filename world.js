@@ -1,11 +1,35 @@
 /* World object. We have one of these: it runs the world state.
  */
 
-var World = function() {
+// update canvas size 
+updateSizes = function(canvas) {
+    var viewportSize = {
+        height: window.innerHeight,
+        width:  window.innerWidth
+    };
+
+    canvas.width = viewportSize.width
+    canvas.height = viewportSize.height
+
+    gl.viewportWidth = canvas.width;
+    gl.viewportHeight = canvas.height;
+
+    canvas.world.width = gl.viewportWidth;
+    canvas.world.height = gl.viewportHeight;
+};
+
+var World = function(canvas) {
+    this.canvas = canvas;
+    // makes it easy to get to the world back again
+    canvas.world = this;
+
+    window.addEventListener('resize', function() {
+        updateSizes(canvas);
+    });
+    updateSizes(canvas);
+
     this.sprites = [];
     this.n_asteroids = 0;
-    this.width = gl.viewportWidth;
-    this.height = gl.viewportHeight;
     this.last_time = 0;
 
     // number of frames since last update, can be fractional ... scale speed
@@ -39,16 +63,15 @@ World.prototype.update = function() {
     }
     this.last_time = time_now;
 
-    var rotate_by = 0;
+    movement = Mouse.getMovement();
+    var rotate_by = -movement[0] / 5;
+
     if (Key.isDown(Key.LEFT)) {
         rotate_by += 3;
     }
     if (Key.isDown(Key.RIGHT)) {
         rotate_by -= 3;
     }
-
-    movement = Mouse.getMovement();
-    rotate_by = -movement[0] / 5;
 
     if (this.player) {
         this.player.rotate_by(rotate_by);
