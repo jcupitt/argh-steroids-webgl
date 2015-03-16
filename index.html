@@ -11,16 +11,9 @@
 <script type="text/javascript" src="alien.js"></script>
 <script type="text/javascript" src="bullet.js"></script>
 <script type="text/javascript" src="ship.js"></script>
+<script type="text/javascript" src="particles.js"></script>
 <script type="text/javascript" src="world.js"></script>
 <script type="text/javascript" src="main.js"></script>
-
-<script id="shader-fs-white" type="x-shader/x-fragment">
-    precision mediump float;
-
-    void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-</script>
 
 <script id="shader-vs-plain" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
@@ -33,13 +26,11 @@
     }
 </script>
 
-<script id="shader-fs" type="x-shader/x-fragment">
+<script id="shader-fs-white" type="x-shader/x-fragment">
     precision mediump float;
 
-    varying vec4 vColor;
-
     void main(void) {
-        gl_FragColor = vColor;
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }
 </script>
 
@@ -55,6 +46,17 @@
     void main(void) {
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
         vColor = aVertexColor;
+	//gl_Pointsize = 18.0;
+    }
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec4 vColor;
+
+    void main(void) {
+        gl_FragColor = vColor;
     }
 </script>
 

@@ -63,3 +63,13 @@ Asteroid.prototype.update = function() {
 
     Sprite.prototype.update.call(this);
 };
+
+Asteroid.prototype.collide = function(other) {
+    if (other instanceof Asteroid) {
+        var angular_velocity = other.angular_velocity;
+        other.angular_velocity = this.angular_velocity;
+        this.angular_velocity = angular_velocity;
+    }
+
+    Sprite.prototype.collide.call(this, other);
+}
