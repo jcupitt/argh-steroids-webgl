@@ -41,7 +41,7 @@ var World = function(canvas) {
     // the player's ship, or null for no player on screen
     this.player = null;
 
-    this.particles = new Particles(world);
+    this.particles = new Particles(this);
 };
 
 World.prototype.add = function(sprite) {
@@ -139,6 +139,8 @@ World.prototype.update = function() {
         // we no longer need to test anything against sprite
         sprite.tested_collision = true;
     });
+
+    this.particles.update(); 
 }
 
 World.prototype.draw = function() {
@@ -149,6 +151,11 @@ World.prototype.draw = function() {
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, [0, 0, -1]);
 
+    setShaderProgram(shaderPrograms[0]);
+    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
+    this.particles.draw(); 
+    gl.disableVertexAttribArray(currentProgram.vertexColorAttribute);
+
     setShaderProgram(shaderPrograms[1]);
 
     this.sprites.forEach (function(sprite) { 
@@ -156,12 +163,6 @@ World.prototype.draw = function() {
         sprite.draw();
         mvPopMatrix();
     });
-
-    setShaderProgram(shaderPrograms[0]);
-    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
-    this.particles.draw(); 
-    gl.disableVertexAttribArray(currentProgram.vertexColorAttribute);
-
 }
 
 

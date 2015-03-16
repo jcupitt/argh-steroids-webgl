@@ -247,8 +247,7 @@ colour_table = [[ 15, 0, 30 ],
 var Particles = function(world) {
     this.world = world;
 
-    //this.n_particles = 10000;
-    this.n_particles = 1;
+    this.n_particles = 10;
 
     // counts down to zero, zero means dead
     this.life = new Array(this.n_particles);
@@ -285,19 +284,30 @@ Particles.prototype.constructor = Particles;
 Particles.prototype.emit = function(life, x, y, u, v, colour, colour_delta) {
     if (this.n_free > 0) {
         this.n_free -= 1;
+        var i = this.free[this.n_free];
 
-        var i = this.n_free;
         this.life[i] = life;
         this.position[i * 3] = x;
         this.position[i * 3 + 1] = y;
+        this.position[i * 3 + 2] = -10;
         this.velocity[i * 3] = u;
         this.velocity[i * 3 + 1] = v;
         this.colour[i * 4 + 0] = 1.0;
         this.colour[i * 4 + 1] = 0.0;
         this.colour[i * 4 + 2] = 0.0;
-        this.colour[i * 4 + 3] = 0.4;
+        this.colour[i * 4 + 3] = 0.0;
     }
 };
+
+Particles.prototype.starfield = function() {
+    for (var i = 0; i < 30; i++) {
+        this.emit(100000000,
+                  randint(0, this.world.width), randint(0, this.world.height),
+                  0, 0,
+                  randint(50, 200),
+                  randint(1, 3));
+    }
+}
 
 Particles.prototype.update = function() {
     for (var i = 0; i < this.n_particles; i++) {
@@ -320,27 +330,101 @@ Particles.prototype.update = function() {
     }
 }
 
-Particles.prototype.draw = function() {
+Particles.prototype.draw3 = function() {
     setMatrixUniforms();
 
-    this.position[0] = 100;
-    this.position[1] = 100;
-    this.position[2] = 10;
-
     gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
-    gl.bufferSubData(gl.ARRAY_BUFFER, this.position_buffer, this.position);
+    //gl.bufferSubData(gl.ARRAY_BUFFER, this.position_buffer, this.position);
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
             this.position_buffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    this.colour[0] = 1.0;
-    this.colour[1] = 0.0;
-    this.colour[2] = 0.0;
-    this.colour[3] = 0.4;
-
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colour_buffer);
-    gl.bufferSubData(gl.ARRAY_BUFFER, this.colour_buffer, this.colour);
-    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+    //gl.bufferSubData(gl.ARRAY_BUFFER, this.colour_buffer, this.colour);
+    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
+    gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
             this.colour_buffer.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.POINT, 0, this.n_particles);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, undefined);
+};
+
+Particles.prototype.draw = function() {
+    setMatrixUniforms();
+
+    var position = new Float32Array(30);
+    var colour = new Float32Array(40);
+
+    for (var i = 0; i < 10; i++) {
+        position[i * 3 + 0] = 100 + i * 4;
+        position[i * 3 + 1] = 100;
+        position[i * 3 + 2] = -10;
+
+        colour[i * 3 + 0] = 1.0;
+        colour[i * 3 + 1] = 0.0;
+        colour[i * 3 + 2] = 0.0;
+        colour[i * 3 + 3] = 0.0;
+    }
+
+    var position_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
+
+    var colour_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, colour, gl.DYNAMIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, position_buffer, position);
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
+    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+            3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, colour_buffer, colour);
+    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
+    gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
+            4, gl.FLOAT, false, 0, 0);
+
+    // this is drawing random colours for each point, why aren't they all red?
+    // check lesson02 again, do we need another array to link colors to
+    // vertices?
+
+    gl.drawArrays(gl.POINT, 0, 10);
+};
+
+Particles.prototype.draw2 = function() {
+    setMatrixUniforms();
+
+    var position = new Float32Array(3);
+    position[0] = 100;
+    position[1] = 100;
+    position[2] = -10;
+
+    var colour = new Float32Array(4);
+    colour[0] = 1.0;
+    colour[1] = 0.0;
+    colour[2] = 0.0;
+    colour[3] = 0.0;
+
+    var position_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
+
+    var colour_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, colour, gl.DYNAMIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
+    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+            3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
+    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
+    gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
+            4, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.POINT, 0, 1);
 };

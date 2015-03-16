@@ -67,6 +67,7 @@ function arghsteroids() {
         new Asteroid(world, randint(50, 100), 2);
     new Alien(world);
     world.add_player();
+    //world.particles.starfield();
 
     tick();
 }
