@@ -47,7 +47,7 @@ Bullet.prototype.impact = function(other) {
             var n = randint(2, Math.max(2, Math.min(5, other.scale / 5)));
 
             for (var i = 0; i < n; i++) {
-                new_asteroid = Asteroid(this.world, other.scale / n, 1);
+                new_asteroid = new Asteroid(this.world, other.scale / n, 1);
                 new_asteroid.x = other.x;
                 new_asteroid.y = other.y;
                 new_asteroid.u += other.u;

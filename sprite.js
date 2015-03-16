@@ -7,6 +7,8 @@ var Sprite = function(world) {
     this.y = 0;
     this.u = 0;
     this.v = 0;
+    this.angle = 0;
+    this.scale = 10;
     this.kill = false;
     this.tested_collision = false;
 

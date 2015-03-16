@@ -14,10 +14,19 @@ var World = function() {
 
     // next alien timer
     this.alien_time = randint(1000, 2000)
+
+    // the player's ship, or null for no player on screen
+    this.player = null;
 };
 
 World.prototype.add = function(sprite) {
     this.sprites.push(sprite);
+}
+
+World.prototype.add_player = function() {
+    if (!this.player) {
+        this.player = new Ship(this);
+    }
 }
 
 World.prototype.update = function() {
@@ -30,10 +39,31 @@ World.prototype.update = function() {
     }
     this.last_time = time_now;
 
+    var rotate_by = 0;
+    if (Key.isDown(Key.LEFT)) {
+        rotate_by += 3;
+    }
+    if (Key.isDown(Key.RIGHT)) {
+        rotate_by -= 3;
+    }
+
+    if (this.player) {
+        this.player.rotate_by(rotate_by);
+        if (Key.isDown(Key.UP)) {
+            this.player.thrust();
+        }
+        if (Key.isDown(Key.SPACE)) {
+            this.player.fire();
+        }
+    }
+
     this.sprites.forEach (function(sprite) { 
         sprite.update();
     });
 
+    if (this.player && this.player.kill) {
+        this.player = null;
+    }
     this.sprites = this.sprites.filter(function(sprite) {
         return !sprite.kill;
     });
