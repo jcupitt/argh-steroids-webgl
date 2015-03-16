@@ -49,6 +49,7 @@ function webGLStart() {
     initShaders()
     asteroidsCreate();
     alienCreate();
+    bulletCreate();
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     world = new World();

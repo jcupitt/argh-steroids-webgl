@@ -4,34 +4,16 @@
 var alienBuffers = [];
 
 function alienCreate() {
-    var vertices = [[1, 0, 0], [-1, 0, 0], [-0.7, 0, 0],
-                    [-0.5, 0.2, 0], [0.5, 0.2, 0],
-                    [0.7, 0, 0],
-                    [0.5, -0.4, 0], [-0.5, -0.4, 0],
-                    [-0.7, 0, 0]];
+    var vertices = [[1, 0], [-1, 0], [-0.7, 0],
+                    [-0.5, -0.2], [0.5, -0.2], [0.7, 0],
+                    [0.5, 0.4], [-0.5, 0.4], [-0.7, 0]];
 
-    var index = []
-    for (var j = 0; j < vertices.length; j++) {
-        index.push(j);
-    }
-
-    var vertex_buffer = 
-        createBuffer(gl.ARRAY_BUFFER, new Float32Array(vertices));
-    vertex_buffer.itemSize = 3;
-    vertex_buffer.numItems = vertices.length;
-
-    var index_buffer = 
-        createBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
-    index_buffer.itemSize = 1;
-    index_buffer.numItems = vertices.length;
-
-    alienBuffers = [vertex_buffer, index_buffer];
+    alienBuffers = buffersCreate(vertices);
 }
 
 var Alien = function(world) {
     Sprite.call(this, world);
 
-    //this.buffers = asteroidBuffers[0];
     this.buffers = alienBuffers;
     this.direction = randint(1, 2) * 2 - 3;
     this.x = world.width / 2 - this.direction * world.width / 2;
@@ -77,6 +59,6 @@ Alien.prototype.update = function() {
 Alien.prototype.impact = function(other) {
     this.angle = randint(-90, 90);
 
-    Sprite.prototype.update.call(this, other);
+    Sprite.prototype.impact.call(this, other);
 }
 

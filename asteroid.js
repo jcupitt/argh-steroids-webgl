@@ -6,38 +6,22 @@
 var asteroidBuffers = [];
 
 function asteroidsCreate() {
-    var i = 0;
-    var j = 0;
-
-    for (i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
         var vertices = [];
-        var index = [];
-        var n_points = 20
+        var n_points = randint(10, 20);
 
-        for (j = 0; j < n_points; j++) {
+        for (var j = 0; j < n_points; j++) {
             var delta = 360 / n_points;
             var angle = j * 360 / n_points + randint(-delta / 2, delta / 2);
             var distance = Math.random() / 4.0 + 0.75;
 
-            vertices = vertices.concat([
+            vertices.push([
                 distance * Math.cos(rad(angle)), 
                 distance * Math.sin(rad(angle)), 
-                0
             ]);
-            index.push(j);
         }
 
-        var vertex_buffer = 
-            createBuffer(gl.ARRAY_BUFFER, new Float32Array(vertices));
-        vertex_buffer.itemSize = 3;
-        vertex_buffer.numItems = n_points;
-
-        var index_buffer = 
-            createBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
-        index_buffer.itemSize = 1;
-        index_buffer.numItems = n_points;
-
-        asteroidBuffers.push([vertex_buffer, index_buffer]);
+        asteroidBuffers.push(buffersCreate(vertices));
     }
 }
 

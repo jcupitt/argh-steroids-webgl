@@ -94,3 +94,27 @@ function wrap_around(x, limit) {
     else
         return x;
 }
+
+/* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
+ * draw buffers.
+ */
+function buffersCreate(vertices) {
+    var points = [];
+    var index = [];
+    for (var i = 0; i < vertices.length; i++) {
+        points = points.concat([vertices[i][0], vertices[i][1], 0]);
+        index.push(i);
+    }
+
+    var vertex_buffer = 
+        createBuffer(gl.ARRAY_BUFFER, new Float32Array(points));
+    vertex_buffer.itemSize = 3;
+    vertex_buffer.numItems = vertices.length;
+
+    var index_buffer = 
+        createBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
+    index_buffer.itemSize = 1;
+    index_buffer.numItems = vertices.length;
+
+    return [vertex_buffer, index_buffer];
+}
