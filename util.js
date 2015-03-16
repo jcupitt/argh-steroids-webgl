@@ -155,49 +155,85 @@ window.addEventListener('keydown', function(event) {
 }, false);
 
 var Mouse = {
+    movementX: 0,
+    movementY: 0,
+    locked: false,
+    isDown: {},
+    LEFT: 0,
+    RIGHT: 2,
+
     onMove: function (event) {
-        console.log("Mouse.onMove");
+        Mouse.movementX += 
+            event.movementX ||
+            event.mozMovementX ||
+            event.webkitMovementX ||
+            0;
+        Mouse.movementY += 
+            event.movementX ||
+            event.mozMovementX ||
+            event.webkitMovementX ||
+            0;
+    },
+
+    mousedown: function() {
+        Mouse.isDown[event.button] = true;
+    },
+
+    mouseup: function() {
+        delete Mouse.isDown[event.button];
+    },
+
+    // pick up all the movement since the last call
+    getMovement: function() {
+        result = [Mouse.movementX, Mouse.movementy];
+        Mouse.movementX = 0;
+        Mouse.movementY = 0;
+
+        return result;
     },
 
     onChange: function () {
-        console.log("Mouse.onChange");
-
-        if (document.pointerLockElement === window ||
-            document.mozPointerLockElement === window ||
-            document.webkitPointerLockElement === window) {
-            // Pointer was just locked
-            // Enable the mousemove listener
-            document.addEventListener("mousemove", mouse.onMove, false);
+        if(document.pointerLockElement === Mouse.element ||
+            document.mozPointerLockElement === Mouse.element ||
+            document.webkitPointerLockElement === Mouse.element) {
+            document.addEventListener("mousemove", Mouse.onMove, false);
+            Mouse.locked = true;
         } 
         else {
-            // Pointer was just unlocked
-            // Disable the mousemove listener
-            document.removeEventListener("mousemove", mouse.onMove, false);
-            this.unlockHook(window);
+            document.removeEventListener("mousemove", Mouse.onMove, false);
+            Mouse.locked = false;
         }
     },
 
     attach: function(element) {
-        var havePointerLock = 'pointerLockElement' in document ||
-            'mozPointerLockElement' in document ||
-            'webkitPointerLockElement' in document;
+        Mouse.element = element;
 
-        if (havePointerLock) {
-            element.requestPointerLock = 
-                element.requestPointerLock ||
-                element.mozRequestPointerLock ||
-                element.webkitRequestPointerLock;
+        element.requestPointerLock = element.requestPointerLock ||
+            element.mozRequestPointerLock ||
+            element.webkitRequestPointerLock;
 
-            // Ask the browser to lock the pointer
-            element.requestPointerLock();
-
-            // Hook pointer lock state change events
+        if ("onpointerlockchange" in document) {
             document.addEventListener('pointerlockchange', 
-                    Mouse.onChange, false);
+                Mouse.onChange, false);
+        } 
+        else if ("onmozpointerlockchange" in document) {
             document.addEventListener('mozpointerlockchange', 
-                    Mouse.onChange, false);
+                Mouse.onChange, false);
+        } 
+        else if ("onwebkitpointerlockchange" in document) {
             document.addEventListener('webkitpointerlockchange', 
-                    Mouse.onChange, false);
+                Mouse.onChange, false);
         }
+
+        if (element.requestPointerLock) {
+            element.onclick = function() {
+                if (!Mouse.locked) {
+                    Mouse.element.requestPointerLock();
+                }
+            }
+        }
+
+        element.addEventListener('mousedown', Mouse.mousedown, false);
+        element.addEventListener('mouseup', Mouse.mouseup, false);
     }
 };

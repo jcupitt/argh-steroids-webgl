@@ -16,7 +16,7 @@ var Alien = function(world) {
 
     this.buffers = alienBuffers;
     this.direction = randint(1, 2) * 2 - 3;
-    this.x = world.width / 2 - this.direction * world.width / 2;
+    this.x = world.width / 2 - this.direction * (world.width / 2 - 2);
     this.y = randint(0, world.height);
     this.angle = 0;
     this.scale = 10;

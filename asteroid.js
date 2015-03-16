@@ -35,10 +35,10 @@ var Asteroid = function(world, scale, max_speed) {
     // spawn on a screen edge
     if (randint(0, 1) == 0) {
         this.x = randint(0, world.width);
-        this.y = randint(0, 1) * world.height;
+        this.y = randint(0, 1) * (world.height - 1);
     }
     else {
-        this.x = randint(0, 1) * world.width;
+        this.x = randint(0, 1) * (world.width - 1);
         this.y = randint(0, world.height);
     }
 

@@ -47,14 +47,23 @@ World.prototype.update = function() {
         rotate_by -= 3;
     }
 
+    movement = Mouse.getMovement();
+    rotate_by = -movement[0] / 5;
+
     if (this.player) {
         this.player.rotate_by(rotate_by);
-        if (Key.isDown(Key.UP)) {
-            this.player.thrust();
-        }
-        if (Key.isDown(Key.SPACE)) {
+        if (Key.isDown(Key.SPACE) || Mouse.isDown[Mouse.LEFT]) {
             this.player.fire();
         }
+        if (Key.isDown(Key.UP) || Mouse.isDown[Mouse.RIGHT]) {
+            this.player.thrust();
+        }
+    }
+
+    this.alien_time -= 1;
+    if (this.alien_time < 0) {
+        this.alien_time = randint(1000, 2000);
+        new Alien(this);
     }
 
     this.sprites.forEach (function(sprite) { 
@@ -67,12 +76,6 @@ World.prototype.update = function() {
     this.sprites = this.sprites.filter(function(sprite) {
         return !sprite.kill;
     });
-
-    this.alien_time -= 1;
-    if (this.alien_time < 0) {
-        this.alien_time = randint(1000, 2000);
-        new Alien(this);
-    }
 
     var map_spacing = 100;
     var map_width = Math.ceil(this.width / map_spacing);
