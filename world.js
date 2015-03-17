@@ -33,31 +33,15 @@ var World = function(canvas) {
 
     this.particles = new Particles(this);
 
-    this.sprites = [];
-    this.score = 0;
-    this.level = 0;
-    this.n_asteroids = 0;
-
-    // the player's ship, or null for no player on screen
-    this.player = null;
-
-    // number of frames since last update, can be fractional ... scale speed
-    // etc. by this
-    this.dt = 0;
-    this.last_time = 0;
-
-    this.text_y = this.height - 100;
-
-    // next alien timer
-    this.alien_time = randint(1000, 2000)
+    this.reset();
 }
 
 World.prototype.constructor = World;
 
-World.prototype.clear = function() {
+World.prototype.reset = function() {
     this.sprites = [];
     this.score = 0;
-    this.level = 0;
+    this.level = 1;
     this.n_asteroids = 0;
     this.player = null;
     this.dt = 0;
@@ -197,5 +181,5 @@ World.prototype.draw = function() {
 
 World.prototype.draw_hud = function() {
     text_draw("SCORE " + this.score, 20, world.height - 20, 10, 0, false);
-    //text.draw_string(self.surface, "LEVEL " % self.level, util.WHITE, 10, [10, 40])
+    text_draw("LEVEL " + this.level, 20, world.height - 40, 10, 0, false);
 }

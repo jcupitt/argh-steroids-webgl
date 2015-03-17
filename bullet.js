@@ -44,7 +44,7 @@ Bullet.prototype.impact = function(other) {
     else if (other instanceof Asteroid) {
         other.kill = true;
         this.kill = true;
-        this.world.score += other.scale;
+        this.world.score += other.scale | 0;
         this.world.n_asteroids -= 1;
         this.world.particles.explosion(other.scale / 3, 
                                        other.x, other.y, other.u, other.v);

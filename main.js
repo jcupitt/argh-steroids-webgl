@@ -45,19 +45,132 @@ function setMatrixUniforms() {
 
 var world;
 
-function startscreen_tick() {
-    var requestId = requestAnimFrame(startscreen_tick);
-
+function epilogue_tick() {
     world.draw();
+    world.draw_hud(); 
+
+    text_draw("PRESS ENTER TO PLAY AGAIN", 
+              world.width / 2, world.height / 2,
+              20, 0,
+              true);
+
     world.update();
 
     if (Key.isDown(Key.ENTER)) {
-        cancelAnimFrame(requestId);
-        requestId = undefined;
+        gamestart();
+    }
+    else {
+        requestAnimFrame(epilogue_tick);
+    }
+}
+
+function epilogue() {
+    epilogue_tick();
+}
+
+var gameover_timer = 0;
+var gameover_frames = 100;
+
+function gameover_tick() {
+    world.draw();
+    world.draw_hud(); 
+
+    var t = gameover_timer / gameover_frames;
+    text_draw("GAME OVER", 
+              world.width / 2, world.height / 2,
+              Math.log(t + 0.001) * 150, 180,
+              true);
+
+    world.update();
+
+    gameover_timer -= 1;
+    if (gameover_timer == 0) {
+        epilogue();
+    }
+    else {
+        requestAnimFrame(gameover_tick);
+    }
+}
+
+function gameover() {
+    gameover_timer = gameover_frames;
+    gameover_tick();
+}
+
+function levelplay_tick() {
+    world.draw();
+    world.draw_hud(); 
+    world.update();
+
+    if (!world.player) {
+        gameover();
+    }
+    else if (world.n_asteroids == 0) {
+        world.level += 1;
+        levelstart();
+    }
+    else {
+        requestAnimFrame(levelplay_tick);
+    }
+}
+
+function levelplay() {
+    for (var i = 0; i < world.level * 2; i += 1) 
+        new Asteroid(world, randint(75, 100), 0.5 + world.level / 4.0);
+
+    levelplay_tick();
+}
+
+var levelstart_timer = 0;
+var levelstart_frames = 100;
+
+function levelstart_tick() {
+    world.draw();
+    world.draw_hud(); 
+
+    var t = levelstart_timer / levelstart_frames;
+    text_draw("LEVEL START", 
+              world.width / 2, world.height / 2,
+              t * 150, t * 200.0, true); 
+
+    world.update();
+
+    levelstart_timer -= 1;
+    if (levelstart_timer < 0) {
+        levelplay();
+    }
+    else {
+        requestAnimFrame(levelstart_tick);
+    }
+}
+
+function levelstart() {
+    levelstart_timer = levelstart_frames;
+    levelstart_tick();
+}
+
+function gamestart() {
+    world.reset();
+    world.particles.starfield();
+    world.add_player();
+    levelstart();
+}
+
+function startscreen_tick() {
+    world.draw();
+
+    world.update();
+
+    if (Key.isDown(Key.ENTER)) {
+        gamestart();
+    }
+    else {
+        requestAnimFrame(startscreen_tick);
     }
 }
 
 function startscreen() {
+    world.reset();
     world.particles.starfield();
 
     for (var i = 0; i < 2; i += 1) 
@@ -72,87 +185,6 @@ function startscreen() {
     world.add_text('PRESS ENTER TO START', 20)
 
     startscreen_tick();
-}
-
-var level_start_timer = 0;
-var level_start_frames = 100;
-
-function level_start_tick() {
-    var requestId = requestAnimFrame(level_start_tick);
-
-    world.draw();
-    world.draw_hud(); 
-    world.update();
-
-    level_start_timer -= 1;
-    if (level_start_timer < 0) {
-        cancelAnimFrame(requestId);
-        requestId = undefined;
-    }
-}
-
-function level_start() {
-    level_start_timer = level_start_frames;
-    level_start_tick();
-}
-
-function level_tick() {
-    var requestId = requestAnimFrame(level_tick);
-
-    world.draw();
-    world.draw_hud(); 
-    world.update();
-
-    if (world.n_asteroids == 0 || !world.player) {
-        cancelAnimFrame(requestId);
-        requestId = undefined;
-    }
-}
-
-function level_play() {
-    for (var i = 0; i < 2; i += 1) 
-        new Asteroid(world, randint(50, 100), 2);
-
-    level_tick();
-}
-
-var game_over_timer = 0;
-var game_over_frames = 100;
-
-function game_over_tick() {
-    var requestId = requestAnimFrame(game_over_tick);
-
-    world.draw();
-    world.draw_hud(); 
-    world.update();
-
-    game_over_timer -= 1;
-    if (game_over_timer == 0) {
-        cancelAnimFrame(requestId);
-        requestId = undefined;
-    }
-}
-
-function game_over() {
-    game_over_timer = game_over_frames;
-    game_over_tick();
-}
-
-function epilogue_tick() {
-    var requestId = requestAnimFrame(epilogue_tick);
-
-    world.draw();
-    world.draw_hud(); 
-    world.update();
-
-    if (Key.isDown(Key.ENTER)) {
-        cancelAnimFrame(requestId);
-        requestId = undefined;
-    }
-}
-
-function epilogue() {
-    epilogue_tick();
 }
 
 function arghsteroids() {
@@ -172,19 +204,4 @@ function arghsteroids() {
     world = new World(canvas);
 
     startscreen();
-
-    //while (true) {
-        world.clear();
-        world.particles.starfield();
-        world.add_player();
-
-        while (world.player) {
-            world.level += 1;
-            level_start(world);
-            level_play(world);
-        }
-
-        game_over();
-        epilogue();
-    //}
 }
