@@ -1,6 +1,7 @@
 # Argh-steroids
 
-Asteroids-like game using webgl. 
+Asteroids-like game using webgl. There's a [version in
+pygame](https://github.com/jcupitt/argh-steroids) as well.
 
 ![Start screen](/screenshots/start_screen.png)
 ![In play](/screenshots/play.png)
