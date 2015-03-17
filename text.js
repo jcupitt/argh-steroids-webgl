@@ -136,9 +136,9 @@ function text_draw(string, x, y, scale, angle, centre) {
         var ch = string.charAt(i);
         if (textBuffers[ch]) {
             text_draw_at(textBuffers[ch], x, y, scale, angle);
-            x += a * kern;
-            y += c * kern;
         }
+        x += a * kern;
+        y += c * kern;
     }
 }
 

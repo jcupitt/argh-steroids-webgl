@@ -45,10 +45,18 @@ function setMatrixUniforms() {
 
 var world;
 
+function draw_hud(world) {
+    text_draw("SCORE " + world.score, 
+              20, world.height - 20, 
+              10, 0, false);
+    //text.draw_string(self.surface, "LEVEL " % self.level, util.WHITE, 10, [10, 40])
+}
+
 function tick() {
     requestAnimFrame(tick);
-    world.update();
     world.draw();
+    draw_hud(world);
+    world.update();
 }
 
 function arghsteroids() {

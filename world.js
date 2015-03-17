@@ -48,6 +48,8 @@ var World = function(canvas) {
     this.particles = new Particles(this);
 
     this.text_y = this.height - 100;
+
+    this.score = 0;
 };
 
 World.prototype.add = function(sprite) {
