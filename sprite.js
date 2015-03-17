@@ -47,8 +47,35 @@ Sprite.prototype.collide = function(other) {
 Sprite.prototype.test_collisions = function(possible_sprites) {
     possible_sprites.forEach (function(other) { 
         if (other != this && !other.tested_collision) {
+            var world = this.world;
+            var width = world.width;
+            var height = world.height;
+
             var dx = this.x - other.x;
             var dy = this.y - other.y;
+
+            // we need to do wrap-around testing
+            //
+            // we know that possible_sprites is only other sprites in the
+            // immediate neighbourhood, therefore if dx > half screen width,
+            // then this and other must be on opposite sides of the screen and
+            // must be possibly colliding via warp-around
+            //
+            // in this case, notionally move down by a screen width 
+            if (dx > width / 2) {
+                dx = this.x - other.x - width;
+            }
+            else if (dx < -width / 2) {
+                dx = this.x - other.x + width;
+            }
+
+            if (dy > height / 2) {
+                dy = this.y - other.y - height;
+            }
+            else if (dy < -height / 2) {
+                dy = this.y - other.y + height;
+            }
+
             var d2 = dx * dx + dy * dy;
             var t = this.scale + other.scale;
             var t2 = t * t ;
@@ -67,9 +94,9 @@ Sprite.prototype.test_collisions = function(possible_sprites) {
 
                 // displace by overlap in that direction
                 other.x += u * overlap;
-                other.x = wrap_around(other.x, this.world.width);
+                other.x = wrap_around(other.x, width);
                 other.y += v * overlap;
-                other.y = wrap_around(other.y, this.world.height);
+                other.y = wrap_around(other.y, height);
 
                 // tell the objects they have collided ... both objects 
                 // need to be told

@@ -260,9 +260,7 @@ var Particles = function(world) {
     this.colour = new Float32Array(4 * this.n_particles);
     this.index = new Array(this.n_particles);
     this.delta = new Array(this.n_particles);
-
     this.free = new Array(this.n_particles);
-    this.n_free = this.n_particles;
 
     this.reset();
 
@@ -293,6 +291,7 @@ Particles.prototype.reset = function() {
         this.index[i] = 1;
         this.delta[i] = 0;
     }
+    this.n_free = this.n_particles;
 };
 
 Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
@@ -311,7 +310,7 @@ Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
 };
 
 Particles.prototype.starfield = function() {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 30; i++) {
         this.emit(100000000,
                   randint(0, this.world.width), randint(0, this.world.height),
                   0, 0,
