@@ -28,6 +28,8 @@ Asteroids-like game using webgl.
 
 * There's no sound. 
 
+* The fullscreen code seems to be broken in Safari.
+
 * Collision detection is just touching circles, we could look at the geometry
   as well to get pixel-perfect detection.
 

@@ -63,17 +63,17 @@ Sprite.prototype.test_collisions = function(possible_sprites) {
             //
             // in this case, notionally move down by a screen width 
             if (dx > width / 2) {
-                dx = this.x - other.x - width;
+                dx -= width;
             }
             else if (dx < -width / 2) {
-                dx = this.x - other.x + width;
+                dx += width;
             }
 
             if (dy > height / 2) {
-                dy = this.y - other.y - height;
+                dy -= height;
             }
             else if (dy < -height / 2) {
-                dy = this.y - other.y + height;
+                dy += height;
             }
 
             var d2 = dx * dx + dy * dy;
