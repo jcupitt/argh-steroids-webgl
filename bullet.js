@@ -42,12 +42,9 @@ Bullet.prototype.impact = function(other) {
                                        other.x, other.y, other.u, other.v);
     }
     else if (other instanceof Asteroid) {
-        other.kill = true;
         this.kill = true;
+        other.terminate();
         this.world.score += other.scale | 0;
-        this.world.n_asteroids -= 1;
-        this.world.particles.explosion(other.scale / 3, 
-                                       other.x, other.y, other.u, other.v);
 
         if (other.scale > 15) { 
             var n = randint(2, Math.max(2, Math.min(5, other.scale / 5)));

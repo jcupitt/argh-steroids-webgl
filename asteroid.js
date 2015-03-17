@@ -57,6 +57,13 @@ var Asteroid = function(world, scale, max_speed) {
 Asteroid.prototype = Object.create(Sprite.prototype); 
 Asteroid.prototype.constructor = Asteroid;
 
+Asteroid.prototype.terminate = function() {
+    this.kill = true;
+    this.world.n_asteroids -= 1;
+    this.world.particles.explosion(this.scale / 3, 
+                                   this.x, this.y, this.u, this.v);
+}
+
 Asteroid.prototype.update = function() {
     var world = this.world;
     var dt = world.dt;
