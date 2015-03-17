@@ -31,26 +31,41 @@ var World = function(canvas) {
     });
     updateSizes(canvas);
 
+    this.particles = new Particles(this);
+
     this.sprites = [];
+    this.score = 0;
+    this.level = 0;
     this.n_asteroids = 0;
-    this.last_time = 0;
-
-    // number of frames since last update, can be fractional ... scale speed
-    // etc. by this
-    this.dt = 1;
-
-    // next alien timer
-    this.alien_time = randint(1000, 2000)
 
     // the player's ship, or null for no player on screen
     this.player = null;
 
-    this.particles = new Particles(this);
+    // number of frames since last update, can be fractional ... scale speed
+    // etc. by this
+    this.dt = 0;
+    this.last_time = 0;
 
     this.text_y = this.height - 100;
 
+    // next alien timer
+    this.alien_time = randint(1000, 2000)
+}
+
+World.prototype.constructor = World;
+
+World.prototype.clear = function() {
+    this.sprites = [];
     this.score = 0;
-};
+    this.level = 0;
+    this.n_asteroids = 0;
+    this.player = null;
+    this.dt = 0;
+    this.last_time = 0;
+    this.text_y = this.height - 100;
+    this.alien_time = randint(1000, 2000)
+    this.particles.reset();
+}
 
 World.prototype.add = function(sprite) {
     this.sprites.push(sprite);
