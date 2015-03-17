@@ -188,7 +188,7 @@ var Mouse = {
     movementX: 0,
     movementY: 0,
     locked: false,
-    isDown: {},
+    _pressed: {},
     LEFT: 0,
     RIGHT: 2,
 
@@ -205,12 +205,16 @@ var Mouse = {
             0;
     },
 
+    isDown: function(button) {
+        return this._pressed[button];
+    },
+
     mousedown: function(event) {
-        Mouse.isDown[event.button] = true;
+        Mouse._pressed[event.button] = true;
     },
 
     mouseup: function(event) {
-        delete Mouse.isDown[event.button];
+        delete Mouse._pressed[event.button];
     },
 
     // pick up all the movement since the last call

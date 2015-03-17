@@ -118,10 +118,10 @@ World.prototype.update = function() {
 
     if (this.player) {
         this.player.rotate_by(rotate_by);
-        if (Key.isDown(Key.SPACE) || Mouse.isDown[Mouse.LEFT]) {
+        if (Key.isDown(Key.SPACE) || Mouse.isDown(Mouse.LEFT)) {
             this.player.fire();
         }
-        if (Key.isDown(Key.UP) || Mouse.isDown[Mouse.RIGHT]) {
+        if (Key.isDown(Key.UP) || Mouse.isDown(Mouse.RIGHT)) {
             this.player.thrust();
         }
     }
