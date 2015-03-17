@@ -75,7 +75,7 @@ World.prototype.update = function() {
     if (this.last_time != 0) {
         var time_elapsed = time_now - this.last_time;
 
-        this.delta_time = time_elapsed / (1000.0 / 60);
+        this.dt = time_elapsed / (1000.0 / 60);
     }
     this.last_time = time_now;
 
@@ -180,4 +180,7 @@ World.prototype.draw = function() {
     });
 }
 
-
+World.prototype.draw_hud = function() {
+    text_draw("SCORE " + this.score, 20, world.height - 20, 10, 0, false);
+    //text.draw_string(self.surface, "LEVEL " % self.level, util.WHITE, 10, [10, 40])
+}

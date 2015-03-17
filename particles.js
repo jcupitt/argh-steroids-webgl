@@ -371,6 +371,9 @@ Particles.prototype.jet = function(x, y, u, v, angle) {
 };
 
 Particles.prototype.update = function() {
+    var world = this.world;
+    var dt = world.dt;
+
     for (var i = 0; i < this.n_particles; i++) {
         if (this.life[i] > 0) {
             this.life[i] -= 1;
@@ -381,10 +384,10 @@ Particles.prototype.update = function() {
             }
             else {
                 this.position[i * 3] = wrap_around(
-                    this.position[i * 3] + this.velocity[i * 2], 
+                    this.position[i * 3] + dt * this.velocity[i * 2], 
                     this.world.width);
                 this.position[i * 3 + 1] = wrap_around(
-                    this.position[i * 3 + 1] + this.velocity[i * 2 + 1], 
+                    this.position[i * 3 + 1] + dt * this.velocity[i * 2 + 1], 
                     this.world.height);
                 this.index[i] = wrap_around(
                     this.index[i] + this.delta[i], 

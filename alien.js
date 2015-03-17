@@ -60,7 +60,7 @@ Alien.prototype.update = function() {
 
 Alien.prototype.impact = function(other) {
     this.angle = randint(-90, 90);
-    this.world.particles.sparks(this.x, this.x, this.u, this.v);
+    this.world.particles.sparks(this.x, this.y, this.u, this.v);
 
     Sprite.prototype.impact.call(this, other);
 }

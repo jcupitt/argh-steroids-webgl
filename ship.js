@@ -45,13 +45,19 @@ Ship.prototype = Object.create(Sprite.prototype);
 Ship.prototype.constructor = Ship;
 
 Ship.prototype.rotate_by = function(angle) {
-    this.angle += angle;
+    var world = this.world;
+    var dt = world.dt;
+
+    this.angle += dt * angle;
     this.angle = wrap_around(this.angle, 360);
 }
 
 Ship.prototype.thrust = function() {
-    this.u += 0.1 * Math.cos(rad(this.angle));
-    this.v += 0.1 * Math.sin(rad(this.angle));
+    var world = this.world;
+    var dt = world.dt;
+
+    this.u += dt * 0.1 * Math.cos(rad(this.angle));
+    this.v += dt * 0.1 * Math.sin(rad(this.angle));
     this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
 }
 
