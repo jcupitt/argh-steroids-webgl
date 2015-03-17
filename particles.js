@@ -251,16 +251,16 @@ var colour_table = [
 var Particles = function(world) {
     this.world = world;
 
-    this.n_particles = 1000;
+    this.max_particles = 1000;
 
     // counts down to zero, zero means dead
-    this.life = new Array(this.n_particles);
-    this.position = new Float32Array(3 * this.n_particles);
-    this.velocity = new Array(2 * this.n_particles);
-    this.colour = new Float32Array(4 * this.n_particles);
-    this.index = new Array(this.n_particles);
-    this.delta = new Array(this.n_particles);
-    this.free = new Array(this.n_particles);
+    this.life = new Array(this.max_particles);
+    this.position = new Float32Array(3 * this.max_particles);
+    this.velocity = new Array(2 * this.max_particles);
+    this.colour = new Float32Array(4 * this.max_particles);
+    this.index = new Array(this.max_particles);
+    this.delta = new Array(this.max_particles);
+    this.free = new Array(this.max_particles);
 
     this.reset();
 
@@ -277,8 +277,12 @@ var Particles = function(world) {
 
 Particles.prototype.constructor = Particles;
 
+Particles.prototype.n_particles = function() {
+    return this.max_particles - this.n_free;
+}
+
 Particles.prototype.reset = function() {
-    for (var i = 0; i < this.n_particles; i++) {
+    for (var i = 0; i < this.max_particles; i++) {
         this.free[i] = i;
         this.life[i] = 0;
         this.position[i * 3] = -100.0;
@@ -291,7 +295,7 @@ Particles.prototype.reset = function() {
         this.index[i] = 1;
         this.delta[i] = 0;
     }
-    this.n_free = this.n_particles;
+    this.n_free = this.max_particles;
 };
 
 Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
@@ -374,7 +378,7 @@ Particles.prototype.update = function() {
     var world = this.world;
     var dt = world.dt;
 
-    for (var i = 0; i < this.n_particles; i++) {
+    for (var i = 0; i < this.max_particles; i++) {
         if (this.life[i] > 0) {
             this.life[i] -= 1;
             if (this.life[i] == 0) {
@@ -415,5 +419,5 @@ Particles.prototype.draw = function() {
     gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
             this.colour_buffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.drawArrays(gl.POINT, 0, this.n_particles);
+    gl.drawArrays(gl.POINT, 0, this.max_particles);
 };

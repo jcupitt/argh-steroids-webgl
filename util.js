@@ -82,14 +82,11 @@ function getProgram(fs_id, vs_id) {
 
 // for clock-style arithmetic
 function wrap_around(x, limit) {
-    if (x >= limit) {
-        return x - limit;
-    }
-    else if (x < 0) {
-        return x + limit;
+    if (x > 0) {
+        return x % limit;
     }
     else
-        return x;
+        return ((x % limit) + limit) % limit;
 }
 
 function bufferCreate(type, data) {

@@ -28,6 +28,12 @@ var World = function(canvas) {
         updateSizes(canvas);
         canvas.world.particles.reset();
         canvas.world.particles.starfield();
+
+        // ugly! during the startscreen we want to be able to spot resize and
+        // relayout everything
+        if (canvas.world.resize_handler) {
+            canvas.world.resize_handler();
+        }
     });
     updateSizes(canvas);
 
@@ -46,9 +52,16 @@ World.prototype.reset = function() {
     this.player = null;
     this.dt = 0;
     this.last_time = 0;
+    this.fps_start_time = 0;
+    this.fps_count = 0;
+    this.fps_current = 0;
     this.text_y = this.height - 100;
     this.alien_time = randint(1000, 2000)
     this.particles.reset();
+}
+
+World.prototype.n_objects = function() {
+    return this.sprites.length;
 }
 
 World.prototype.add = function(sprite) {
@@ -61,11 +74,19 @@ World.prototype.add_player = function() {
     }
 }
 
+World.prototype.remove_asteroids = function() {
+    this.sprites.forEach (function(sprite) { 
+        if (sprite instanceof Asteroid) {
+            sprite.kill = true;
+        }
+    });
+}
+
 World.prototype.add_text = function(string, scale) {
     scale = typeof scale !== 'undefined' ? scale : 10;
 
     text_add(this, string, this.width / 2, this.text_y, scale);
-    this.text_y += scale * 10;
+    this.text_y -= scale * 10;
 }
 
 World.prototype.update = function() {
@@ -77,6 +98,13 @@ World.prototype.update = function() {
         this.dt = time_elapsed / (1000.0 / 60);
     }
     this.last_time = time_now;
+
+    this.fps_count += 1;
+    if (time_now - this.fps_start_time > 1000) {
+        this.fps_start_time = time_now;
+        this.fps_current = this.fps_count;
+        this.fps_count = 0;
+    }
 
     var movement = Mouse.getMovement();
     var rotate_by = -movement[0] / 5;
@@ -182,4 +210,11 @@ World.prototype.draw = function() {
 World.prototype.draw_hud = function() {
     text_draw("SCORE " + this.score, 20, world.height - 20, 10, 0, false);
     text_draw("LEVEL " + this.level, 20, world.height - 40, 10, 0, false);
+}
+
+World.prototype.draw_info = function() {
+    text_draw("FPS " + this.fps_current, 10, 10, 10, 0, false);
+    text_draw("OBJECTS " + world.n_objects(), 10, 30, 10, 0, false);
+    text_draw("PARTICLES " + world.particles.n_particles(), 
+            10, 50, 10, 0, false);
 }

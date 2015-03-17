@@ -48,6 +48,9 @@ var world;
 function epilogue_tick() {
     world.draw();
     world.draw_hud(); 
+    if (Key.isDown(Key.I)) { 
+        world.draw_info();
+    }
 
     text_draw("PRESS ENTER TO PLAY AGAIN", 
               world.width / 2, world.height / 2,
@@ -74,6 +77,9 @@ var gameover_frames = 100;
 function gameover_tick() {
     world.draw();
     world.draw_hud(); 
+    if (Key.isDown(Key.I)) { 
+        world.draw_info();
+    }
 
     var t = gameover_timer / gameover_frames;
     text_draw("GAME OVER", 
@@ -100,12 +106,21 @@ function gameover() {
 function levelplay_tick() {
     world.draw();
     world.draw_hud(); 
+    if (Key.isDown(Key.I)) { 
+        world.draw_info();
+    }
+
     world.update();
 
     if (!world.player) {
         gameover();
     }
     else if (world.n_asteroids == 0) {
+        world.level += 1;
+        levelstart();
+    }
+    else if (Key.isDown(Key.N)) {
+        world.remove_asteroids();
         world.level += 1;
         levelstart();
     }
@@ -127,6 +142,12 @@ var levelstart_frames = 100;
 function levelstart_tick() {
     world.draw();
     world.draw_hud(); 
+    if (Key.isDown(Key.I)) { 
+        world.draw_info();
+    }
+    if (Key.isDown(Key.S)) { 
+        new Asteroid(world, randint(75, 100), 0.5 + world.level / 4.0);
+    }
 
     var t = levelstart_timer / levelstart_frames;
     text_draw("LEVEL START", 
@@ -158,10 +179,14 @@ function gamestart() {
 
 function startscreen_tick() {
     world.draw();
+    if (Key.isDown(Key.I)) { 
+        world.draw_info();
+    }
 
     world.update();
 
     if (Key.isDown(Key.ENTER)) {
+        world.resize_handler = null;
         gamestart();
     }
     else {
@@ -184,7 +209,8 @@ function startscreen() {
     world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
     world.add_text('PRESS ENTER TO START', 20)
 
-    startscreen_tick();
+    // on a resize, re-run this function
+    world.resize_handler = startscreen;
 }
 
 function arghsteroids() {
@@ -204,4 +230,5 @@ function arghsteroids() {
     world = new World(canvas);
 
     startscreen();
+    startscreen_tick();
 }
