@@ -62,13 +62,21 @@ function arghsteroids() {
     alienCreate();
     bulletCreate();
     shipCreate();
+    textCreate();
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     world = new World(canvas);
     world.particles.starfield();
-    for (var i = 0; i < 20; i += 1) 
+    for (var i = 0; i < 2; i += 1) 
         new Asteroid(world, randint(50, 100), 2);
-    world.add_player();
+    world.add_text('ARGH ITS THE ASTEROIDS', 20)
+    world.add_text('PRESS ESC TO QUIT') 
+    world.add_text('PRESS LEFT AND RIGHT TO ROTATE') 
+    world.add_text('PRESS UP FOR THRUST')
+    world.add_text('PRESS SPACE FOR FIRE')
+    world.add_text('OR USE MOUSE CONTROLS') 
+    world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
+    world.add_text('PRESS ENTER TO START', 20)
 
     tick();
 }

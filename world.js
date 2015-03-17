@@ -46,6 +46,8 @@ var World = function(canvas) {
     this.player = null;
 
     this.particles = new Particles(this);
+
+    this.text_y = this.height - 100;
 };
 
 World.prototype.add = function(sprite) {
@@ -56,6 +58,13 @@ World.prototype.add_player = function() {
     if (!this.player) {
         this.player = new Ship(this);
     }
+}
+
+World.prototype.add_text = function(string, scale) {
+    scale = typeof scale !== 'undefined' ? scale : 10;
+
+    text_add(this, string, this.width / 2, this.text_y, scale);
+    this.text_y += scale * 10;
 }
 
 World.prototype.update = function() {

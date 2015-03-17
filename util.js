@@ -259,7 +259,7 @@ var Mouse = {
         }
 
         if (element.requestPointerLock) {
-            element.onclick = function() {
+            element.ondblclick = function() {
                 if (!Mouse.locked) {
                     Mouse.element.requestPointerLock();
 
