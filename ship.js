@@ -36,6 +36,7 @@ var Ship = function(world) {
     this.scale = 5;
     this.reload_timer = 0;
     this.regenerate_timer = 0;
+    this.jet_timer = 1;
     this.max_shields = 3;
     this.shields = this.max_shields;
     this.shield_tick = 0;
@@ -58,11 +59,16 @@ Ship.prototype.thrust = function() {
 
     this.u += dt * 0.1 * Math.cos(rad(this.angle));
     this.v += dt * 0.1 * Math.sin(rad(this.angle));
-    this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
+
+    this.jet_timer -= dt;
+    if (this.jet_timer < 0) { 
+        this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
+        this.jet_timer = 1;
+    }
 }
 
 Ship.prototype.fire = function() {
-    if (this.reload_timer == 0) { 
+    if (this.reload_timer < 0) { 
         var u = Math.cos(rad(this.angle));
         var v = Math.sin(rad(this.angle));
 
@@ -78,11 +84,11 @@ Ship.prototype.fire = function() {
 }
 
 Ship.prototype.update = function() {
-    this.reload_timer = Math.max(0, this.reload_timer - 1);
-    this.shield_tick += 1;
+    this.reload_timer -= world.dt;
+    this.shield_tick += world.dt;
 
-    this.regenerate_timer = Math.max(0, this.regenerate_timer - 1);
-    if (this.regenerate_timer == 0 && this.shields < this.max_shields) {
+    this.regenerate_timer -= world.dt;
+    if (this.regenerate_timer < 0 && this.shields < this.max_shields) {
         this.regenerate_timer = 500;
         this.shields += 1;
     }

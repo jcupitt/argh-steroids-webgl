@@ -120,7 +120,7 @@ function text_add(world, string, x, y, scale) {
     }
 }
 
-function text_draw(string, x, y, scale, angle, centre) {
+function text_draw_immediate(string, x, y, scale, angle, centre) {
     var kern = 2.5;
     var a = scale * Math.cos(rad(angle));
     var b = scale * -Math.sin(rad(angle));

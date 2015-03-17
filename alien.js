@@ -35,17 +35,19 @@ Alien.prototype.random_velocity = function() {
 }
 
 Alien.prototype.update = function() {
-    this.direction_timer -= 1;
+    var dt = this.world.dt;
+
+    this.direction_timer -= dt;
     if (this.direction_timer < 0) {
         this.direction_timer = randint(10, 50);
         this.random_velocity();
     }
 
     if (this.angle > 0) {
-        this.angle -= 1;
+        this.angle -= dt;
     }
     else if (this.angle < 0) {
-        this.angle += 1;
+        this.angle += dt;
     }
 
     if (this.direction == 1 && this.x > this.world.width - 10) {

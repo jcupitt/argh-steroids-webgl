@@ -52,10 +52,10 @@ function epilogue_tick() {
         world.draw_info();
     }
 
-    text_draw("PRESS ENTER TO PLAY AGAIN", 
-              world.width / 2, world.height / 2,
-              20, 0,
-              true);
+    text_draw_immediate("PRESS ENTER TO PLAY AGAIN", 
+                        world.width / 2, world.height / 2,
+                        20, 0,
+                        true);
 
     world.update();
 
@@ -82,14 +82,14 @@ function gameover_tick() {
     }
 
     var t = gameover_timer / gameover_frames;
-    text_draw("GAME OVER", 
-              world.width / 2, world.height / 2,
-              Math.log(t + 0.001) * 150, 180,
-              true);
+    text_draw_immediate("GAME OVER", 
+                        world.width / 2, world.height / 2,
+                        Math.log(t + 0.001) * 150, 180,
+                        true);
 
     world.update();
 
-    gameover_timer -= 1;
+    gameover_timer -= world.dt;
     if (gameover_timer == 0) {
         epilogue();
     }
@@ -150,13 +150,13 @@ function levelstart_tick() {
     }
 
     var t = levelstart_timer / levelstart_frames;
-    text_draw("LEVEL START", 
-              world.width / 2, world.height / 2,
-              t * 150, t * 200.0, true); 
+    text_draw_immediate("LEVEL START", 
+                        world.width / 2, world.height / 2,
+                        t * 150, t * 200.0, true); 
 
     world.update();
 
-    levelstart_timer -= 1;
+    levelstart_timer -= world.dt;
     if (levelstart_timer < 0) {
         levelplay();
     }

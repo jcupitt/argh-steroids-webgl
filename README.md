@@ -29,6 +29,8 @@ as well.
 
 * Press 'N' to skip to the next level. Handy for testing. 
 
+* Hold 'P' for slo-mo. Handy for testing. 
+
 # TODO
 
 * There's no sound. 

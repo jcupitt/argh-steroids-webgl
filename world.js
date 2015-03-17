@@ -30,7 +30,7 @@ var World = function(canvas) {
         canvas.world.particles.starfield();
 
         // ugly! during the startscreen we want to be able to spot resize and
-        // relayout everything
+        // relayout the text ... offer this callback for that
         if (canvas.world.resize_handler) {
             canvas.world.resize_handler();
         }
@@ -96,6 +96,10 @@ World.prototype.update = function() {
         var time_elapsed = time_now - this.last_time;
 
         this.dt = time_elapsed / (1000.0 / 60);
+
+        if (Key.isDown(Key.P)) {
+            this.dt *= 0.1;
+        }
     }
     this.last_time = time_now;
 
@@ -208,13 +212,17 @@ World.prototype.draw = function() {
 }
 
 World.prototype.draw_hud = function() {
-    text_draw("SCORE " + this.score, 20, world.height - 20, 10, 0, false);
-    text_draw("LEVEL " + this.level, 20, world.height - 40, 10, 0, false);
+    text_draw_immediate("SCORE " + this.score, 
+                        20, world.height - 20, 10, 0, false);
+    text_draw_immediate("LEVEL " + this.level, 
+                        20, world.height - 40, 10, 0, false);
 }
 
 World.prototype.draw_info = function() {
-    text_draw("FPS " + this.fps_current, 10, 10, 10, 0, false);
-    text_draw("OBJECTS " + world.n_objects(), 10, 30, 10, 0, false);
-    text_draw("PARTICLES " + world.particles.n_particles(), 
-            10, 50, 10, 0, false);
+    text_draw_immediate("FPS " + this.fps_current, 
+                        20, 20, 10, 0, false);
+    text_draw_immediate("OBJECTS " + world.n_objects(), 
+                        20, 40, 10, 0, false);
+    text_draw_immediate("PARTICLES " + world.particles.n_particles(), 
+                        20, 60, 10, 0, false);
 }

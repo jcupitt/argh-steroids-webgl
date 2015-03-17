@@ -380,8 +380,8 @@ Particles.prototype.update = function() {
 
     for (var i = 0; i < this.max_particles; i++) {
         if (this.life[i] > 0) {
-            this.life[i] -= 1;
-            if (this.life[i] == 0) {
+            this.life[i] -= dt;
+            if (this.life[i] < 0) {
                 this.position[i * 3] = -100;
                 this.free[this.n_free] = i;
                 this.n_free += 1;
@@ -394,11 +394,13 @@ Particles.prototype.update = function() {
                     this.position[i * 3 + 1] + dt * this.velocity[i * 2 + 1], 
                     this.world.height);
                 this.index[i] = wrap_around(
-                    this.index[i] + this.delta[i], 
+                    this.index[i] + dt * this.delta[i], 
                     colour_table.length);
-                this.colour[i * 4] = colour_table[this.index[i]][0];
-                this.colour[i * 4 + 1] = colour_table[this.index[i]][1];
-                this.colour[i * 4 + 2] = colour_table[this.index[i]][2];
+
+                var j = this.index[i] | 0;
+                this.colour[i * 4] = colour_table[j][0];
+                this.colour[i * 4 + 1] = colour_table[j][1];
+                this.colour[i * 4 + 2] = colour_table[j][2];
             }
         }
     }

@@ -25,7 +25,7 @@ Bullet.prototype = Object.create(Sprite.prototype);
 Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.update = function() {
-    this.life -= 1;
+    this.life -= world.dt;
     if (this.life < 0) {
         this.kill = true;
     }
