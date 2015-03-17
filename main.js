@@ -90,7 +90,7 @@ function gameover_tick() {
     world.update();
 
     gameover_timer -= world.dt;
-    if (gameover_timer == 0) {
+    if (gameover_timer < 0) {
         epilogue();
     }
     else {
