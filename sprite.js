@@ -1,6 +1,8 @@
 /* Sprite base class.
  */
 
+'use strict';
+
 var Sprite = function(world) {
     this.world = world;
     this.x = 0;

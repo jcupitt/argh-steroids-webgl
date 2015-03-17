@@ -1,6 +1,8 @@
 /* A bullet.
  */
 
+'use strict';
+
 var bulletBuffers = [];
 
 function bulletCreate() {
@@ -36,18 +38,22 @@ Bullet.prototype.impact = function(other) {
         other.kill = true;
         this.kill = true;
         this.world.score += 1000;
+        this.world.particles.explosion(20, 
+                                       other.x, other.y, other.u, other.v);
     }
     else if (other instanceof Asteroid) {
         other.kill = true;
         this.kill = true;
         this.world.score += other.scale;
         this.world.n_asteroids -= 1;
+        this.world.particles.explosion(other.scale / 3, 
+                                       other.x, other.y, other.u, other.v);
 
         if (other.scale > 15) { 
             var n = randint(2, Math.max(2, Math.min(5, other.scale / 5)));
 
             for (var i = 0; i < n; i++) {
-                new_asteroid = new Asteroid(this.world, other.scale / n, 1);
+                var new_asteroid = new Asteroid(this.world, other.scale / n, 1);
                 new_asteroid.x = other.x;
                 new_asteroid.y = other.y;
                 new_asteroid.u += other.u;

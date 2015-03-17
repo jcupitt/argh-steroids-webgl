@@ -1,6 +1,8 @@
 /* Asteroid object.
  */
 
+'use strict';
+
 // We make a few random asteroid models at startup and reuse them during the
 // game
 var asteroidBuffers = [];
@@ -69,6 +71,20 @@ Asteroid.prototype.collide = function(other) {
         var angular_velocity = other.angular_velocity;
         other.angular_velocity = this.angular_velocity;
         this.angular_velocity = angular_velocity;
+
+        // calculate point of impact for sparks
+        var dx = this.x - other.x;
+        var dy = this.y - other.y;
+        var d2 = dx * dx + dy * dy;
+        var d = Math.sqrt(d2);
+        if (d == 0) {
+            d = 0.0001;
+        }
+        var u = dx / d;
+        var v = dy / d;
+        var impact_x = other.x + u * other.scale;
+        var impact_y = other.y + v * other.scale;
+        this.world.particles.sparks(impact_x, impact_y, other.u, other.v);
     }
 
     Sprite.prototype.collide.call(this, other);

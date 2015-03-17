@@ -1,33 +1,7 @@
 /* The player's ship.
  */
 
-/* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
- * draw buffers which will join pairs of points.
- */
-function buffersCreateDiscontinuous(vertices) {
-    if (vertices.length % 2 != 0) {
-        console.log("buffersCreateDiscontinuous: not an even number of points");
-    }
-
-    var points = [];
-    var index = [];
-    for (var i = 0; i < vertices.length; i++) {
-        points = points.concat([vertices[i][0], vertices[i][1], 0]);
-        index.push(i);
-    }
-
-    var vertex_buffer = 
-        createBuffer(gl.ARRAY_BUFFER, new Float32Array(points));
-    vertex_buffer.itemSize = 3;
-    vertex_buffer.numItems = vertices.length;
-
-    var index_buffer = 
-        createBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
-    index_buffer.itemSize = 2;
-    index_buffer.numItems = vertices.length;
-
-    return [vertex_buffer, index_buffer];
-}
+'use strict';
 
 var shipBuffers = [];
 
@@ -65,7 +39,6 @@ var Ship = function(world) {
     this.max_shields = 3;
     this.shields = this.max_shields;
     this.shield_tick = 0;
-    this.jet_tick = 0;
 }
 
 Ship.prototype = Object.create(Sprite.prototype); 
@@ -79,12 +52,7 @@ Ship.prototype.rotate_by = function(angle) {
 Ship.prototype.thrust = function() {
     this.u += 0.1 * Math.cos(rad(this.angle));
     this.v += 0.1 * Math.sin(rad(this.angle));
-
-    this.jet_tick -= 1;
-    if (this.jet_tick < 0) {
-        this.jet_tick = 3;
-        //this.world.particle.jet(self.position, self.velocity, self.angle)
-    }
+    this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
 }
 
 Ship.prototype.fire = function() {
@@ -92,7 +60,7 @@ Ship.prototype.fire = function() {
         var u = Math.cos(rad(this.angle));
         var v = Math.sin(rad(this.angle));
 
-        bullet = new Bullet(self.world);
+        var bullet = new Bullet(self.world);
         bullet.x = this.x + u * this.scale;
         bullet.y = this.y + v * this.scale;
         bullet.u = this.u + u * 7.0;
@@ -118,13 +86,14 @@ Ship.prototype.update = function() {
 
 Ship.prototype.impact = function(other) {
     if (other instanceof Alien || other instanceof Asteroid) {
-        //this.world.particle.sparks(this.position, this.velocity)
+        this.world.particles.sparks(this.x, this.y, this.u, this.v);
         this.shields -= 1;
         this.regenerate_timer = 1000;
 
         if (this.shields < 0) { 
             this.kill = true;
-            //this.world.particle.explosion2(300, this.position, this.velocity)
+            this.world.particles.explosion2(300, 
+                    this.x, this.y, this.u, this.v);
         }
     }
 

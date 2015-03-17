@@ -1,7 +1,12 @@
 /* Misc utility functions. 
  */
 
+'use strict';
+
 function randint(min, max) {
+    min |= 0;
+    max |= 0;
+
     return ((Math.random() * (1 + max - min)) | 0) + min;
 }
 
@@ -75,14 +80,6 @@ function getProgram(fs_id, vs_id) {
     return program;
 }
 
-function createBuffer(type, data) {
-    var buf = gl.createBuffer();
-    gl.bindBuffer(type, buf);
-    gl.bufferData(type, data, gl.STATIC_DRAW);
-
-    return buf;
-}
-
 // for clock-style arithmetic
 function wrap_around(x, limit) {
     if (x >= limit) {
@@ -93,6 +90,14 @@ function wrap_around(x, limit) {
     }
     else
         return x;
+}
+
+function bufferCreate(type, data) {
+    var buf = gl.createBuffer();
+    gl.bindBuffer(type, buf);
+    gl.bufferData(type, data, gl.STATIC_DRAW);
+
+    return buf;
 }
 
 /* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
@@ -107,13 +112,41 @@ function buffersCreate(vertices) {
     }
 
     var vertex_buffer = 
-        createBuffer(gl.ARRAY_BUFFER, new Float32Array(points));
+        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(points));
     vertex_buffer.itemSize = 3;
     vertex_buffer.numItems = vertices.length;
 
     var index_buffer = 
-        createBuffer(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
+        bufferCreate(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
     index_buffer.itemSize = 1;
+    index_buffer.numItems = vertices.length;
+
+    return [vertex_buffer, index_buffer];
+}
+
+/* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
+ * draw buffers which will join pairs of points.
+ */
+function buffersCreateDiscontinuous(vertices) {
+    if (vertices.length % 2 != 0) {
+        console.log("buffersCreateDiscontinuous: not an even number of points");
+    }
+
+    var points = [];
+    var index = [];
+    for (var i = 0; i < vertices.length; i++) {
+        points = points.concat([vertices[i][0], vertices[i][1], 0]);
+        index.push(i);
+    }
+
+    var vertex_buffer = 
+        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(points));
+    vertex_buffer.itemSize = 3;
+    vertex_buffer.numItems = vertices.length;
+
+    var index_buffer = 
+        bufferCreate(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
+    index_buffer.itemSize = 2;
     index_buffer.numItems = vertices.length;
 
     return [vertex_buffer, index_buffer];
@@ -185,7 +218,7 @@ var Mouse = {
 
     // pick up all the movement since the last call
     getMovement: function() {
-        result = [Mouse.movementX, Mouse.movementy];
+        var result = [Mouse.movementX, Mouse.movementy];
         Mouse.movementX = 0;
         Mouse.movementY = 0;
 

@@ -1,7 +1,9 @@
 /* World object. We have one of these: it runs the world state.
  */
 
-updateSizes = function(canvas) {
+'use strict';
+
+var updateSizes = function(canvas) {
     var viewportSize = {
         height: window.innerHeight,
         width:  window.innerWidth
@@ -24,6 +26,8 @@ var World = function(canvas) {
 
     window.addEventListener('resize', function() {
         updateSizes(canvas);
+        canvas.world.particles.reset();
+        canvas.world.particles.starfield();
     });
     updateSizes(canvas);
 
@@ -64,7 +68,7 @@ World.prototype.update = function() {
     }
     this.last_time = time_now;
 
-    movement = Mouse.getMovement();
+    var movement = Mouse.getMovement();
     var rotate_by = -movement[0] / 5;
 
     if (Key.isDown(Key.LEFT)) {
@@ -114,10 +118,10 @@ World.prototype.update = function() {
     }
 
     this.sprites.forEach (function(sprite) { 
-        sprite.tested_collision = false
+        sprite.tested_collision = false;
 
-        var x = Math.floor(sprite.x / map_spacing)
-        var y = Math.floor(sprite.y / map_spacing)
+        var x = (sprite.x / map_spacing) | 0;
+        var y = (sprite.y / map_spacing) | 0;
 
         for (var a = x - 1; a <= x + 1; a++ ) {
             for (var b = y - 1; b <= y + 1; b++ ) {
@@ -130,8 +134,8 @@ World.prototype.update = function() {
     });
 
     this.sprites.forEach (function(sprite) { 
-        var x = Math.floor(sprite.x / map_spacing);
-        var y = Math.floor(sprite.y / map_spacing);
+        var x = (sprite.x / map_spacing) | 0;
+        var y = (sprite.y / map_spacing) | 0;
 
         sprite.test_collisions(world_map[x][y]);
 

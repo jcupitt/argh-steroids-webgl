@@ -1,8 +1,10 @@
 /* Simple particle system.
  */
 
+'use strict';
+
 // stolen from a PET scanner
-colour_table = [[ 15, 0, 30 ],
+var colour_table = [[ 15, 0, 30 ],
                 [ 19, 0, 40 ],
                 [ 23, 0, 48 ],
                 [ 28, 0, 57 ],
@@ -247,41 +249,51 @@ colour_table = [[ 15, 0, 30 ],
 var Particles = function(world) {
     this.world = world;
 
-    this.n_particles = 10;
+    this.n_particles = 1000;
 
     // counts down to zero, zero means dead
     this.life = new Array(this.n_particles);
     this.position = new Float32Array(3 * this.n_particles);
-    this.velocity = new Float32Array(3 * this.n_particles);
-    this.colour = new Float32Array(4 * this.n_articles);
-    this.colour_delta = new Array(this.n_particles);
+    this.velocity = new Array(2 * this.n_particles);
+    this.colour = new Float32Array(4 * this.n_particles);
+    this.index = new Array(this.n_particles);
+    this.delta = new Array(this.n_particles);
 
     this.free = new Array(this.n_particles);
     this.n_free = this.n_particles;
 
-    for (var i = 0; i < this.n_particles; i++) {
-        this.free[i] = i;
-        this.life[i] = 0;
-        this.position[i * 3] = -100;
-    }
+    this.reset();
 
-    // position buffer
     this.position_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.position, gl.DYNAMIC_DRAW);
     this.position_buffer.itemSize = 3;
 
-    // colour buffer
     this.colour_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colour_buffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.colour, gl.DYNAMIC_DRAW);
     this.colour_buffer.itemSize = 4;
-
 };
 
 Particles.prototype.constructor = Particles;
 
-Particles.prototype.emit = function(life, x, y, u, v, colour, colour_delta) {
+Particles.prototype.reset = function() {
+    for (var i = 0; i < this.n_particles; i++) {
+        this.free[i] = i;
+        this.life[i] = 0;
+        this.position[i * 3] = -100.0;
+        this.position[i * 3 + 1] = 0.0;
+        this.position[i * 3 + 1] = -10.0;
+        this.colour[i * 4 + 0] = 1.0;
+        this.colour[i * 4 + 1] = 0.0;
+        this.colour[i * 4 + 2] = 0.0;
+        this.colour[i * 4 + 3] = 0.0;
+        this.index[i] = 1;
+        this.delta[i] = 0;
+    }
+};
+
+Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
     if (this.n_free > 0) {
         this.n_free -= 1;
         var i = this.free[this.n_free];
@@ -289,18 +301,15 @@ Particles.prototype.emit = function(life, x, y, u, v, colour, colour_delta) {
         this.life[i] = life;
         this.position[i * 3] = x;
         this.position[i * 3 + 1] = y;
-        this.position[i * 3 + 2] = -10;
-        this.velocity[i * 3] = u;
-        this.velocity[i * 3 + 1] = v;
-        this.colour[i * 4 + 0] = 1.0;
-        this.colour[i * 4 + 1] = 0.0;
-        this.colour[i * 4 + 2] = 0.0;
-        this.colour[i * 4 + 3] = 0.0;
+        this.velocity[i * 2] = u;
+        this.velocity[i * 2 + 1] = v;
+        this.index[i] = index;
+        this.delta[i] = delta;
     }
 };
 
 Particles.prototype.starfield = function() {
-    for (var i = 0; i < 30; i++) {
+    for (var i = 0; i < 100; i++) {
         this.emit(100000000,
                   randint(0, this.world.width), randint(0, this.world.height),
                   0, 0,
@@ -308,6 +317,57 @@ Particles.prototype.starfield = function() {
                   randint(1, 3));
     }
 }
+
+Particles.prototype.explosion = function(n_points, x, y, u, v) {
+    for (var i = 0; i < n_points; i++) {
+        var delta = 360 / n_points;
+        var angle = i * delta + randint(-delta / 2, delta / 2);
+        var speed = Math.random() * 2.0;
+        this.emit(randint(50, 100),
+                  x, y, 
+                  u + speed * Math.cos(rad(angle)),
+                  v + speed * Math.sin(rad(angle)),
+                  colour_table.length - randint(1, 50), -1);
+    }
+};
+
+Particles.prototype.explosion2 = function(n_points, x, y, u, v) {
+    for (var i = 0; i < n_points; i++) {
+        var delta = 360.0 / n_points;
+        var angle = i * delta + randint(-delta, delta);
+        var speed = Math.random() * 4.0;
+
+        this.emit(randint(50, 300),
+                  x, y,
+                  u + speed * Math.cos(rad(angle)),
+                  v + speed * Math.sin(rad(angle)),
+                  colour_table.length - randint(1, 50), -1); 
+    }
+};
+
+Particles.prototype.sparks = function(x, y, u, v) {
+    var n_points = 3;
+    var delta = 360 / n_points;
+    for (var i = 0; i < n_points; i++) {
+        var angle = i * delta + randint(-delta / 2, delta / 2);
+        var speed = Math.random() * 2.0;
+        this.emit(randint(50, 100),
+                  x, y,
+                  u + speed * Math.cos(rad(angle)),
+                  v + speed * Math.sin(rad(angle)),
+                  colour_table.length - randint(1, 200), -113);
+    }
+};
+
+Particles.prototype.jet = function(x, y, u, v, angle) {
+    var angle = angle + randint(-10, 10) + 180;
+    var u1 = 2 * Math.cos(rad(angle));
+    var v1 = 2 * Math.sin(rad(angle));
+    this.emit(randint(20, 30),
+              x + 3 * u1, y + 3 * v1,
+              u + u1, v + v1,
+              randint(50, 200), randint(20, 200));
+};
 
 Particles.prototype.update = function() {
     for (var i = 0; i < this.n_particles; i++) {
@@ -320,111 +380,37 @@ Particles.prototype.update = function() {
             }
             else {
                 this.position[i * 3] = wrap_around(
-                    this.position[i * 3] + this.velocity[i * 3], 
+                    this.position[i * 3] + this.velocity[i * 2], 
                     this.world.width);
                 this.position[i * 3 + 1] = wrap_around(
-                    this.position[i * 3 + 1] + this.velocity[i * 3 + 1], 
+                    this.position[i * 3 + 1] + this.velocity[i * 2 + 1], 
                     this.world.height);
+                this.index[i] = wrap_around(
+                    this.index[i] + this.delta[i], 
+                    colour_table.length);
+                this.colour[i * 4] = colour_table[this.index[i]][0];
+                this.colour[i * 4 + 1] = colour_table[this.index[i]][1];
+                this.colour[i * 4 + 2] = colour_table[this.index[i]][2];
+                this.colour[i * 4 + 3] = colour_table[this.index[i]][3];
             }
         }
     }
 }
 
-Particles.prototype.draw3 = function() {
+Particles.prototype.draw = function() {
     setMatrixUniforms();
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
-    //gl.bufferSubData(gl.ARRAY_BUFFER, this.position_buffer, this.position);
+    gl.bufferSubData(gl.ARRAY_BUFFER, this.position_buffer, this.position);
     gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
             this.position_buffer.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colour_buffer);
-    //gl.bufferSubData(gl.ARRAY_BUFFER, this.colour_buffer, this.colour);
+    gl.bufferSubData(gl.ARRAY_BUFFER, this.colour_buffer, this.colour);
     gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
     gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
             this.colour_buffer.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.POINT, 0, this.n_particles);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, undefined);
-};
-
-Particles.prototype.draw = function() {
-    setMatrixUniforms();
-
-    var position = new Float32Array(30);
-    var colour = new Float32Array(40);
-
-    for (var i = 0; i < 10; i++) {
-        position[i * 3 + 0] = 100 + i * 4;
-        position[i * 3 + 1] = 100;
-        position[i * 3 + 2] = -10;
-
-        colour[i * 3 + 0] = 1.0;
-        colour[i * 3 + 1] = 0.0;
-        colour[i * 3 + 2] = 0.0;
-        colour[i * 3 + 3] = 0.0;
-    }
-
-    var position_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
-
-    var colour_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, colour, gl.DYNAMIC_DRAW);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.bufferSubData(gl.ARRAY_BUFFER, position_buffer, position);
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
-    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
-            3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
-    gl.bufferSubData(gl.ARRAY_BUFFER, colour_buffer, colour);
-    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
-    gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
-            4, gl.FLOAT, false, 0, 0);
-
-    // this is drawing random colours for each point, why aren't they all red?
-    // check lesson02 again, do we need another array to link colors to
-    // vertices?
-
-    gl.drawArrays(gl.POINT, 0, 10);
-};
-
-Particles.prototype.draw2 = function() {
-    setMatrixUniforms();
-
-    var position = new Float32Array(3);
-    position[0] = 100;
-    position[1] = 100;
-    position[2] = -10;
-
-    var colour = new Float32Array(4);
-    colour[0] = 1.0;
-    colour[1] = 0.0;
-    colour[2] = 0.0;
-    colour[3] = 0.0;
-
-    var position_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
-
-    var colour_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, colour, gl.DYNAMIC_DRAW);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, position_buffer);
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
-    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
-            3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, colour_buffer);
-    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
-    gl.vertexAttribPointer(currentProgram.vertexColorAttribute, 
-            4, gl.FLOAT, false, 0, 0);
-
-    gl.drawArrays(gl.POINT, 0, 1);
 };

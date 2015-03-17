@@ -1,6 +1,8 @@
 /* Allen the alien.
  */
 
+'use strict';
+
 var alienBuffers = [];
 
 function alienCreate() {
