@@ -163,6 +163,11 @@ var Key = {
     S: 83,
     N: 78,
     P: 80,
+    ONE: 49,
+    TWO: 50,
+    THREE: 51,
+    FOUR: 52,
+    FIVE: 53,
 
     isDown: function(keyCode) {
         return this._pressed[keyCode];

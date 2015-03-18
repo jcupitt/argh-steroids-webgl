@@ -31,6 +31,8 @@ as well.
 
 * Hold 'P' for slo-mo. Handy for testing. 
 
+* Press '1' for default rendering, '2' for mega-explosions. 
+
 # TODO
 
 * There's no sound. 

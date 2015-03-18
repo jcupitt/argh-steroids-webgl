@@ -56,6 +56,7 @@ World.prototype.reset = function() {
     this.text_y = this.height - 100;
     this.alien_time = randint(1000, 2000)
     this.particles.reset();
+    this.explosion_scale_factor = 1;
 
     // note t0, handy to keep tick numbers comprehensible
     this.t0 = new Date().getTime();
@@ -125,6 +126,12 @@ World.prototype.update = function() {
     }
     if (Key.isDown(Key.RIGHT)) {
         rotate_by -= 3;
+    }
+    if (Key.isDown(Key.ONE)) {
+        this.explosion_scale_factor = 1;
+    }
+    if (Key.isDown(Key.TWO)) {
+        this.explosion_scale_factor = 100;
     }
 
     if (this.player) {
