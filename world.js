@@ -176,8 +176,9 @@ World.prototype.update = function() {
     });
 
     this.sprites.forEach (function(sprite) { 
-        var x = (sprite.x / map_spacing) | 0;
-        var y = (sprite.y / map_spacing) | 0;
+        // wrap_around() just in case the sprite is outside screenspace 
+        var x = wrap_around((sprite.x / map_spacing) | 0, map_width);
+        var y = wrap_around((sprite.y / map_spacing) | 0, map_height);
 
         sprite.test_collisions(world_map[x][y]);
 
