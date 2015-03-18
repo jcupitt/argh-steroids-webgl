@@ -42,6 +42,7 @@
     attribute float aVertexLifespan;
     attribute float aVertexColourstart;
     attribute float aVertexColourscale;
+    attribute float aVertexSize;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
@@ -51,12 +52,12 @@
     varying vec4 vColor;
 
     void main(void) {
-    	float t = uTicks - aVertexBirthticks;
+    	float t = (uTicks - aVertexBirthticks) / aVertexLifespan;
 
-	if (t > aVertexLifespan)
+	if (t > 1.0)
 	    gl_Position = vec4(-100.0, 0.0, 0.0, 0.0);
 	else {
-	    vec2 pos = t * aVertexVelocity + aVertexPosition;
+	    vec2 pos = 30.0 * t * aVertexVelocity + aVertexPosition;
 	    vec4 spos = uPMatrix * uMVMatrix * vec4(pos, 0.0, 1.0);
 
 	    // wrap around screen space
@@ -66,21 +67,29 @@
 	    gl_Position = vec4(spos2, 0.0, 1.0);
 	}
 
-	float index = aVertexColourstart + t * aVertexColourscale;
+	float index = aVertexColourstart + 200.0 * t * aVertexColourscale;
         vColor = texture2D(uRamp, vec2(index / 255.0, 0.5));
 
-        gl_PointSize = 3.0;
+        gl_PointSize = (1.0 - t) * aVertexSize;
     }
 </script>
 
 <script id="shader-fs-particle" type="x-shader/x-fragment">
-    precision mediump float;
+	precision lowp float;
 
-    varying vec4 vColor;
+	varying vec4 vColor;
 
-    void main(void) {
-        gl_FragColor = vColor;
-    }
+	uniform sampler2D uTexture;
+
+	void main(void) {
+		vec4 col;
+		col = texture2D(uTexture, gl_PointCoord);
+		if (col.a == 0.0) 
+			discard;
+
+		vec4 tex = vColor * col;
+		gl_FragColor = tex;
+	}
 </script>
 
 <style>

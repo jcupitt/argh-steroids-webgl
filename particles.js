@@ -283,6 +283,9 @@ var Particles = function(world) {
     // speed of colour change
     this.colourscale = new Float32Array(this.max_particles);
 
+    // particle size 
+    this.size = new Float32Array(this.max_particles);
+
     this.free = new Array(this.max_particles);
     this.n_free = 0;
     this.GC_index = 0;
@@ -323,6 +326,11 @@ var Particles = function(world) {
     gl.bufferData(gl.ARRAY_BUFFER, this.colourscale, gl.DYNAMIC_DRAW);
     this.colourscale_buffer.itemSize = 1;
 
+    this.size_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.size_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.size, gl.DYNAMIC_DRAW);
+    this.size_buffer.itemSize = 1;
+
     this.ramp_texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.ramp_texture);
 
@@ -337,6 +345,8 @@ var Particles = function(world) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, colour_table.length, 1, 0,
         gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(texels));
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    this.point_texture = loadPointTexture("blob.png");
 };
 
 Particles.prototype.constructor = Particles;
@@ -358,6 +368,7 @@ Particles.prototype.reset = function() {
 
         this.colourstart[i] = 0;
         this.colourscale[i] = 0;
+        this.size[i] = 0;
 
         this.free[i] = i;
     }
@@ -393,7 +404,7 @@ Particles.prototype.GC = function() {
     this.GC_index = i;
 }
 
-Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
+Particles.prototype.emit = function(life, x, y, u, v, index, delta, size) {
     if (this.n_free < 1) {
         this.GC();
     }
@@ -413,6 +424,7 @@ Particles.prototype.emit = function(life, x, y, u, v, index, delta) {
 
         this.colourstart[i] = index;
         this.colourscale[i] = delta;
+        this.size[i] = size;
 
         this.changed = true;
     }
@@ -424,21 +436,22 @@ Particles.prototype.starfield = function() {
                   randint(0, this.world.width), randint(0, this.world.height),
                   0, 0,
                   randint(50, 200),
-                  Math.random() * 2);
+                  Math.random() * 2, randint(3, 6));
     }
 }
 
 Particles.prototype.explosion = function(n_points, x, y, u, v) {
     var factor = this.world.explosion_scale_factor;
+    var base_colour = randint(50, 255);
     for (var i = 0; i < factor * n_points; i++) {
         var delta = 360 / n_points;
         var angle = i * delta + randint(-delta / 2, delta / 2);
-        var speed = Math.random() * 2.0;
-        this.emit(randint(50, 100),
+        var speed = Math.random() * 4.0;
+        this.emit(randint(10, 100),
                   x, y, 
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  colour_table.length - randint(1, 50), -1);
+                  base_colour - randint(1, 50), -1, randint(10, 20));
     }
 };
 
@@ -447,19 +460,20 @@ Particles.prototype.explosion2 = function(n_points, x, y, u, v) {
     for (var i = 0; i < factor * n_points; i++) {
         var delta = 360.0 / n_points;
         var angle = i * delta + randint(-delta, delta);
-        var speed = Math.random() * 4.0;
+        var speed = Math.random() * 6.0;
         this.emit(randint(50, 300),
                   x, y,
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  colour_table.length - randint(1, 50), -1); 
+                  colour_table.length - randint(1, 50), -1, randint(10, 64)); 
     }
 };
 
 Particles.prototype.sparks = function(x, y, u, v) {
     var factor = this.world.explosion_scale_factor;
-    var n_points = 3 * factor;
+    var n_points = 0.2 * factor;
     var delta = 360 / n_points;
+    var base_colour = randint(50, 255);
     for (var i = 0; i < n_points; i++) {
         var angle = i * delta + randint(-delta / 2, delta / 2);
         var speed = Math.random() * 2.0;
@@ -467,21 +481,18 @@ Particles.prototype.sparks = function(x, y, u, v) {
                   x, y,
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  colour_table.length - randint(1, 200), -113);
+                  base_colour - randint(1, 200), -113, randint(5, 10));
     }
 };
 
 Particles.prototype.jet = function(x, y, u, v, angle) {
-    var factor = this.world.explosion_scale_factor;
-    for (var i = 0; i < factor; i++) { 
-        var particle_angle = angle + randint(-20, 20) + 180;
-        var u1 = 2 * Math.cos(rad(particle_angle));
-        var v1 = 2 * Math.sin(rad(particle_angle));
-        this.emit(randint(20, 30),
-                  x + 3 * u1, y + 3 * v1,
-                  u + u1, v + v1,
-                  randint(50, 200), randint(20, 200));
-    }
+    var particle_angle = angle + randint(-20, 20) + 180;
+    var u1 = 2 * Math.cos(rad(particle_angle));
+    var v1 = 2 * Math.sin(rad(particle_angle));
+    this.emit(randint(20, 30),
+              x + 3 * u1, y + 3 * v1,
+              u + u1, v + v1,
+              randint(50, 200), randint(20, 200), randint(3, 6));
 };
 
 Particles.prototype.set_buffer = function(attr, buffer, array) {
@@ -496,6 +507,9 @@ Particles.prototype.set_buffer = function(attr, buffer, array) {
 Particles.prototype.draw = function() {
     setMatrixUniforms();
 
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
     this.set_buffer(currentProgram.vertexPositionAttribute,
         this.position_buffer, this.position);
     this.set_buffer(currentProgram.vertexVelocityAttribute,
@@ -508,6 +522,8 @@ Particles.prototype.draw = function() {
         this.colourstart_buffer, this.colourstart);
     this.set_buffer(currentProgram.vertexColourscaleAttribute,
         this.colourscale_buffer, this.colourscale);
+    this.set_buffer(currentProgram.vertexSizeAttribute,
+        this.size_buffer, this.size);
 
     this.changed = false;
 
@@ -516,6 +532,10 @@ Particles.prototype.draw = function() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.ramp_texture);
     gl.uniform1i(currentProgram.rampUniform, 0);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, this.point_texture);
+    gl.uniform1i(currentProgram.textureUniform, 1);
 
     gl.drawArrays(gl.POINT, 0, this.max_particles);
 };

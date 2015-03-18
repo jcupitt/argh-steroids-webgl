@@ -47,6 +47,11 @@ as well.
 
 * The shaders are very crude for that retro look. An option to use fancy
   shaders would be fun. 
+
+* If running locally, you need to tell your browser to allow JS to access
+  file:// URLs. For example, in Chrome on Mac:
+
+  	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files
  
 # Author
 

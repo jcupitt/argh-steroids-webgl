@@ -29,10 +29,15 @@ function initShaders() {
     shaderPrograms[0].vertexColourscaleAttribute = 
         gl.getAttribLocation(shaderPrograms[0], "aVertexColourscale");
 
+    shaderPrograms[0].vertexSizeAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexSize");
+
     shaderPrograms[0].ticksUniform = 
         gl.getUniformLocation(shaderPrograms[0], "uTicks");
     shaderPrograms[0].rampUniform = 
         gl.getUniformLocation(shaderPrograms[0], "uRamp");
+    shaderPrograms[0].textureUniform = 
+        gl.getUniformLocation(shaderPrograms[0], "uTexture");
 
     shaderPrograms[1] = getProgram("shader-fs-vector", "shader-vs-vector");
 }
