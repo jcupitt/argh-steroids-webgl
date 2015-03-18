@@ -43,8 +43,6 @@ as well.
 * Collision physics just exchanges the two velocities, we could do true
   billiard-ball collisions.
 
-* The particle updates are done in JavaScript, they should be in webgl.
-
 * The shaders are very crude for that retro look. An option to use fancy
   shaders would be fun. 
  

@@ -17,13 +17,13 @@
 <script type="text/javascript" src="main.js"></script>
 
 <script id="shader-vs-vector" type="x-shader/x-vertex">
-    attribute vec3 aVertexPosition;
+    attribute vec2 aVertexPosition;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
 
     void main(void) {
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 0.0, 1.0);
     }
 </script>
 
@@ -36,18 +36,40 @@
 </script>
 
 <script id="shader-vs-particle" type="x-shader/x-vertex">
-    attribute vec3 aVertexPosition;
-    attribute vec4 aVertexColor;
+    attribute vec2 aVertexPosition;
+    attribute vec2 aVertexVelocity;
+    attribute float aVertexBirthticks;
+    attribute float aVertexLifespan;
+    attribute float aVertexColourstart;
+    attribute float aVertexColourscale;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
+    uniform float uTicks;
+    uniform sampler2D uRamp;
 
     varying vec4 vColor;
 
     void main(void) {
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-	gl_PointSize = 3.0;
-        vColor = aVertexColor;
+    	float t = uTicks - aVertexBirthticks;
+
+	if (t > aVertexLifespan)
+	    gl_Position = vec4(-100.0, 0.0, 0.0, 0.0);
+	else {
+	    vec2 pos = t * aVertexVelocity + aVertexPosition;
+	    vec4 spos = uPMatrix * uMVMatrix * vec4(pos, 0.0, 1.0);
+
+	    // wrap around screen space
+	    vec2 spos2 = spos.xy;
+	    spos2 = mod(spos2 + 1.0, 2.0) - 1.0;
+
+	    gl_Position = vec4(spos2, 0.0, 1.0);
+	}
+
+	float index = aVertexColourstart + t * aVertexColourscale;
+        vColor = texture2D(uRamp, vec2(index / 255.0, 0.5));
+
+        gl_PointSize = 3.0;
     }
 </script>
 

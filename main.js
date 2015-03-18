@@ -14,8 +14,25 @@ function setShaderProgram(program) {
 function initShaders() {
     shaderPrograms[0] = getProgram("shader-fs-particle", "shader-vs-particle");
 
-    shaderPrograms[0].vertexColorAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexColor");
+    shaderPrograms[0].vertexVelocityAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexVelocity");
+
+    shaderPrograms[0].vertexBirthticksAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexBirthticks");
+
+    shaderPrograms[0].vertexLifespanAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexLifespan");
+
+    shaderPrograms[0].vertexColourstartAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexColourstart");
+
+    shaderPrograms[0].vertexColourscaleAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexColourscale");
+
+    shaderPrograms[0].ticksUniform = 
+        gl.getUniformLocation(shaderPrograms[0], "uTicks");
+    shaderPrograms[0].rampUniform = 
+        gl.getUniformLocation(shaderPrograms[0], "uRamp");
 
     shaderPrograms[1] = getProgram("shader-fs-vector", "shader-vs-vector");
 }

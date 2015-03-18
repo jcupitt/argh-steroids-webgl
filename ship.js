@@ -123,6 +123,7 @@ Ship.prototype.draw_at = function(x, y) {
         mat4.scale(mvMatrix, [radius, radius, 1]);
         mat4.rotate(mvMatrix, rad(angle), [0, 0, 1]);
 
+        gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
         gl.bindBuffer(gl.ARRAY_BUFFER, shipBuffers[1][0]);
         gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
                 shipBuffers[1][0].itemSize, gl.FLOAT, false, 0, 0);

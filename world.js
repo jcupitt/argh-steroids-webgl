@@ -50,14 +50,19 @@ World.prototype.reset = function() {
     this.level = 1;
     this.n_asteroids = 0;
     this.player = null;
-    this.dt = 0;
-    this.last_time = 0;
     this.fps_start_time = 0;
     this.fps_count = 0;
     this.fps_current = 0;
     this.text_y = this.height - 100;
     this.alien_time = randint(1000, 2000)
     this.particles.reset();
+
+    // note t0, handy to keep tick numbers comprehensible
+    this.t0 = new Date().getTime();
+
+    this.ticks = 0;
+    this.dt = 0;
+    this.last_time = 0;
 }
 
 World.prototype.n_objects = function() {
@@ -90,7 +95,7 @@ World.prototype.add_text = function(string, scale) {
 }
 
 World.prototype.update = function() {
-    var time_now = new Date().getTime();
+    var time_now = new Date().getTime() - this.t0;
 
     if (this.last_time != 0) {
         var time_elapsed = time_now - this.last_time;
@@ -100,6 +105,8 @@ World.prototype.update = function() {
         if (Key.isDown(Key.P)) {
             this.dt *= 0.1;
         }
+
+        this.ticks += this.dt;
     }
     this.last_time = time_now;
 
@@ -186,8 +193,6 @@ World.prototype.update = function() {
         // we no longer need to test anything against sprite
         sprite.tested_collision = true;
     });
-
-    this.particles.update(); 
 }
 
 World.prototype.draw = function() {
