@@ -110,7 +110,7 @@ Character.prototype.draw_at = function(x, y) {
 }
 
 function text_add(world, string, x, y, scale) {
-    var kern = 2.5;
+    var kern = 2;
     x = x - string.length * scale * kern / 2.0;
     for (var i = 0; i < string.length; i++) {
         var ch = string.charAt(i);
@@ -122,7 +122,7 @@ function text_add(world, string, x, y, scale) {
 }
 
 function text_draw_immediate(string, x, y, scale, angle, centre) {
-    var kern = 2.5;
+    var kern = 1.5;
     var a = scale * Math.cos(rad(angle));
     var b = scale * -Math.sin(rad(angle));
     var c = -b;

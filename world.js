@@ -92,7 +92,7 @@ World.prototype.add_text = function(string, scale) {
     scale = typeof scale !== 'undefined' ? scale : 10;
 
     text_add(this, string, this.width / 2, this.text_y, scale);
-    this.text_y -= scale * 10;
+    this.text_y -= scale + 50;
 }
 
 World.prototype.update = function() {
