@@ -391,9 +391,9 @@ Particles.prototype.GC = function() {
     var ticks = world.ticks;
     var dt = world.dt;
 
-    // don't bother running the GC more than once every 10 ticks, we can get
+    // don't bother running the GC more than once per frame, we can get
     // pathological cases when the particle table fills
-    if (ticks - this.GC_last_ticks < 10) {
+    if (this.GC_last_ticks == ticks) {
         return;
     }
     this.GC_last_ticks = ticks;
@@ -411,9 +411,8 @@ Particles.prototype.GC = function() {
         }
 
         i = wrap_around(i + 1, this.max_particles);
-        if (this.n_free > 10000) {
-            // stop after we've found 10000, won't take long and should keep us
-            // going for a while
+        if (this.n_free > 30000) {
+            // stop after we've found 30000, enough for the biggest explosion
             break;
         }
     }
