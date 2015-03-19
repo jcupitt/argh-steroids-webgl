@@ -286,6 +286,9 @@ var Particles = function(world) {
     // particle size 
     this.size = new Float32Array(this.max_particles);
 
+    // damping
+    this.damp = new Float32Array(this.max_particles);
+
     this.free = new Array(this.max_particles);
     this.n_free = 0;
     this.GC_index = 0;
@@ -331,6 +334,11 @@ var Particles = function(world) {
     gl.bufferData(gl.ARRAY_BUFFER, this.size, gl.DYNAMIC_DRAW);
     this.size_buffer.itemSize = 1;
 
+    this.damp_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.damp_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.damp, gl.DYNAMIC_DRAW);
+    this.damp_buffer.itemSize = 1;
+
     this.ramp_texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.ramp_texture);
 
@@ -369,6 +377,7 @@ Particles.prototype.reset = function() {
         this.colourstart[i] = 0;
         this.colourscale[i] = 0;
         this.size[i] = 0;
+        this.damp[i] = 0;
 
         this.free[i] = i;
     }
@@ -404,7 +413,8 @@ Particles.prototype.GC = function() {
     this.GC_index = i;
 }
 
-Particles.prototype.emit = function(life, x, y, u, v, index, delta, size) {
+Particles.prototype.emit = function(life, x, y, u, v, 
+    index, delta, size, damp) {
     if (this.n_free < 1) {
         this.GC();
     }
@@ -425,6 +435,7 @@ Particles.prototype.emit = function(life, x, y, u, v, index, delta, size) {
         this.colourstart[i] = index;
         this.colourscale[i] = delta;
         this.size[i] = size;
+        this.damp[i] = damp;
 
         this.changed = true;
     }
@@ -436,44 +447,52 @@ Particles.prototype.starfield = function() {
                   randint(0, this.world.width), randint(0, this.world.height),
                   0, 0,
                   randint(50, 200),
-                  Math.random() * 2, randint(3, 6));
+                  Math.random() * 2, randint(3, 6), 0);
     }
 }
 
-Particles.prototype.explosion = function(n_points, x, y, u, v) {
-    var factor = this.world.explosion_scale_factor;
+Particles.prototype.explosion = function(radius, x, y, u, v) {
     var base_colour = randint(50, 255);
-    for (var i = 0; i < factor * n_points; i++) {
-        var delta = 360 / n_points;
+    var n_points = 10 * radius;
+    var delta = 360 / n_points;
+    var change = Math.random() * 3;
+    var damp = Math.random();
+    var size = Math.random();
+    var life = Math.random();
+
+    for (var i = 0; i < n_points; i++) {
         var angle = i * delta + randint(-delta / 2, delta / 2);
-        var speed = Math.random() * 4.0;
-        this.emit(randint(10, 100),
+        var speed = 0.1 * Math.random() * radius;
+        this.emit(randint(10, 20 + 2 * life * radius),
                   x, y, 
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  base_colour - randint(1, 50), -1, randint(10, 20));
+                  base_colour - randint(1, 50), change, 
+                  randint(5, size * 10 + radius / 10), 20 + damp * 50);
     }
 };
 
-Particles.prototype.explosion2 = function(n_points, x, y, u, v) {
-    var factor = this.world.explosion_scale_factor;
-    for (var i = 0; i < factor * n_points; i++) {
+Particles.prototype.explosion2 = function(x, y, u, v) {
+    var n_points = 30000;
+
+    for (var i = 0; i < n_points; i++) {
         var delta = 360.0 / n_points;
         var angle = i * delta + randint(-delta, delta);
         var speed = Math.random() * 6.0;
-        this.emit(randint(50, 300),
+        this.emit(randint(10, 300),
                   x, y,
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  colour_table.length - randint(1, 50), -1, randint(10, 64)); 
+                  colour_table.length - randint(1, 50), -1, 
+                  randint(10, 64), 50.0); 
     }
 };
 
 Particles.prototype.sparks = function(x, y, u, v) {
-    var factor = this.world.explosion_scale_factor;
-    var n_points = 0.2 * factor;
+    var n_points = 20;
     var delta = 360 / n_points;
     var base_colour = randint(50, 255);
+
     for (var i = 0; i < n_points; i++) {
         var angle = i * delta + randint(-delta / 2, delta / 2);
         var speed = Math.random() * 2.0;
@@ -481,7 +500,8 @@ Particles.prototype.sparks = function(x, y, u, v) {
                   x, y,
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  base_colour - randint(1, 200), -113, randint(5, 10));
+                  base_colour - randint(1, 200), -113, 
+                  randint(5, 10), 10);
     }
 };
 
@@ -489,10 +509,11 @@ Particles.prototype.jet = function(x, y, u, v, angle) {
     var particle_angle = angle + randint(-20, 20) + 180;
     var u1 = 2 * Math.cos(rad(particle_angle));
     var v1 = 2 * Math.sin(rad(particle_angle));
-    this.emit(randint(20, 30),
-              x + 3 * u1, y + 3 * v1,
+    this.emit(randint(40, 50),
+              x + 5 * u1, y + 5 * v1,
               u + u1, v + v1,
-              randint(50, 200), randint(20, 200), randint(3, 6));
+              randint(5, 200), randint(5, 200), 
+              randint(4, 10), 0);
 };
 
 Particles.prototype.set_buffer = function(attr, buffer, array) {
@@ -524,6 +545,8 @@ Particles.prototype.draw = function() {
         this.colourscale_buffer, this.colourscale);
     this.set_buffer(currentProgram.vertexSizeAttribute,
         this.size_buffer, this.size);
+    this.set_buffer(currentProgram.vertexDampAttribute,
+        this.damp_buffer, this.damp);
 
     this.changed = false;
 

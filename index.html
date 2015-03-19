@@ -43,6 +43,7 @@
     attribute float aVertexColourstart;
     attribute float aVertexColourscale;
     attribute float aVertexSize;
+    attribute float aVertexDamp;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
@@ -52,12 +53,19 @@
     varying vec4 vColor;
 
     void main(void) {
-    	float t = (uTicks - aVertexBirthticks) / aVertexLifespan;
+    	float t = uTicks - aVertexBirthticks;
+	float s = t / aVertexLifespan;
 
-	if (t > 1.0)
+	if (s > 1.0)
 	    gl_Position = vec4(-100.0, 0.0, 0.0, 0.0);
 	else {
-	    vec2 pos = 30.0 * t * aVertexVelocity + aVertexPosition;
+	    vec2 pos;
+
+	    if (aVertexDamp > 1.0) 
+	        pos = 50.0 * s * aVertexVelocity + aVertexPosition;
+	    else
+	        pos = t * aVertexVelocity + aVertexPosition;
+
 	    vec4 spos = uPMatrix * uMVMatrix * vec4(pos, 0.0, 1.0);
 
 	    // wrap around screen space
@@ -67,10 +75,10 @@
 	    gl_Position = vec4(spos2, 0.0, 1.0);
 	}
 
-	float index = aVertexColourstart + 200.0 * t * aVertexColourscale;
+	float index = aVertexColourstart + t * aVertexColourscale;
         vColor = texture2D(uRamp, vec2(index / 255.0, 0.5));
 
-        gl_PointSize = (1.0 - t) * aVertexSize;
+        gl_PointSize = (1.0 - s) * aVertexSize;
     }
 </script>
 

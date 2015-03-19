@@ -104,8 +104,7 @@ Ship.prototype.impact = function(other) {
 
         if (this.shields < 0) { 
             this.kill = true;
-            this.world.particles.explosion2(300, 
-                    this.x, this.y, this.u, this.v);
+            this.world.particles.explosion2(this.x, this.y, this.u, this.v);
         }
     }
 

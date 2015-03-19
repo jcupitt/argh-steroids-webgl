@@ -32,6 +32,9 @@ function initShaders() {
     shaderPrograms[0].vertexSizeAttribute = 
         gl.getAttribLocation(shaderPrograms[0], "aVertexSize");
 
+    shaderPrograms[0].vertexDampAttribute = 
+        gl.getAttribLocation(shaderPrograms[0], "aVertexDamp");
+
     shaderPrograms[0].ticksUniform = 
         gl.getUniformLocation(shaderPrograms[0], "uTicks");
     shaderPrograms[0].rampUniform = 

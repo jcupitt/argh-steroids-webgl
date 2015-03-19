@@ -60,7 +60,7 @@ Asteroid.prototype.constructor = Asteroid;
 Asteroid.prototype.terminate = function() {
     this.kill = true;
     this.world.n_asteroids -= 1;
-    this.world.particles.explosion(this.scale / 3, 
+    this.world.particles.explosion(this.scale, 
                                    this.x, this.y, this.u, this.v);
 }
 
