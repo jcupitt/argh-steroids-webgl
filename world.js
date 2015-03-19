@@ -56,7 +56,6 @@ World.prototype.reset = function() {
     this.text_y = this.height - 100;
     this.alien_time = randint(1000, 2000)
     this.particles.reset();
-    this.explosion_scale_factor = 100;
 
     // note t0, handy to keep tick numbers comprehensible
     this.t0 = new Date().getTime();
@@ -122,10 +121,10 @@ World.prototype.update = function() {
     var rotate_by = -movement[0] / 5;
 
     if (Key.isDown(Key.LEFT)) {
-        rotate_by += 3;
+        rotate_by += 2;
     }
     if (Key.isDown(Key.RIGHT)) {
-        rotate_by -= 3;
+        rotate_by -= 2;
     }
 
     if (this.player) {
@@ -204,18 +203,18 @@ World.prototype.draw = function() {
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, [0, 0, -1]);
 
-    setShaderProgram(shaderPrograms[0]);
-    gl.enableVertexAttribArray(currentProgram.vertexColorAttribute);
-    this.particles.draw(); 
-    gl.disableVertexAttribArray(currentProgram.vertexColorAttribute);
-
     setShaderProgram(shaderPrograms[1]);
-
     this.sprites.forEach (function(sprite) { 
         mvPushMatrix();
         sprite.draw();
         mvPopMatrix();
     });
+
+    setShaderProgram(shaderPrograms[0]);
+    this.particles.draw(); 
+
+    // back into vector mode for any extra lettering
+    setShaderProgram(shaderPrograms[1]);
 }
 
 World.prototype.draw_hud = function() {

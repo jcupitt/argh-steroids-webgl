@@ -46,6 +46,10 @@ Bullet.prototype.impact = function(other) {
         this.world.score += other.scale | 0;
         other.terminate();
     }
+    else if (other instanceof Ship) {
+        // just kill the bullet, we don't want to send the ship flying
+        this.kill = true;
+    }
 
     Sprite.prototype.impact.call(this, other);
 }

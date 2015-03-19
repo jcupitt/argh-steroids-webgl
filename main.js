@@ -7,8 +7,10 @@ var shaderPrograms = [];
 var currentProgram;
 
 function setShaderProgram(program) {
-    currentProgram = program;
-    gl.useProgram(currentProgram);
+    if (currentProgram !== program) {
+        currentProgram = program;
+        gl.useProgram(currentProgram);
+    }
 }
 
 function initShaders() {
