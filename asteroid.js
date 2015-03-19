@@ -62,6 +62,18 @@ Asteroid.prototype.terminate = function() {
     this.world.n_asteroids -= 1;
     this.world.particles.explosion(this.scale, 
                                    this.x, this.y, this.u, this.v);
+
+    if (this.scale > 15) { 
+        var n = randint(2, Math.max(2, Math.min(5, this.scale / 5)));
+
+        for (var i = 0; i < n; i++) {
+            var new_asteroid = new Asteroid(this.world, this.scale / n, 1);
+            new_asteroid.x = this.x;
+            new_asteroid.y = this.y;
+            new_asteroid.u += this.u;
+            new_asteroid.v += this.v;
+        }
+    }
 }
 
 Asteroid.prototype.update = function() {

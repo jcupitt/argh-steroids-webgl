@@ -128,11 +128,24 @@ function gameover() {
     gameover_tick();
 }
 
+var terminate_ok = true;
+
 function levelplay_tick() {
     world.draw();
     world.draw_hud(); 
     if (Key.isDown(Key.I)) { 
         world.draw_info();
+    }
+
+    // need to debounce N key
+    if (terminate_ok && 
+        Key.isDown(Key.N)) {
+        world.terminate_asteroids();
+        terminate_ok = false;
+    }
+    if (!terminate_ok && 
+        !Key.isDown(Key.N)) {
+        terminate_ok = true;
     }
 
     world.update();
@@ -141,11 +154,6 @@ function levelplay_tick() {
         gameover();
     }
     else if (world.n_asteroids == 0) {
-        world.level += 1;
-        levelstart();
-    }
-    else if (Key.isDown(Key.N)) {
-        world.remove_asteroids();
         world.level += 1;
         levelstart();
     }

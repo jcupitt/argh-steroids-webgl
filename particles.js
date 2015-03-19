@@ -292,6 +292,7 @@ var Particles = function(world) {
     this.free = new Array(this.max_particles);
     this.n_free = 0;
     this.GC_index = 0;
+    this.GC_last_ticks = 0;
 
     this.reset();
 
@@ -390,6 +391,13 @@ Particles.prototype.GC = function() {
     var ticks = world.ticks;
     var dt = world.dt;
 
+    // don't bother running the GC more than once every 10 ticks, we can get
+    // pathological cases when the particle table fills
+    if (ticks - this.GC_last_ticks < 10) {
+        return;
+    }
+    this.GC_last_ticks = ticks;
+
     var i = this.GC_index;
     for (var n = 0; n < this.max_particles; n++) {
         if (ticks - this.birthticks[i] > this.lifespan[i] &&
@@ -403,8 +411,8 @@ Particles.prototype.GC = function() {
         }
 
         i = wrap_around(i + 1, this.max_particles);
-        if (this.n_free > 500) {
-            // stop after we've found 500, won't take long and should keep us
+        if (this.n_free > 10000) {
+            // stop after we've found 10000, won't take long and should keep us
             // going for a while
             break;
         }

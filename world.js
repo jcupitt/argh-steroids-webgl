@@ -80,7 +80,7 @@ World.prototype.add_player = function() {
     }
 }
 
-World.prototype.remove_asteroids = function() {
+World.prototype.terminate_asteroids = function() {
     this.sprites.forEach (function(sprite) { 
         if (sprite instanceof Asteroid) {
             sprite.terminate();

@@ -43,20 +43,8 @@ Bullet.prototype.impact = function(other) {
     }
     else if (other instanceof Asteroid) {
         this.kill = true;
-        other.terminate();
         this.world.score += other.scale | 0;
-
-        if (other.scale > 15) { 
-            var n = randint(2, Math.max(2, Math.min(5, other.scale / 5)));
-
-            for (var i = 0; i < n; i++) {
-                var new_asteroid = new Asteroid(this.world, other.scale / n, 1);
-                new_asteroid.x = other.x;
-                new_asteroid.y = other.y;
-                new_asteroid.u += other.u;
-                new_asteroid.v += other.v;
-            }
-        }
+        other.terminate();
     }
 
     Sprite.prototype.impact.call(this, other);
