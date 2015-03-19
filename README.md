@@ -35,7 +35,8 @@ as well.
 
 * There's no sound. 
 
-* The fullscreen code seems to be broken in Safari.
+* The fullscreen code seems to be broken in Safari. Mouse input seems to be
+  broken in Firefox.
 
 * Collision detection is just touching circles, we could look at the geometry
   as well to get pixel-perfect detection.
@@ -43,20 +44,18 @@ as well.
 * Collision physics just exchanges the two velocities, we could do true
   billiard-ball collisions.
 
-* The shaders are very crude for that retro look. An option to use fancy
-  shaders would be fun. 
+# Developing
 
-* If running locally, you need to tell your browser to allow JS to access
-  file:// URLs. 
+If running locally, you need to tell your browser to allow JS to access 
+`file://` URLs. 
   
-  For example, in Chrome on Mac:
+For example, in Chrome on Mac:
 
 ```bash
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files
-
 ```
 
-  Or Linux:
+Or Linux:
 
 ```bash
 google-chrome --allow-file-access-from-files index.html
