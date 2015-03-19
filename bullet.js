@@ -35,11 +35,11 @@ Bullet.prototype.update = function() {
 
 Bullet.prototype.impact = function(other) {
     if (other instanceof Alien) {
-        other.kill = true;
         this.kill = true;
-        this.world.score += 1000;
-        this.world.particles.explosion(100, 
-                                       other.x, other.y, other.u, other.v);
+        this.world.score += 500;
+        other.kill = true;
+        other.world.particles.explosion(100, 
+                                        other.x, other.y, other.u, other.v);
     }
     else if (other instanceof Asteroid) {
         this.kill = true;
