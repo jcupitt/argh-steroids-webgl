@@ -62,7 +62,7 @@
 	    vec2 pos;
 
 	    if (aVertexDamp > 1.0) 
-	        pos = 50.0 * s * aVertexVelocity + aVertexPosition;
+	        pos = aVertexDamp * s * aVertexVelocity + aVertexPosition;
 	    else
 	        pos = t * aVertexVelocity + aVertexPosition;
 

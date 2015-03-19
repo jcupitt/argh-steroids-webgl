@@ -468,7 +468,7 @@ Particles.prototype.explosion = function(radius, x, y, u, v) {
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
                   base_colour - randint(1, 50), change, 
-                  randint(5, size * 10 + radius / 10), 20 + damp * 50);
+                  randint(5, size * 10 + radius / 10), 10 + damp * 60);
     }
 };
 
@@ -484,7 +484,7 @@ Particles.prototype.explosion2 = function(x, y, u, v) {
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
                   colour_table.length - randint(1, 50), -1, 
-                  randint(10, 64), 50.0); 
+                  randint(10, 64), 70); 
     }
 };
 
@@ -501,7 +501,7 @@ Particles.prototype.sparks = function(x, y, u, v) {
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
                   base_colour - randint(1, 200), -113, 
-                  randint(5, 10), 10);
+                  randint(5, 10), 50);
     }
 };
 
