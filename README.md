@@ -51,11 +51,16 @@ as well.
   
   For example, in Chrome on Mac:
 
-  	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files
+```bash
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files
+
+```
 
   Or Linux:
 
-  	google-chrome --allow-file-access-from-files index.html
+```bash
+google-chrome --allow-file-access-from-files index.html
+```
  
 # Author
 

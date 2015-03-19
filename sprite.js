@@ -117,6 +117,7 @@ Sprite.prototype.draw_at = function(x, y) {
     mat4.scale(mvMatrix, [this.scale, this.scale, 1]);
     mat4.rotate(mvMatrix, rad(this.angle), [0, 0, 1]);
     setMatrixUniforms();
+    gl.lineWidth(2);
 
     gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[0]);
