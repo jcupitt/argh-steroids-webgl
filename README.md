@@ -19,7 +19,8 @@ as well.
   shield regenerates slowly.
 
 * Mouse and keyboard controls. Double click and you get fullscreen with a
-  locked pointer. 
+  locked pointer. Unfortunately Safari does not yet support pointerlock, so 
+  this is a bit broken there.
 
 # Secret keys
 
@@ -34,9 +35,6 @@ as well.
 # TODO
 
 * There's no sound. 
-
-* The fullscreen code seems to be broken in Safari. Mouse input seems to be
-  broken in Firefox.
 
 * Collision detection is just touching circles, we could look at the geometry
   as well to get pixel-perfect detection.

@@ -300,24 +300,23 @@ var Mouse = {
                 Mouse.onChange, false);
         }
 
-        if (element.requestPointerLock) {
-            element.ondblclick = function() {
-                if (!Mouse.locked) {
-                    Mouse.element.requestPointerLock();
+        element.ondblclick = function() {
+            if (!Mouse.locked && Mouse.element.requestPointerLock) {
+                Mouse.element.requestPointerLock();
+            }
 
-                    if (Mouse.element.requestFullscreen) {
-                          Mouse.element.requestFullscreen();
-                    } 
-                    else if (Mouse.element.msRequestFullscreen) {
-                          Mouse.element.msRequestFullscreen();
-                    } 
-                    else if (Mouse.element.mozRequestFullScreen) {
-                          Mouse.element.mozRequestFullScreen();
-                    } 
-                    else if (Mouse.element.webkitRequestFullscreen) {
-                          Mouse.element.webkitRequestFullscreen();
-                    }
-                }
+            // Safari has fullscreen but does not support pointerlock
+            if (Mouse.element.requestFullscreen) {
+                  Mouse.element.requestFullscreen();
+            } 
+            else if (Mouse.element.msRequestFullscreen) {
+                  Mouse.element.msRequestFullscreen();
+            } 
+            else if (Mouse.element.mozRequestFullScreen) {
+                  Mouse.element.mozRequestFullScreen();
+            } 
+            else if (Mouse.element.webkitRequestFullscreen) {
+                  Mouse.element.webkitRequestFullscreen();
             }
         }
 
