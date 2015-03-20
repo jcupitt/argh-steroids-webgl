@@ -92,15 +92,9 @@ function text_draw_at(buffers, x, y, scale, angle) {
     mat4.translate(mvMatrix, [x, y, 0]);
     mat4.scale(mvMatrix, [scale, scale, 1]);
     mat4.rotate(mvMatrix, rad(angle), [0, 0, 1]);
-
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
-    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
-            buffers[0].itemSize, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[1]);
     setMatrixUniforms();
-    gl.drawElements(gl.LINES, 
-            buffers[1].numItems, gl.UNSIGNED_SHORT, 0);
+
+    buffersDrawDiscontinuous(buffers);
 
     mvPopMatrix();
 }

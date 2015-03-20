@@ -121,6 +121,18 @@ function buffersCreate(vertices) {
     return [vertex_buffer, index_buffer];
 }
 
+/* Draw the thing made by buffersCreate() abiove.
+ */
+function buffersDraw(buffers) {
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
+    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+        buffers[0].itemSize, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[1]);
+    gl.drawElements(gl.LINE_LOOP, 
+        buffers[1].numItems, gl.UNSIGNED_SHORT, 0);
+};
+
 /* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
  * draw buffers which will join pairs of points.
  */
@@ -148,6 +160,18 @@ function buffersCreateDiscontinuous(vertices) {
 
     return [vertex_buffer, index_buffer];
 }
+
+/* Draw the thing made by buffersCreateDiscontinuous() above.
+ */
+function buffersDrawDiscontinuous(buffers) {
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
+    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+            buffers[0].itemSize, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[1]);
+    gl.drawElements(gl.LINES, 
+            buffers[1].numItems, gl.UNSIGNED_SHORT, 0);
+};
 
 function loadPointTexture(imgURL) {
     var tex = gl.createTexture();

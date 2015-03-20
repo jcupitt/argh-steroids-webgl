@@ -119,17 +119,12 @@ Ship.prototype.draw_at = function(x, y) {
         var angle = ((i & 1) * 2 - 1) * this.shield_tick;
 
         mvPushMatrix();
+
         mat4.scale(mvMatrix, [radius, radius, 1]);
         mat4.rotate(mvMatrix, rad(angle), [0, 0, 1]);
-
-        gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
-        gl.bindBuffer(gl.ARRAY_BUFFER, shipBuffers[1][0]);
-        gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
-                shipBuffers[1][0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shipBuffers[1][1]);
         setMatrixUniforms();
-        gl.drawElements(gl.LINES, 
-                shipBuffers[1][1].numItems, gl.UNSIGNED_SHORT, 0);
+
+        buffersDrawDiscontinuous(shipBuffers[1]);
 
         mvPopMatrix();
     }
