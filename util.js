@@ -97,66 +97,59 @@ function bufferCreate(type, data) {
     return buf;
 }
 
-/* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
- * draw buffers.
+/* points is a 2D array of like [[x1, y1], [x2, y2], ..], make a 
+ * draw buffer.
  */
-function buffersCreate(vertices) {
-    var points = [];
+function buffersCreate(points) {
+    var vertex = [];
+    for (var i = 0; i < points.length; i++) {
+        vertex.push(points[i][0]);
+        vertex.push(points[i][1]);
+    }
+
+    var vertex_buffer = 
+        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(vertex));
+    vertex_buffer.itemSize = 2;
+    vertex_buffer.numItems = points.length;
+
+    return vertex_buffer;
+}
+
+/* Draw the thing made by buffersCreate() above.
+ */
+function buffersDraw(buffers) {
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers);
+    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
+        buffers.itemSize, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.LINE_LOOP, 0, buffers.numItems);
+};
+
+/* points is a 2D array like [[x1, y1], [x2, y2], ..], make a pair of
+ * draw buffers which will join pairs of points.
+ */
+function buffersCreateDiscontinuous(points) {
+    if (points.length % 2 != 0) {
+        console.log("buffersCreateDiscontinuous: not an even number of points");
+    }
+
+    var vertex = [];
     var index = [];
-    for (var i = 0; i < vertices.length; i++) {
-        points = points.concat(vertices[i]);
+    for (var i = 0; i < points.length; i++) {
+        vertex.push(points[i][0]);
+        vertex.push(points[i][1]);
         index.push(i);
     }
 
     var vertex_buffer = 
-        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(points));
+        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(vertex));
     vertex_buffer.itemSize = 2;
-    vertex_buffer.numItems = vertices.length;
+    vertex_buffer.numItems = points.length;
 
     var index_buffer = 
         bufferCreate(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
     index_buffer.itemSize = 1;
-    index_buffer.numItems = vertices.length;
-
-    return [vertex_buffer, index_buffer];
-}
-
-/* Draw the thing made by buffersCreate() abiove.
- */
-function buffersDraw(buffers) {
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
-    gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
-        buffers[0].itemSize, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[1]);
-    gl.drawElements(gl.LINE_LOOP, 
-        buffers[1].numItems, gl.UNSIGNED_SHORT, 0);
-};
-
-/* vertices is a 2D array of points [[x1, y1], [x2, y2], ..], make a pair of
- * draw buffers which will join pairs of points.
- */
-function buffersCreateDiscontinuous(vertices) {
-    if (vertices.length % 2 != 0) {
-        console.log("buffersCreateDiscontinuous: not an even number of points");
-    }
-
-    var points = [];
-    var index = [];
-    for (var i = 0; i < vertices.length; i++) {
-        points = points.concat([vertices[i][0], vertices[i][1], 0]);
-        index.push(i);
-    }
-
-    var vertex_buffer = 
-        bufferCreate(gl.ARRAY_BUFFER, new Float32Array(points));
-    vertex_buffer.itemSize = 3;
-    vertex_buffer.numItems = vertices.length;
-
-    var index_buffer = 
-        bufferCreate(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index));
-    index_buffer.itemSize = 2;
-    index_buffer.numItems = vertices.length;
+    index_buffer.numItems = points.length;
 
     return [vertex_buffer, index_buffer];
 }

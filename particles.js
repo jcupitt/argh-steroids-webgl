@@ -568,4 +568,5 @@ Particles.prototype.draw = function() {
     gl.uniform1i(currentProgram.textureUniform, 1);
 
     gl.drawArrays(gl.POINT, 0, this.max_particles);
+
 };
