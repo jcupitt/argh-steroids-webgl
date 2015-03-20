@@ -13,7 +13,8 @@ as well.
 # Features
 
 * Asteroids bump off each other. It uses a map to make collision detection
-  fast.
+  fast. The particle effects are entirely on the GPU and should be fast even
+  on modest hardware. 
 
 * Your ship has a shield and you can bump into asteroids a few times. The
   shield regenerates slowly.
@@ -28,7 +29,8 @@ as well.
 
 * Hold 'I' to see object and FPS counts.
 
-* Press 'N' to skip to the next level. Handy for testing. 
+* Press 'N' to skip to the next level. Handy for testing, or you're bored of
+  shooting gravel.
 
 * Hold 'P' for slo-mo. Handy for testing. 
 
