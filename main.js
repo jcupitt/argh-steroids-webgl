@@ -10,6 +10,16 @@ function setShaderProgram(program) {
     if (currentProgram !== program) {
         currentProgram = program;
         gl.useProgram(currentProgram);
+
+        // turn off all vertex attributes, draw operations need to turn the ones
+        // they need back on
+        //
+        // if we don't do this, we see mysterious warnings from welgl on some
+        // platforms due to unused attributes being left on
+        var maxVSattribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+        for (var i = 0; i < maxVSattribs; i++) {
+            gl.disableVertexAttribArray(i);
+        }
     }
 }
 

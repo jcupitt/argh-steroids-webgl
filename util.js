@@ -72,7 +72,6 @@ function getProgram(fs_id, vs_id) {
 
     program.vertexPositionAttribute = 
         gl.getAttribLocation(program, "aVertexPosition");
-    gl.enableVertexAttribArray(program.vertexPositionAttribute);
 
     program.pMatrixUniform = gl.getUniformLocation(program, "uPMatrix");
     program.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
@@ -118,8 +117,8 @@ function buffersCreate(points) {
 /* Draw the thing made by buffersCreate() above.
  */
 function buffersDraw(buffers) {
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers);
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
         buffers.itemSize, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.LINE_LOOP, 0, buffers.numItems);
@@ -157,8 +156,8 @@ function buffersCreateDiscontinuous(points) {
 /* Draw the thing made by buffersCreateDiscontinuous() above.
  */
 function buffersDrawDiscontinuous(buffers) {
-    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers[0]);
+    gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
             buffers[0].itemSize, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[1]);
