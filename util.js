@@ -79,6 +79,49 @@ function getProgram(fs_id, vs_id) {
     return program;
 }
 
+var shaderPrograms = [];
+var currentProgram;
+
+function setShaderProgram(program) {
+    if (currentProgram !== program) {
+        currentProgram = program;
+        gl.useProgram(currentProgram);
+
+        // turn off all vertex attributes, draw operations need to turn the ones
+        // they need back on
+        //
+        // if we don't do this, we see mysterious warnings from welgl on some
+        // platforms due to unused attributes being left on
+        var maxVSattribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+        for (var i = 0; i < maxVSattribs; i++) {
+            gl.disableVertexAttribArray(i);
+        }
+    }
+}
+
+var mvMatrix = mat4.create();
+var mvMatrixStack = [];
+
+function mvPushMatrix() {
+    var copy = mat4.create();
+    mat4.set(mvMatrix, copy);
+    mvMatrixStack.push(copy);
+}
+
+function mvPopMatrix() {
+    if (mvMatrixStack.length == 0) {
+        throw "Invalid popMatrix!";
+    }
+    mvMatrix = mvMatrixStack.pop();
+}
+
+var pMatrix = mat4.create();
+
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(currentProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(currentProgram.mvMatrixUniform, false, mvMatrix);
+}
+
 // for clock-style arithmetic
 function wrap_around(x, limit) {
     if (x > 0) {
