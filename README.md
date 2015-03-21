@@ -60,6 +60,10 @@ Or Linux:
 ```bash
 google-chrome --allow-file-access-from-files index.html
 ```
+
+In Firefox, go to `about:config` and add `webgl.verbose=true`, you get JS
+warnings for every WebGL error and more. Go to the web console (Ctrl-Shift-K)
+and in the JS tab make sure warnings are enabled. 
  
 # Author
 
