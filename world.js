@@ -4,13 +4,8 @@
 'use strict';
 
 var updateSizes = function(canvas) {
-    var viewportSize = {
-        height: window.innerHeight,
-        width:  window.innerWidth
-    };
-
-    canvas.width = viewportSize.width
-    canvas.height = viewportSize.height
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     gl.viewportWidth = canvas.width;
     gl.viewportHeight = canvas.height;
@@ -24,16 +19,17 @@ var World = function(canvas) {
     // makes it easy to get to the world back again
     canvas.world = this;
 
+    canvas.world.resize_handler_id = null;
     window.addEventListener('resize', function() {
-        updateSizes(canvas);
-        canvas.world.particles.reset();
-        canvas.world.particles.starfield();
-
-        // ugly! during the startscreen we want to be able to spot resize and
-        // relayout the text ... offer this callback for that
-        if (canvas.world.resize_handler) {
-            canvas.world.resize_handler();
+        // we need to throttle GL resizes ... they can be issued very
+        // frequently, for example on a tablet during screen rotate
+        if (canvas.world.resize_handler_id) {
+            clearTimeout(canvas.world.resize_handler_id);
+            canvas.world.resize_handler_id = null;
         }
+        canvas.world.resize_handler_id = setTimeout(function() { 
+            World.prototype.resize.call(canvas.world);
+        }, 500);
     });
     updateSizes(canvas);
 
@@ -43,6 +39,23 @@ var World = function(canvas) {
 }
 
 World.prototype.constructor = World;
+
+World.prototype.resize = function() {
+    if (!this.resize_handler_id) {
+        return;
+    }
+    this.resize_handler_id = null;
+
+    updateSizes(this.canvas);
+    this.particles.reset();
+    this.particles.starfield();
+
+    // ugly! during the startscreen we want to be able to spot resize and
+    // relayout the text ... offer this callback for that
+    if (this.resize_handler) {
+        this.resize_handler();
+    }
+};
 
 World.prototype.reset = function() {
     this.sprites = [];
