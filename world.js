@@ -19,18 +19,35 @@ var World = function(canvas) {
     // makes it easy to get to the world back again
     canvas.world = this;
 
-    canvas.world.resize_handler_id = null;
+    // orientationchange signals the start of a rotate event on a tablet ...
+    // delay responding to a resize event for a loooong time if we see one of
+    // these
+    canvas.world.in_orientation_change = false;
+    window.addEventListener('orientationchange', function() {
+        canvas.world.in_orientation_change = true;
+        setTimeout(function() { 
+            canvas.world.in_orientation_change = false;
+        }, 1000);
+    });
+
+    this.resize_handler_id = null;
     window.addEventListener('resize', function() {
-        // we need to throttle GL resizes ... they can be issued very
-        // frequently, for example on a tablet during screen rotate
+        // we need to throttle resizes ... they can be issued very
+        // frequently 
         if (canvas.world.resize_handler_id) {
             clearTimeout(canvas.world.resize_handler_id);
             canvas.world.resize_handler_id = null;
         }
+
+        var timeout = 100;
+        if (canvas.world.in_orientation_change) {
+            timeout = 1000;
+        }
         canvas.world.resize_handler_id = setTimeout(function() { 
             World.prototype.resize.call(canvas.world);
-        }, 500);
+        }, timeout);
     });
+
     updateSizes(canvas);
 
     this.particles = new Particles(this);
