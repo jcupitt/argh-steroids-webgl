@@ -60,9 +60,10 @@ Ship.prototype.rotate_to = function(angle) {
 Ship.prototype.thrust = function() {
     var world = this.world;
     var dt = world.dt;
+    var power = 0.01;
 
-    this.u += dt * 0.1 * Math.cos(rad(this.angle));
-    this.v += dt * 0.1 * Math.sin(rad(this.angle));
+    this.u += dt * power * Math.cos(rad(this.angle));
+    this.v += dt * power * Math.sin(rad(this.angle));
 
     this.jet_timer -= dt;
     if (this.jet_timer < 0) { 
@@ -72,7 +73,7 @@ Ship.prototype.thrust = function() {
 }
 
 Ship.prototype.fire = function() {
-    if (this.reload_timer < 0) { 
+    if (this.reload_timer <= 0) { 
         var u = Math.cos(rad(this.angle));
         var v = Math.sin(rad(this.angle));
 
@@ -85,6 +86,10 @@ Ship.prototype.fire = function() {
 
         this.reload_timer = 10;
     }
+}
+
+Ship.prototype.reload = function() {
+    this.reload_timer = 0;
 }
 
 Ship.prototype.update = function() {

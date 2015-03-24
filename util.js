@@ -407,12 +407,16 @@ var Touch = {
     last_rotation: 0,
     current_rotation: 0,
 
+    current_taps: {},
     tapped: false,
-    tap_x: 0,
-    tap_y: 0,
+    tap_position: null,
 
     double_tapped: false,
     double_tap_timeout: 0,
+
+    current_holds: {},
+    holding: false,
+    holding_id: null,
 
     // return total rotation since the last call
     getRotation: function () {
@@ -434,11 +438,21 @@ var Touch = {
 
         result = null;
         if (this.tapped) {
-            result = {
-                'x': this.tap_x, 
-                'y': this.tap_y
-            };
+            result = this.tap_position;
+            this.tap_position = null;
             this.tapped = false;
+        }
+
+        return result;
+    },
+
+    // are we holding
+    getHold: function () {
+        var result;
+
+        result = null;
+        if (this.holding) {
+            result = this.current_holds[this.holding_id];
         }
 
         return result;
@@ -460,34 +474,90 @@ var Touch = {
         }
 
         if (changedTouches.length > 0) {
-            Touch.tapped = true;
-            Touch.tap_x = changedTouches[0].clientX;
-            Touch.tap_y = changedTouches[0].clientY;
+            var touch = changedTouches[0];
+            var id = touch.identifier;
+
+            Touch.current_taps[id] = {
+                'x': touch.clientX,
+                'y': touch.clientY
+            };
+
+            Touch.current_holds[id] = {
+                'x': touch.clientX,
+                'y': touch.clientY,
+                'timeout': setTimeout(function() { 
+                    Touch.holding = true;
+                    Touch.holding_id = id;
+                }, 100)
+            };
         }
     }, 
 
     touchMove: function (event) {
         event.preventDefault();
-        var allTouches = event.touch;
+        var changedTouches = event.changedTouches;
 
         if (Touch.double_tap_timeout) {
             clearTimeout(Touch.double_tap_timeout);
             Touch.double_tap_timeout = 0;
         }
+
+        if (changedTouches.length > 0) {
+            var touch = changedTouches[0];
+            var id = touch.identifier;
+
+            if (Touch.current_taps[id]) { 
+                var dx = touch.clientX - Touch.current_taps[id].x;
+                var dy = touch.clientY - Touch.current_taps[id].y;
+
+                if (Math.abs(dx) > 10 || 
+                    Math.abs(dy) > 10) {
+                    delete Touch.current_taps[id];
+                }
+            }
+
+            if (Touch.current_holds[id]) {
+                Touch.current_holds[id].x = touch.clientX;
+                Touch.current_holds[id].y = touch.clientY;
+            }
+        }
     }, 
 
     touchEnd: function (event) {
         event.preventDefault();
-        var allTouches = event.touch;
+        var changedTouches = event.changedTouches;
+
+        if (changedTouches.length > 0) {
+            var touch = changedTouches[0];
+            var id = touch.identifier;
+
+            if (Touch.current_taps[id]) {
+                Touch.tap_position = Touch.current_taps[id];
+                Touch.tapped = true;
+
+                delete Touch.current_taps[id];
+            }
+
+            if (Touch.current_holds[id]) {
+                if (id == Touch.holding_id) {
+                    Touch.holding = false;
+                    Touch.holding_id = null;
+                }
+
+                delete Touch.current_holds[id];
+            }
+        }
     }, 
 
     touchCancel: function (event) {
         event.preventDefault();
-        var allTouches = event.touch;
+        var changedTouches = event.changedTouches;
 
-        if (Touch.double_tap_timeout) {
-            clearTimeout(Touch.double_tap_timeout);
-            Touch.double_tap_timeout = 0;
+        if (changedTouches.length > 0) {
+            var touch = changedTouches[0];
+            var id = touch.identifier;
+
+            delete Touch.current_taps[id];
         }
     }, 
 

@@ -159,11 +159,22 @@ World.prototype.update = function() {
         var tap = Touch.getTap();
         if (tap) {
             var dx = tap.x - this.player.x;
-            var dy = tap.y - this.player.y;
+            var dy = this.player.y - tap.y;
             var angle = rect_to_polar(dx, dy);
 
-            this.player.rotate_to(360 - angle);
+            this.player.rotate_to(angle);
+            this.player.reload();
             this.player.fire();
+        }
+
+        var hold = Touch.getHold();
+        if (hold) {
+            var dx = hold.x - this.player.x;
+            var dy = this.player.y - hold.y;
+            var angle = rect_to_polar(dx, dy);
+
+            this.player.rotate_to(angle);
+            this.player.thrust();
         }
     }
 

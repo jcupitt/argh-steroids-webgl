@@ -46,14 +46,15 @@ function epilogue_tick() {
         world.draw_info();
     }
 
-    text_draw_immediate("PRESS ENTER TO PLAY AGAIN", 
+    text_draw_immediate("ENTER OR DOUBLETAP TO PLAY AGAIN", 
                         world.width / 2, world.height / 2,
                         20, 0,
                         true);
 
     world.update();
 
-    if (Key.isDown(Key.ENTER)) {
+    if (Key.isDown(Key.ENTER) ||
+        Touch.getDoubletap()) {
         gamestart();
     }
     else {
@@ -213,6 +214,7 @@ function startscreen() {
     world.add_text('PRESS UP FOR THRUST')
     world.add_text('PRESS SPACE FOR FIRE')
     world.add_text('OR DOUBLE-CLICK FOR MOUSE CONTROLS') 
+    world.add_text('OR DOUBLE-TAP FOR TOUCH CONTROLS') 
     world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
     world.add_text('PRESS ENTER TO START', 20)
 
