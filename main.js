@@ -122,6 +122,9 @@ function levelplay_tick() {
         !Key.isDown(Key.N)) {
         terminate_ok = true;
     }
+    if (Touch.getTriplehold()) {
+        world.terminate_asteroids();
+    }
 
     world.update();
 

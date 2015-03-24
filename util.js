@@ -422,16 +422,19 @@ var Touch = {
     last_rotation: 0,
     current_rotation: 0,
 
-    current_taps: {},
+    current_taps: [],
     tapped: false,
     tap_position: null,
 
     double_tapped: false,
     double_tap_timeout: 0,
 
-    current_holds: {},
+    current_holds: [],
+    n_holds: 0,
     holding: false,
     holding_id: null,
+
+    triple_hold: false,
 
     // return total rotation since the last call
     getRotation: function () {
@@ -444,6 +447,13 @@ var Touch = {
     getDoubletap: function () {
         var result = this.double_tapped;
         this.double_tapped = false;
+        return result;
+    },
+
+    // has there been a triplehold since the last call
+    getTriplehold: function () {
+        var result = this.triple_hold;
+        this.triple_hold = false;
         return result;
     },
 
@@ -488,8 +498,8 @@ var Touch = {
             }, 400);
         }
 
-        if (changedTouches.length > 0) {
-            var touch = changedTouches[0];
+        for (var i = 0; i < changedTouches.length; i++) { 
+            var touch = changedTouches[i];
             var id = touch.identifier;
 
             Touch.current_taps[id] = {
@@ -506,8 +516,15 @@ var Touch = {
                         Touch.holding_id = id;
                         Touch.current_holds[id].timeout = null;
                     }
+
+                    Touch.n_holds += 1;
+                    if (Touch.n_holds == 3) {
+                        Touch.triple_hold = true;
+                    }
                 }, 100)
             };
+
+
         }
     }, 
 
@@ -520,8 +537,8 @@ var Touch = {
             Touch.double_tap_timeout = 0;
         }
 
-        if (changedTouches.length > 0) {
-            var touch = changedTouches[0];
+        for (var i = 0; i < changedTouches.length; i++) { 
+            var touch = changedTouches[i];
             var id = touch.identifier;
 
             if (Touch.current_taps[id]) { 
@@ -545,8 +562,8 @@ var Touch = {
         event.preventDefault();
         var changedTouches = event.changedTouches;
 
-        if (changedTouches.length > 0) {
-            var touch = changedTouches[0];
+        for (var i = 0; i < changedTouches.length; i++) { 
+            var touch = changedTouches[i];
             var id = touch.identifier;
 
             if (Touch.current_taps[id]) {
@@ -565,6 +582,10 @@ var Touch = {
                 if (Touch.current_holds[id].timeout) {
                     clearTimeout(Touch.current_holds[id].timeout);
                 }
+                else {
+                    Touch.n_holds -= 1;
+                }
+
                 delete Touch.current_holds[id];
             }
         }
@@ -574,11 +595,27 @@ var Touch = {
         event.preventDefault();
         var changedTouches = event.changedTouches;
 
-        if (changedTouches.length > 0) {
-            var touch = changedTouches[0];
+        for (var i = 0; i < changedTouches.length; i++) { 
+            var touch = changedTouches[i];
             var id = touch.identifier;
 
             delete Touch.current_taps[id];
+
+            if (Touch.current_holds[id]) {
+                if (id == Touch.holding_id) {
+                    Touch.holding = false;
+                    Touch.holding_id = null;
+                }
+
+                if (Touch.current_holds[id].timeout) {
+                    clearTimeout(Touch.current_holds[id].timeout);
+                }
+                else {
+                    Touch.n_holds -= 1;
+                }
+
+                delete Touch.current_holds[id];
+            }
         }
     }, 
 
