@@ -24,7 +24,7 @@ var World = function(canvas) {
         // we need to throttle resizes ... they can be issued very
         // frequently 
         //
-        // on a tablet you get a resize and the start of orientation change, so
+        // on a tablet you get a resize at the start of orientation change, so
         // we need to wait for that animation to finish
         if (canvas.world.resize_handler_id) {
             clearTimeout(canvas.world.resize_handler_id);
@@ -52,13 +52,16 @@ World.prototype.resize = function() {
     this.resize_handler_id = null;
 
     updateSizes(this.canvas);
-    this.particles.reset();
-    this.particles.starfield();
 
     // ugly! during the startscreen we want to be able to spot resize and
     // relayout the text ... offer this callback for that
     if (this.resize_handler) {
         this.resize_handler();
+    }
+    else {
+        // just do the minimum
+        this.particles.reset();
+        this.particles.starfield();
     }
 };
 
@@ -135,18 +138,18 @@ World.prototype.update = function() {
         this.fps_count = 0;
     }
 
-    var movement = Mouse.getMovement();
-    var rotate_by = -movement[0] / 5;
-
-    if (Key.isDown(Key.LEFT)) {
-        rotate_by += 2;
-    }
-    if (Key.isDown(Key.RIGHT)) {
-        rotate_by -= 2;
-    }
-
     if (this.player) {
+        var movement = Mouse.getMovement();
+        var rotate_by = -movement[0] / 5;
+
+        if (Key.isDown(Key.LEFT)) {
+            rotate_by += 2;
+        }
+        if (Key.isDown(Key.RIGHT)) {
+            rotate_by -= 2;
+        }
         this.player.rotate_by(rotate_by);
+
         if (Key.isDown(Key.SPACE) || 
             Mouse.isDown(Mouse.LEFT)) {
             this.player.fire();
@@ -159,7 +162,7 @@ World.prototype.update = function() {
         var tap = Touch.getTap();
         if (tap) {
             var dx = tap.x - this.player.x;
-            var dy = this.player.y - tap.y;
+            var dy = (this.height - tap.y) - this.player.y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);
@@ -170,12 +173,25 @@ World.prototype.update = function() {
         var hold = Touch.getHold();
         if (hold) {
             var dx = hold.x - this.player.x;
-            var dy = this.player.y - hold.y;
+            var dy = (this.height - hold.y) - this.player.y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);
             this.player.thrust();
         }
+
+        /* Useful for testing.
+        var click = Mouse.getClick();
+        if (click) {
+            var dx = click.x - this.player.x;
+            var dy = (this.height - click.y) - this.player.y;
+            var angle = rect_to_polar(dx, dy);
+
+            this.player.rotate_to(angle);
+            this.player.reload();
+            this.player.fire();
+        }
+         */
     }
 
     this.alien_time -= 1;

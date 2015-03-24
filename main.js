@@ -46,8 +46,12 @@ function epilogue_tick() {
         world.draw_info();
     }
 
-    text_draw_immediate("ENTER OR DOUBLETAP TO PLAY AGAIN", 
-                        world.width / 2, world.height / 2,
+    text_draw_immediate("ENTER OR DOUBLETAP", 
+                        world.width / 2, world.height / 2 + 20,
+                        20, 0,
+                        true);
+    text_draw_immediate("TO PLAY AGAIN", 
+                        world.width / 2, world.height / 2 - 20,
                         20, 0,
                         true);
 

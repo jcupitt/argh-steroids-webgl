@@ -314,6 +314,7 @@ var Mouse = {
     _pressed: {},
     LEFT: 0,
     RIGHT: 2,
+    click: null,
 
     isDown: function(button) {
         return this._pressed[button];
@@ -328,8 +329,22 @@ var Mouse = {
         return result;
     },
 
+    // pick up any click since the last call
+    getClick: function() {
+        var result = this.click;
+        this.click = null;
+        return result;
+    },
+
     mouseDown: function(event) {
         Mouse._pressed[event.button] = true;
+
+        if (event.button == 0) {
+            Mouse.click = {
+                'x': event.clientX,
+                'y': event.clientY
+            };
+        }
     },
 
     mouseUp: function(event) {

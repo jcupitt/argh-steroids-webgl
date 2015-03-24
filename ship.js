@@ -60,7 +60,7 @@ Ship.prototype.rotate_to = function(angle) {
 Ship.prototype.thrust = function() {
     var world = this.world;
     var dt = world.dt;
-    var power = 0.01;
+    var power = 0.1;
 
     this.u += dt * power * Math.cos(rad(this.angle));
     this.v += dt * power * Math.sin(rad(this.angle));
