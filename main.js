@@ -67,6 +67,7 @@ function epilogue_tick() {
 }
 
 function epilogue() {
+    Touch.getDoubletap();
     epilogue_tick();
 }
 

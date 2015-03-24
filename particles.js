@@ -266,7 +266,7 @@ var colour_table = [
 var Particles = function(world) {
     this.world = world;
 
-    this.max_particles = 100000;
+    this.max_particles = 10000;
 
     this.position = new Float32Array(2 * this.max_particles);
     this.velocity = new Float32Array(2 * this.max_particles);

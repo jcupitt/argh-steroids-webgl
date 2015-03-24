@@ -19,18 +19,19 @@ as well.
 * Your ship has a shield and you can bump into asteroids a few times. The
   shield regenerates slowly.
 
-* Mouse and keyboard controls. Double click and you get fullscreen with a
-  locked pointer. Unfortunately Safari does not yet support pointerlock, so 
-  this is a bit broken there.
+* Mouse, keyboard and touch controls. Double click and you get fullscreen with a
+  locked pointer. Unfortunately Safari does not yet support pointerlock, but
+  Chrome and FF work fine. 
 
 # Secret keys
+
+* Press 'N' to nuke: all asteroids explode, but you get no points. Handy for 
+  testing, or you're bored of shooting gravel and want to jump to the next
+  level.
 
 * Hold 'S' during level start animation to spawn extra asteroids for testing.
 
 * Hold 'I' to see object and FPS counts.
-
-* Press 'N' to skip to the next level. Handy for testing, or you're bored of
-  shooting gravel.
 
 * Hold 'P' for slo-mo. Handy for testing. 
 
