@@ -14,6 +14,10 @@ function rad(angle) {
     return angle * Math.PI / 180.0;
 }
 
+function deg(angle) {
+    return angle * 180 / Math.PI;
+}
+
 var gl;
 
 function initGL(canvas) {
@@ -129,6 +133,41 @@ function wrap_around(x, limit) {
     }
     else
         return ((x % limit) + limit) % limit;
+}
+
+function rect_to_polar(x, y) { 
+    var angle;
+
+    /* We have to get the right quadrant!
+     */
+    if( x == 0 ) {
+        if( y < 0.0 ) {
+            angle = 270;
+        }
+        else if( y == 0.0 ) {
+            angle = 0;
+        }
+        else {
+            angle = 90;
+        }
+    }
+    else {
+        var t = Math.atan(y / x);
+
+        if( x > 0.0 ) {
+            if( y < 0.0 ) {
+                angle = deg(t + Math.PI * 2.0);
+            }
+            else {
+                angle = deg(t);
+            }
+        }
+        else {
+            angle = deg(t + Math.PI);
+        }
+    }
+
+    return angle;
 }
 
 function bufferCreate(type, data) {
@@ -252,21 +291,21 @@ var Key = {
         return this._pressed[keyCode];
     },
 
-    onKeydown: function(event) {
-        this._pressed[event.keyCode] = true;
+    _keyDown: function(event) {
+        Key._pressed[event.keyCode] = true;
     },
 
-    onKeyup: function(event) {
-        delete this._pressed[event.keyCode];
+    _keyUp: function(event) {
+        delete Key._pressed[event.keyCode];
+    },
+
+    attach: function(element) {
+        Key.element = element;
+
+        window.addEventListener('keyup', this._keyUp, false);
+        window.addEventListener('keydown', this._keyDown, false); 
     }
 };
-
-window.addEventListener('keyup', function(event) { 
-    Key.onKeyup(event); 
-}, false);
-window.addEventListener('keydown', function(event) { 
-    Key.onKeydown(event); 
-}, false);
 
 var Mouse = {
     movementX: 0,
@@ -276,7 +315,28 @@ var Mouse = {
     LEFT: 0,
     RIGHT: 2,
 
-    onMove: function (event) {
+    isDown: function(button) {
+        return this._pressed[button];
+    },
+
+    // pick up all the movement since the last call
+    getMovement: function() {
+        var result = [this.movementX, this.movementy];
+        this.movementX = 0;
+        this.movementY = 0;
+
+        return result;
+    },
+
+    mouseDown: function(event) {
+        Mouse._pressed[event.button] = true;
+    },
+
+    mouseUp: function(event) {
+        delete Mouse._pressed[event.button];
+    },
+
+    mouseMove: function (event) {
         Mouse.movementX += 
             event.movementX ||
             event.mozMovementX ||
@@ -289,58 +349,43 @@ var Mouse = {
             0;
     },
 
-    isDown: function(button) {
-        return this._pressed[button];
-    },
-
-    mousedown: function(event) {
-        Mouse._pressed[event.button] = true;
-    },
-
-    mouseup: function(event) {
-        delete Mouse._pressed[event.button];
-    },
-
-    // pick up all the movement since the last call
-    getMovement: function() {
-        var result = [Mouse.movementX, Mouse.movementy];
-        Mouse.movementX = 0;
-        Mouse.movementY = 0;
-
-        return result;
-    },
-
-    onChange: function () {
+    pointerLockChange: function () {
         if(document.pointerLockElement === Mouse.element ||
             document.mozPointerLockElement === Mouse.element ||
             document.webkitPointerLockElement === Mouse.element) {
-            document.addEventListener("mousemove", Mouse.onMove, false);
+            document.addEventListener("mousemove", Mouse.mouseMove, false);
             Mouse.locked = true;
         } 
         else {
-            document.removeEventListener("mousemove", Mouse.onMove, false);
+            document.removeEventListener("mousemove", Mouse.mouseMove, false);
             Mouse.locked = false;
         }
     },
 
     attach: function(element) {
-        Mouse.element = element;
+        this.element = element;
 
         element.requestPointerLock = element.requestPointerLock ||
             element.mozRequestPointerLock ||
             element.webkitRequestPointerLock;
 
+        // Safari has fullscreen but does not support pointerlock
+        element.requestFullScreen = element.requestFullscreen ||
+            element.msRequestFullscreen ||
+            element.mozRequestFullScreen ||
+            element.webkitRequestFullscreen;
+
         if ("onpointerlockchange" in document) {
             document.addEventListener('pointerlockchange', 
-                Mouse.onChange, false);
+                this.pointerLockChange, false);
         } 
         else if ("onmozpointerlockchange" in document) {
             document.addEventListener('mozpointerlockchange', 
-                Mouse.onChange, false);
+                this.pointerLockChange, false);
         } 
         else if ("onwebkitpointerlockchange" in document) {
             document.addEventListener('webkitpointerlockchange', 
-                Mouse.onChange, false);
+                this.pointerLockChange, false);
         }
 
         element.ondblclick = function() {
@@ -348,22 +393,129 @@ var Mouse = {
                 Mouse.element.requestPointerLock();
             }
 
-            // Safari has fullscreen but does not support pointerlock
-            if (Mouse.element.requestFullscreen) {
-                  Mouse.element.requestFullscreen();
-            } 
-            else if (Mouse.element.msRequestFullscreen) {
-                  Mouse.element.msRequestFullscreen();
-            } 
-            else if (Mouse.element.mozRequestFullScreen) {
-                  Mouse.element.mozRequestFullScreen();
-            } 
-            else if (Mouse.element.webkitRequestFullscreen) {
-                  Mouse.element.webkitRequestFullscreen();
+            if (Mouse.element.requestFullScreen) {
+                Mouse.element.requestFullScreen();
             }
         }
 
-        element.addEventListener('mousedown', Mouse.mousedown, false);
-        element.addEventListener('mouseup', Mouse.mouseup, false);
+        element.addEventListener('mousedown', this.mouseDown, false);
+        element.addEventListener('mouseup', this.mouseUp, false);
+    }
+};
+
+var Touch = {
+    last_rotation: 0,
+    current_rotation: 0,
+
+    tapped: false,
+    tap_x: 0,
+    tap_y: 0,
+
+    double_tapped: false,
+    double_tap_timeout: 0,
+
+    // return total rotation since the last call
+    getRotation: function () {
+        var result = this.current_rotation;
+        this.current_rotation = 0;
+        return result;
+    },
+
+    // has there been a doubletap since the last call
+    getDoubletap: function () {
+        var result = this.double_tapped;
+        this.double_tapped = false;
+        return result;
+    },
+
+    // has there been a tap since the last call
+    getTap: function () {
+        var result;
+
+        result = null;
+        if (this.tapped) {
+            result = {
+                'x': this.tap_x, 
+                'y': this.tap_y
+            };
+            this.tapped = false;
+        }
+
+        return result;
+    },
+
+    touchStart: function (event) {
+        event.preventDefault();
+        var changedTouches = event.changedTouches;
+
+        if (Touch.double_tap_timeout) {
+            clearTimeout(Touch.double_tap_timeout);
+            Touch.double_tap_timeout = 0;
+            Touch.double_tapped = true;
+        }
+        else {
+            Touch.double_tap_timeout = setTimeout(function() { 
+                Touch.double_tap_timeout = 0;
+            }, 400);
+        }
+
+        if (changedTouches.length > 0) {
+            Touch.tapped = true;
+            Touch.tap_x = changedTouches[0].clientX;
+            Touch.tap_y = changedTouches[0].clientY;
+        }
+    }, 
+
+    touchMove: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+
+        if (Touch.double_tap_timeout) {
+            clearTimeout(Touch.double_tap_timeout);
+            Touch.double_tap_timeout = 0;
+        }
+    }, 
+
+    touchEnd: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+    }, 
+
+    touchCancel: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+
+        if (Touch.double_tap_timeout) {
+            clearTimeout(Touch.double_tap_timeout);
+            Touch.double_tap_timeout = 0;
+        }
+    }, 
+
+    gestureStart: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+    }, 
+
+    gestureChange: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+    }, 
+
+    gestureEnd: function (event) {
+        event.preventDefault();
+        var allTouches = event.touch;
+    }, 
+
+    attach: function(element) {
+        element.addEventListener("touchstart", this.touchStart, false);
+        element.addEventListener("touchmove", this.touchMove, false);
+        element.addEventListener("touchend", this.touchEnd, false);
+        element.addEventListener("touchcancel", this.touchCancel, false);
+
+        element.addEventListener("gesturestart", this.gestureStart, false);
+        element.addEventListener("gesturechange", this.gestureChange, false);
+        element.addEventListener("gestureend", this.gestureEnd, false);
+
+        this.element = element;
     }
 };

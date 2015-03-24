@@ -147,11 +147,23 @@ World.prototype.update = function() {
 
     if (this.player) {
         this.player.rotate_by(rotate_by);
-        if (Key.isDown(Key.SPACE) || Mouse.isDown(Mouse.LEFT)) {
+        if (Key.isDown(Key.SPACE) || 
+            Mouse.isDown(Mouse.LEFT)) {
             this.player.fire();
         }
-        if (Key.isDown(Key.UP) || Mouse.isDown(Mouse.RIGHT)) {
+        if (Key.isDown(Key.UP) || 
+            Mouse.isDown(Mouse.RIGHT)) {
             this.player.thrust();
+        }
+
+        var tap = Touch.getTap();
+        if (tap) {
+            var dx = tap.x - this.player.x;
+            var dy = tap.y - this.player.y;
+            var angle = rect_to_polar(dx, dy);
+
+            this.player.rotate_to(360 - angle);
+            this.player.fire();
         }
     }
 

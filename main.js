@@ -176,6 +176,10 @@ function gamestart() {
     world.reset();
     world.particles.starfield();
     world.add_player();
+
+    // clear any taps
+    Touch.getTap();
+
     levelstart();
 }
 
@@ -187,7 +191,8 @@ function startscreen_tick() {
 
     world.update();
 
-    if (Key.isDown(Key.ENTER)) {
+    if (Key.isDown(Key.ENTER) ||
+        Touch.getDoubletap()) {
         world.resize_handler = null;
         gamestart();
     }
@@ -218,7 +223,9 @@ function startscreen() {
 function arghsteroids() {
     var canvas = document.getElementById("argh-steroids-canvas");
 
+    Key.attach(canvas);
     Mouse.attach(canvas);
+    Touch.attach(canvas);
 
     initGL(canvas);
     initShaders()

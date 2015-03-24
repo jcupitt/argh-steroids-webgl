@@ -53,6 +53,10 @@ Ship.prototype.rotate_by = function(angle) {
     this.angle = wrap_around(this.angle, 360);
 }
 
+Ship.prototype.rotate_to = function(angle) {
+    this.angle = wrap_around(angle, 360);
+}
+
 Ship.prototype.thrust = function() {
     var world = this.world;
     var dt = world.dt;
