@@ -501,8 +501,11 @@ var Touch = {
                 'x': touch.clientX,
                 'y': touch.clientY,
                 'timeout': setTimeout(function() { 
-                    Touch.holding = true;
-                    Touch.holding_id = id;
+                    if (!Touch.holding) { 
+                        Touch.holding = true;
+                        Touch.holding_id = id;
+                        Touch.current_holds[id].timeout = null;
+                    }
                 }, 100)
             };
         }
@@ -559,6 +562,9 @@ var Touch = {
                     Touch.holding_id = null;
                 }
 
+                if (Touch.current_holds[id].timeout) {
+                    clearTimeout(Touch.current_holds[id].timeout);
+                }
                 delete Touch.current_holds[id];
             }
         }
