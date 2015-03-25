@@ -266,7 +266,7 @@ var colour_table = [
 var Particles = function(world) {
     this.world = world;
 
-    this.max_particles = 10000;
+    this.max_particles = 40000;
 
     this.position = new Float32Array(2 * this.max_particles);
     this.velocity = new Float32Array(2 * this.max_particles);
@@ -355,7 +355,7 @@ var Particles = function(world) {
         gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(texels));
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-    this.point_texture = loadPointTexture("blob.png");
+    this.point_texture = loadPointTexture("media/blob.png");
 };
 
 Particles.prototype.constructor = Particles;
@@ -368,17 +368,9 @@ Particles.prototype.reset = function() {
     for (var i = 0; i < this.max_particles; i++) {
         this.position[i * 2] = -100.0;
         this.position[i * 2 + 1] = 0.0;
-
         this.velocity[i * 2] = 0.0;
         this.velocity[i * 2 + 1] = 0.0;
-
-        this.birthticks[i] = 0;
-        this.lifespan[i] = 0;
-
-        this.colourstart[i] = 0;
-        this.colourscale[i] = 0;
         this.size[i] = 0;
-        this.damp[i] = 0;
 
         this.free[i] = i;
     }

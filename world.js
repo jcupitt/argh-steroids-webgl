@@ -38,6 +38,10 @@ var World = function(canvas) {
 
     updateSizes(canvas);
 
+    this.audio = new Audio('media/hoarse_space_cadet.m4a');
+    this.audio.autoplay = true;
+    this.audio.loop = true;
+
     this.particles = new Particles(this);
 
     this.reset();
