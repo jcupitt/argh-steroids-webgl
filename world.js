@@ -48,6 +48,21 @@ var World = function(canvas) {
 
 World.prototype.constructor = World;
 
+World.prototype.sound = function(event) {
+    var dx = (this.width - 50) - event.clientX;
+    var dy = 50 - (this.height - event.clientY);
+    var d = Math.sqrt(dx * dx + dy * dy);
+
+    if (d < 50) {
+        if (this.audio.paused) {
+            this.audio.play();
+        }
+        else {
+            this.audio.pause();
+        }
+    }
+}
+
 World.prototype.resize = function() {
     if (!this.resize_handler_id) {
         return;
@@ -275,6 +290,16 @@ World.prototype.draw = function() {
 
     // back into vector mode for any extra lettering
     setShaderProgram(shaderPrograms[1]);
+
+    var music_angle = 0;
+    var music_scale = 20;
+    if (!this.audio.paused) {
+        music_angle = this.ticks;
+        music_scale = 20 - wrap_around(0.2 * this.ticks, 7);
+    }
+    text_draw_immediate("m", 
+                        this.width - 50, 50,
+                        music_scale, music_angle, false); 
 }
 
 World.prototype.draw_hud = function() {

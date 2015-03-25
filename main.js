@@ -192,46 +192,17 @@ function gamestart() {
     levelstart();
 }
 
-function startscreen_mouseclick(event) {
-    var dx = (world.width - 50) - event.clientX;
-    var dy = 50 - (world.height - event.clientY);
-    var d = Math.sqrt(dx * dx + dy * dy);
-
-    if (d < 50) {
-        if (world.audio.paused) {
-            world.audio.play();
-        }
-        else {
-            world.audio.pause();
-        }
-    }
-}
-
 function startscreen_tick() {
     world.draw();
     if (Key.isDown(Key.I)) { 
         world.draw_info();
     }
-    var music_angle = 0;
-    var music_scale = 20;
 
-    if (!world.audio.paused) {
-        music_angle = world.ticks;
-        music_scale = 20 - wrap_around(0.2 * world.ticks, 7);
-    }
-
-    text_draw_immediate("m", 
-                        world.width - 50, 50,
-                        music_scale, music_angle, false); 
-    Mouse.onclick = startscreen_mouseclick;
-    Touch.onclick = startscreen_mouseclick;
     world.update();
 
     if (Key.isDown(Key.ENTER) ||
         Touch.getDoubletap()) {
         world.resize_handler = null;
-        Mouse.onclick = null;
-        Touch.onclick = null;
         gamestart();
     }
     else {
@@ -276,6 +247,13 @@ function arghsteroids() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     world = new World(canvas);
+
+    Mouse.onclick = function(event) {
+        World.prototype.sound.call(world, event);
+    };
+    Touch.onclick = function(event) {
+        World.prototype.sound.call(world, event);
+    };
 
     startscreen();
     startscreen_tick();
