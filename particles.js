@@ -471,6 +471,12 @@ Particles.prototype.explosion = function(radius, x, y, u, v) {
                   base_colour - randint(1, 50), change, 
                   randint(5, size * 10 + radius / 10), 10 + damp * 60);
     }
+
+    if (this.world.audio_on) {
+        var audio = new Audio("media/planet_crush.mp3");
+        audio.volume = Math.min(0.3, 0.1 + radius / 500);
+        audio.play();
+    }
 };
 
 Particles.prototype.explosion2 = function(x, y, u, v) {
@@ -486,6 +492,12 @@ Particles.prototype.explosion2 = function(x, y, u, v) {
                   v + speed * Math.sin(rad(angle)),
                   colour_table.length - randint(1, 50), -1, 
                   randint(10, 64), 70); 
+    }
+
+    if (this.world.audio_on) {
+        var audio = new Audio("media/ship_crush.mp3");
+        audio.volume = 0.8;
+        audio.play();
     }
 };
 
@@ -503,6 +515,12 @@ Particles.prototype.sparks = function(x, y, u, v) {
                   v + speed * Math.sin(rad(angle)),
                   base_colour - randint(1, 200), -113, 
                   randint(5, 10), 50);
+    }
+
+    if (this.world.audio_on) {
+        var audio = new Audio("media/planet_crush.mp3");
+        audio.volume = 0.1;
+        audio.play();
     }
 };
 

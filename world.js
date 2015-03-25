@@ -38,8 +38,9 @@ var World = function(canvas) {
 
     updateSizes(canvas);
 
-    this.audio = new Audio('media/hoarse_space_cadet.mp3');
-    this.audio.loop = true;
+    this.music = new Audio('media/hoarse_space_cadet.mp3');
+    this.music.loop = true;
+    this.audio_on = false;
 
     this.particles = new Particles(this);
 
@@ -54,11 +55,13 @@ World.prototype.sound = function(event) {
     var d = Math.sqrt(dx * dx + dy * dy);
 
     if (d < 50) {
-        if (this.audio.paused) {
-            this.audio.play();
+        if (this.audio_on) {
+            this.audio_on = false;
+            this.music.pause();
         }
         else {
-            this.audio.pause();
+            this.audio_on = true;
+            this.music.play();
         }
     }
 }
@@ -293,7 +296,7 @@ World.prototype.draw = function() {
 
     var music_angle = 0;
     var music_scale = 30;
-    if (!this.audio.paused) {
+    if (this.audio_on) {
         music_angle = this.ticks;
         music_scale = 30 - wrap_around(0.2 * this.ticks, 10);
     }

@@ -84,6 +84,12 @@ Ship.prototype.fire = function() {
         bullet.v = this.v + v * 7.0;
         bullet.angle = this.angle;
 
+        if (this.world.audio_on) {
+            var audio = new Audio("media/shot.mp3");
+            audio.volume = 0.3;
+            audio.play();
+        }
+
         this.reload_timer = 10;
     }
 }

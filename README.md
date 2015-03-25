@@ -1,6 +1,7 @@
 # Argh-steroids
 
-Asteroids-like game using webgl. 
+Asteroids-like game using webgl. Audio by Martin Pixberg, programming by John
+Cupitt. 
 
 You can play the game on the [github pages for this
 repository](http://jcupitt.github.io/argh-steroids-webgl), or alternatively
@@ -36,8 +37,6 @@ as well.
 * Hold 'P' for slo-mo. Handy for testing. 
 
 # TODO
-
-* There's no sound. 
 
 * Collision detection is just touching circles, we could look at the geometry
   as well to get pixel-perfect detection.
