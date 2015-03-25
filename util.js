@@ -345,6 +345,13 @@ var Mouse = {
                 'y': event.clientY
             };
         }
+
+        // things like audio play can only be started from callbacks ... so we
+        // have to have a hook here for the startscreen to use for the music
+        // on/off button
+        if (Mouse.onclick) {
+            Mouse.onclick(event);
+        }
     },
 
     mouseUp: function(event) {
@@ -524,6 +531,13 @@ var Touch = {
                 }, 100)
             };
 
+
+            // things like audio play can only be started from callbacks ... 
+            // so we have to have a hook here for the startscreen to use for 
+            // the music on/off button
+            if (Touch.onclick) {
+                Touch.onclick(touch);
+            }
 
         }
     }, 
