@@ -292,13 +292,13 @@ World.prototype.draw = function() {
     setShaderProgram(shaderPrograms[1]);
 
     var music_angle = 0;
-    var music_scale = 20;
+    var music_scale = 30;
     if (!this.audio.paused) {
         music_angle = this.ticks;
-        music_scale = 20 - wrap_around(0.2 * this.ticks, 7);
+        music_scale = 30 - wrap_around(0.2 * this.ticks, 10);
     }
     text_draw_immediate("m", 
-                        this.width - 50, 50,
+                        this.width - 70, 70,
                         music_scale, music_angle, false); 
 }
 
