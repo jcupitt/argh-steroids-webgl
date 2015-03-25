@@ -341,8 +341,8 @@ var Mouse = {
 
         if (event.button == 0) {
             Mouse.click = {
-                'x': event.clientX,
-                'y': event.clientY
+                x: event.clientX,
+                y: event.clientY
             };
         }
 
@@ -510,14 +510,14 @@ var Touch = {
             var id = touch.identifier;
 
             Touch.current_taps[id] = {
-                'x': touch.clientX,
-                'y': touch.clientY
+                x: touch.clientX,
+                y: touch.clientY
             };
 
             Touch.current_holds[id] = {
-                'x': touch.clientX,
-                'y': touch.clientY,
-                'timeout': setTimeout(function() { 
+                x: touch.clientX,
+                y: touch.clientY,
+                timeout: setTimeout(function() { 
                     if (!Touch.holding) { 
                         Touch.holding = true;
                         Touch.holding_id = id;
