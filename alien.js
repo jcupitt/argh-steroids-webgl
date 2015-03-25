@@ -24,10 +24,36 @@ var Alien = function(world) {
     this.scale = 10;
     this.direction_timer = randint(10, 50);
     this.random_velocity();
+
+    this.audio = new Audio("media/alien_engine.mp3");
+    this.audio.volume = 0.3;
+    this.audio.loop = true;
+
+    if (this.world.audio_on) {
+        this.audio.play();
+    }
 }
 
 Alien.prototype = Object.create(Sprite.prototype); 
 Alien.prototype.constructor = Alien;
+
+Alien.prototype.terminate = function() {
+    if (!this.kill) { 
+        this.kill = true;
+        this.audio.pause();
+    }
+}
+
+Alien.prototype.setAudio = function(audio_on) {
+    if (this.audio) {
+        if (audio_on) {
+            this.audio.play();
+        }
+        else {
+            this.audio.pause();
+        }
+    }
+}
 
 Alien.prototype.random_velocity = function() {
     this.u = this.direction * (Math.random() * 2 + 1);
@@ -51,10 +77,10 @@ Alien.prototype.update = function() {
     }
 
     if (this.direction == 1 && this.x > this.world.width - 10) {
-        this.kill = true;
+        this.terminate();
     }
     else if (this.direction == -1 && this.x < 10) {
-        this.kill = true;
+        this.terminate();
     }
 
     Sprite.prototype.update.call(this);

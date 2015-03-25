@@ -49,20 +49,28 @@ var World = function(canvas) {
 
 World.prototype.constructor = World;
 
+World.prototype.setAudio = function(audio_on) {
+    this.audio_on = audio_on;
+
+    if (this.audio_on) {
+        this.music.play();
+    }
+    else {
+        this.music.pause();
+    }
+
+    this.sprites.forEach (function(sprite) { 
+        sprite.setAudio(audio_on);
+    });
+};
+
 World.prototype.sound = function(event) {
     var dx = (this.width - 50) - event.clientX;
     var dy = 50 - (this.height - event.clientY);
     var d = Math.sqrt(dx * dx + dy * dy);
 
     if (d < 50) {
-        if (this.audio_on) {
-            this.audio_on = false;
-            this.music.pause();
-        }
-        else {
-            this.audio_on = true;
-            this.music.play();
-        }
+        this.setAudio(!this.audio_on); 
     }
 }
 
@@ -175,9 +183,17 @@ World.prototype.update = function() {
             Mouse.isDown(Mouse.LEFT)) {
             this.player.fire();
         }
+
         if (Key.isDown(Key.UP) || 
             Mouse.isDown(Mouse.RIGHT)) {
             this.player.thrust();
+
+            if (this.audio_on) {
+                this.player.audio.play();
+            }
+        }
+        else {
+            this.player.audio.pause();
         }
 
         var tap = Touch.getTap();

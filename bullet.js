@@ -27,28 +27,24 @@ Bullet.prototype.constructor = Bullet;
 Bullet.prototype.update = function() {
     this.life -= world.dt;
     if (this.life < 0) {
-        this.kill = true;
+        this.terminate();
     }
 
     Sprite.prototype.update.call(this);
 }
 
 Bullet.prototype.impact = function(other) {
+    this.terminate();
+
     if (other instanceof Alien) {
-        this.kill = true;
         this.world.score += 500;
-        other.kill = true;
-        other.world.particles.explosion(100, 
-                                        other.x, other.y, other.u, other.v);
+        other.terminate();
+        this.world.particles.explosion(100, 
+                                       other.x, other.y, other.u, other.v);
     }
     else if (other instanceof Asteroid) {
-        this.kill = true;
         this.world.score += other.scale | 0;
         other.terminate();
-    }
-    else if (other instanceof Ship) {
-        // just kill the bullet, we don't want to send the ship flying
-        this.kill = true;
     }
 
     Sprite.prototype.impact.call(this, other);

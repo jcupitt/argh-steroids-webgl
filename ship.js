@@ -40,6 +40,10 @@ var Ship = function(world) {
     this.max_shields = 3;
     this.shields = this.max_shields;
     this.shield_tick = 0;
+
+    this.audio = new Audio("media/starship_engine.mp3");
+    this.audio.volume = 1.0;
+    this.audio.loop = true;
 }
 
 Ship.prototype = Object.create(Sprite.prototype); 
@@ -69,6 +73,17 @@ Ship.prototype.thrust = function() {
     if (this.jet_timer < 0) { 
         this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
         this.jet_timer = 1;
+    }
+}
+
+Ship.prototype.setAudio = function(audio_on) {
+    if (this.audio) {
+        if (audio_on) {
+            this.audio.play();
+        }
+        else {
+            this.audio.pause();
+        }
     }
 }
 
@@ -106,9 +121,21 @@ Ship.prototype.update = function() {
     if (this.regenerate_timer < 0 && this.shields < this.max_shields) {
         this.regenerate_timer = 500;
         this.shields += 1;
+
+        if (this.world.audio_on) {
+            var audio = new Audio("media/get_bar.mp3");
+            audio.volume = 0.5;
+            audio.play();
+        }
     }
 
     Sprite.prototype.update.call(this);
+}
+
+Ship.prototype.terminate = function() {
+    if (!this.kill) { 
+        this.kill = true;
+    }
 }
 
 Ship.prototype.impact = function(other) {
@@ -116,9 +143,14 @@ Ship.prototype.impact = function(other) {
         this.world.particles.sparks(this.x, this.y, this.u, this.v);
         this.shields -= 1;
         this.regenerate_timer = 1000;
+        if (this.world.audio_on) {
+            var audio = new Audio("media/lose_bar.mp3");
+            audio.volume = 0.8;
+            audio.play();
+        }
 
         if (this.shields < 0) { 
-            this.kill = true;
+            this.terminate();
             this.world.particles.explosion2(this.x, this.y, this.u, this.v);
         }
     }

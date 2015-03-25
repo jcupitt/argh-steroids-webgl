@@ -27,10 +27,17 @@ Sprite.prototype.update = function() {
     this.y = wrap_around(this.y + dt * this.v, world.height);
 };
 
+Sprite.prototype.setAudio = function(audio_on) {
+};
+
+Sprite.prototype.terminate = function() {
+    this.kill = true;
+};
+
 // This is triggered for each object in a collision, so it's for asymmetric
 // things, like something blowing up
 Sprite.prototype.impact = function(other) {
-}
+};
 
 // This is triggered once per collision, so it's for symmetric
 // things, like physics
@@ -42,7 +49,7 @@ Sprite.prototype.collide = function(other) {
     var v = other.v;
     other.v = this.v;
     this.v = v;
-}
+};
 
 Sprite.prototype.test_collisions = function(possible_sprites) {
     possible_sprites.forEach (function(other) { 
@@ -110,7 +117,7 @@ Sprite.prototype.test_collisions = function(possible_sprites) {
             }
         }
     }, this);
-}
+};
 
 Sprite.prototype.draw_at = function(x, y) {
     mat4.translate(mvMatrix, [x, y, 0]);
