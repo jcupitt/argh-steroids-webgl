@@ -19,7 +19,7 @@ function asteroidsCreate() {
 
             vertices.push([
                 distance * Math.cos(rad(angle)), 
-                distance * Math.sin(rad(angle)), 
+                distance * Math.sin(rad(angle))
             ]);
         }
 

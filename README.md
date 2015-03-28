@@ -44,6 +44,15 @@ as well.
 * Collision physics just exchanges the two velocities, we could do true
   billiard-ball collisions.
 
+# Minimisation
+
+With the [closure compiler](https://developers.google.com/closure/compiler/),
+try:
+
+```bash
+java -jar ~/closure/compiler.jar --js glMatrix-0.9.5.min.js webgl-utils.js util.js sprite.js asteroid.js alien.js bullet.js ship.js particles.js text.js world.js main.js --js_output_file argh.js --compilation_level SIMPLE_OPTIMIZATIONS
+```
+
 # Developing
 
 If running locally, you need to tell your browser to allow JS to access 
