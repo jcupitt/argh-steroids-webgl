@@ -189,11 +189,11 @@ World.prototype.update = function() {
             this.player.thrust();
 
             if (this.audio_on) {
-                this.player.audio.play();
+                this.player.engine_audio.play();
             }
         }
         else {
-            this.player.audio.pause();
+            this.player.engine_audio.pause();
         }
 
         var tap = Touch.getTap();

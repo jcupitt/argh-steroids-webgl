@@ -41,9 +41,17 @@ var Ship = function(world) {
     this.shields = this.max_shields;
     this.shield_tick = 0;
 
-    this.audio = new Audio("media/starship_engine.mp3");
-    this.audio.volume = 1.0;
-    this.audio.loop = true;
+    this.engine_audio = new Audio("media/starship_engine.mp3");
+    this.engine_audio.volume = 1.0;
+    this.engine_audio.loop = true;
+
+    this.shot_audio = new Audio("media/shot.mp3");
+    this.shot_audio.volume = 0.3;
+
+    this.lose_bar_audio = new Audio("media/lose_bar.mp3");
+    this.lose_bar_audio.volume = 0.8;
+    this.get_bar_audio = new Audio("media/get_bar.mp3");
+    this.get_bar_audio.volume = 0.3;
 }
 
 Ship.prototype = Object.create(Sprite.prototype); 
@@ -79,10 +87,10 @@ Ship.prototype.thrust = function() {
 Ship.prototype.setAudio = function(audio_on) {
     if (this.audio) {
         if (audio_on) {
-            this.audio.play();
+            this.engine_audio.play();
         }
         else {
-            this.audio.pause();
+            this.engine_audio.pause();
         }
     }
 }
@@ -100,9 +108,7 @@ Ship.prototype.fire = function() {
         bullet.angle = this.angle;
 
         if (this.world.audio_on) {
-            var audio = new Audio("media/shot.mp3");
-            audio.volume = 0.3;
-            audio.play();
+            this.shot_audio.play();
         }
 
         this.reload_timer = 10;
@@ -123,9 +129,7 @@ Ship.prototype.update = function() {
         this.shields += 1;
 
         if (this.world.audio_on) {
-            var audio = new Audio("media/get_bar.mp3");
-            audio.volume = 0.5;
-            audio.play();
+            this.get_bar_audio.play();
         }
     }
 
@@ -144,9 +148,7 @@ Ship.prototype.impact = function(other) {
         this.shields -= 1;
         this.regenerate_timer = 1000;
         if (this.world.audio_on) {
-            var audio = new Audio("media/lose_bar.mp3");
-            audio.volume = 0.8;
-            audio.play();
+            this.lose_bar_audio.play();
         }
 
         if (this.shields < 0) { 

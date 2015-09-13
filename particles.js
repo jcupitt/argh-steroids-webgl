@@ -358,6 +358,11 @@ var Particles = function(world) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
     this.point_texture = loadPointTexture("media/blob.png");
+
+    this.planet_audio = new Audio("media/planet_crush.mp3");
+
+    this.ship_audio = new Audio("media/ship_crush.mp3");
+    this.ship_audio.volume = 0.8;
 };
 
 Particles.prototype.constructor = Particles;
@@ -473,9 +478,8 @@ Particles.prototype.explosion = function(radius, x, y, u, v) {
     }
 
     if (this.world.audio_on) {
-        var audio = new Audio("media/planet_crush.mp3");
-        audio.volume = Math.min(0.3, 0.1 + radius / 500);
-        audio.play();
+        this.planet_audio.volume = Math.min(0.3, 0.1 + radius / 500);
+        this.planet_audio.play();
     }
 };
 
@@ -495,9 +499,7 @@ Particles.prototype.explosion2 = function(x, y, u, v) {
     }
 
     if (this.world.audio_on) {
-        var audio = new Audio("media/ship_crush.mp3");
-        audio.volume = 0.8;
-        audio.play();
+        this.ship_audio.play();
     }
 };
 
@@ -518,9 +520,8 @@ Particles.prototype.sparks = function(x, y, u, v) {
     }
 
     if (this.world.audio_on) {
-        var audio = new Audio("media/planet_crush.mp3");
-        audio.volume = 0.1;
-        audio.play();
+        this.planet_audio.volume = 0.1;
+        this.planet_audio.play();
     }
 };
 
