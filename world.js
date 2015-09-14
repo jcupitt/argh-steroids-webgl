@@ -66,7 +66,6 @@ World.prototype.setAudio = function (audio_on) {
 
 World.prototype.play = function (audio) {
         if (this.audio_on) {
-            audio.pause();
             audio.currentTime = 0;
             audio.play();
         }
