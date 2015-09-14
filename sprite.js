@@ -3,7 +3,7 @@
 
 'use strict';
 
-var Sprite = function(world) {
+var Sprite = function (world) {
     this.world = world;
     this.x = 0;
     this.y = 0;
@@ -19,7 +19,7 @@ var Sprite = function(world) {
 
 Sprite.prototype.constructor = Sprite;
 
-Sprite.prototype.update = function() {
+Sprite.prototype.update = function () {
     var world = this.world;
     var dt = world.dt;
 
@@ -27,21 +27,21 @@ Sprite.prototype.update = function() {
     this.y = wrap_around(this.y + dt * this.v, world.height);
 };
 
-Sprite.prototype.setAudio = function(audio_on) {
+Sprite.prototype.setAudio = function (audio_on) {
 };
 
-Sprite.prototype.terminate = function() {
+Sprite.prototype.terminate = function () {
     this.kill = true;
 };
 
 // This is triggered for each object in a collision, so it's for asymmetric
 // things, like something blowing up
-Sprite.prototype.impact = function(other) {
+Sprite.prototype.impact = function (other) {
 };
 
 // This is triggered once per collision, so it's for symmetric
 // things, like physics
-Sprite.prototype.collide = function(other) {
+Sprite.prototype.collide = function (other) {
     var u = other.u;
     other.u = this.u;
     this.u = u;
@@ -51,8 +51,8 @@ Sprite.prototype.collide = function(other) {
     this.v = v;
 };
 
-Sprite.prototype.test_collisions = function(possible_sprites) {
-    possible_sprites.forEach (function(other) { 
+Sprite.prototype.test_collisions = function (possible_sprites) {
+    possible_sprites.forEach (function (other) { 
         if (other != this && !other.tested_collision) {
             var world = this.world;
             var width = world.width;
@@ -119,7 +119,7 @@ Sprite.prototype.test_collisions = function(possible_sprites) {
     }, this);
 };
 
-Sprite.prototype.draw_at = function(x, y) {
+Sprite.prototype.draw_at = function (x, y) {
     mat4.translate(mvMatrix, [x, y, 0]);
     mat4.scale(mvMatrix, [this.scale, this.scale, 1]);
     mat4.rotate(mvMatrix, rad(this.angle), [0, 0, 1]);
@@ -128,7 +128,7 @@ Sprite.prototype.draw_at = function(x, y) {
     buffersDraw(this.buffers);
 };
 
-Sprite.prototype.draw = function() {
+Sprite.prototype.draw = function () {
     mvPushMatrix();
     this.draw_at(this.x, this.y);
     mvPopMatrix();

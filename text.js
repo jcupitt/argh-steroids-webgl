@@ -67,7 +67,7 @@ function textCreate() {
     }
 }
 
-var Character = function(world, ch, x, y, scale) {
+var Character = function (world, ch, x, y, scale) {
     Sprite.call(this, world);
 
     this.buffers = textBuffers[ch];
@@ -82,13 +82,13 @@ var Character = function(world, ch, x, y, scale) {
 Character.prototype = Object.create(Sprite.prototype); 
 Character.prototype.constructor = Character;
 
-Character.prototype.impact = function(other) {
+Character.prototype.impact = function (other) {
     this.angular_velocity = Math.random() * 2 - 1;
 
     Sprite.prototype.impact.call(this, other);
 }
 
-Character.prototype.update = function() {
+Character.prototype.update = function () {
     this.angle += this.angular_velocity;
 
     Sprite.prototype.update.call(this);
@@ -107,7 +107,7 @@ function text_draw_at(buffers, x, y, scale, angle) {
     mvPopMatrix();
 }
 
-Character.prototype.draw_at = function(x, y) {
+Character.prototype.draw_at = function (x, y) {
     text_draw_at(this.buffers, this.x, this.y, this.scale, this.angle);
 }
 

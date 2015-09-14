@@ -258,7 +258,7 @@ function loadPointTexture(imgURL) {
 
     var img = new Image();
     img.src = imgURL;
-    img.onload = function() {
+    img.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.texImage2D(gl.TEXTURE_2D, 
         0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
@@ -287,19 +287,19 @@ var Key = {
     FOUR: 52,
     FIVE: 53,
 
-    isDown: function(keyCode) {
+    isDown: function (keyCode) {
         return this._pressed[keyCode];
     },
 
-    _keyDown: function(event) {
+    _keyDown: function (event) {
         Key._pressed[event.keyCode] = true;
     },
 
-    _keyUp: function(event) {
+    _keyUp: function (event) {
         delete Key._pressed[event.keyCode];
     },
 
-    attach: function(element) {
+    attach: function (element) {
         Key.element = element;
 
         window.addEventListener('keyup', this._keyUp, false);
@@ -316,12 +316,12 @@ var Mouse = {
     RIGHT: 2,
     click: null,
 
-    isDown: function(button) {
+    isDown: function (button) {
         return this._pressed[button];
     },
 
     // pick up all the movement since the last call
-    getMovement: function() {
+    getMovement: function () {
         var result = [this.movementX, this.movementy];
         this.movementX = 0;
         this.movementY = 0;
@@ -330,13 +330,13 @@ var Mouse = {
     },
 
     // pick up any click since the last call
-    getClick: function() {
+    getClick: function () {
         var result = this.click;
         this.click = null;
         return result;
     },
 
-    mouseDown: function(event) {
+    mouseDown: function (event) {
         Mouse._pressed[event.button] = true;
 
         if (event.button == 0) {
@@ -354,7 +354,7 @@ var Mouse = {
         }
     },
 
-    mouseUp: function(event) {
+    mouseUp: function (event) {
         delete Mouse._pressed[event.button];
     },
 
@@ -384,7 +384,7 @@ var Mouse = {
         }
     },
 
-    attach: function(element) {
+    attach: function (element) {
         this.element = element;
 
         element.requestPointerLock = element.requestPointerLock ||
@@ -410,7 +410,7 @@ var Mouse = {
                 this.pointerLockChange, false);
         }
 
-        element.ondblclick = function() {
+        element.ondblclick = function () {
             if (!Mouse.locked && Mouse.element.requestPointerLock) {
                 Mouse.element.requestPointerLock();
             }
@@ -500,7 +500,7 @@ var Touch = {
             Touch.double_tapped = true;
         }
         else {
-            Touch.double_tap_timeout = setTimeout(function() { 
+            Touch.double_tap_timeout = setTimeout(function () { 
                 Touch.double_tap_timeout = 0;
             }, 400);
         }
@@ -517,7 +517,7 @@ var Touch = {
             Touch.current_holds[id] = {
                 x: touch.clientX,
                 y: touch.clientY,
-                timeout: setTimeout(function() { 
+                timeout: setTimeout(function () { 
                     if (!Touch.holding) { 
                         Touch.holding = true;
                         Touch.holding_id = id;
@@ -648,7 +648,7 @@ var Touch = {
         var allTouches = event.touch;
     }, 
 
-    attach: function(element) {
+    attach: function (element) {
         element.addEventListener("touchstart", this.touchStart, false);
         element.addEventListener("touchmove", this.touchMove, false);
         element.addEventListener("touchend", this.touchEnd, false);

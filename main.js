@@ -248,10 +248,10 @@ function arghsteroids() {
 
     world = new World(canvas);
 
-    Mouse.onclick = function(event) {
+    Mouse.onclick = function (event) {
         World.prototype.sound.call(world, event);
     };
-    Touch.onclick = function(event) {
+    Touch.onclick = function (event) {
         World.prototype.sound.call(world, event);
     };
 

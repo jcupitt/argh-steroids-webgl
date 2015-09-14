@@ -13,7 +13,7 @@ function bulletCreate() {
     bulletBuffers = buffersCreate(vertices);
 }
 
-var Bullet = function(world) {
+var Bullet = function (world) {
     Sprite.call(this, world);
 
     this.buffers = bulletBuffers;
@@ -24,7 +24,7 @@ var Bullet = function(world) {
 Bullet.prototype = Object.create(Sprite.prototype); 
 Bullet.prototype.constructor = Bullet;
 
-Bullet.prototype.update = function() {
+Bullet.prototype.update = function () {
     this.life -= world.dt;
     if (this.life < 0) {
         this.terminate();
@@ -33,7 +33,7 @@ Bullet.prototype.update = function() {
     Sprite.prototype.update.call(this);
 }
 
-Bullet.prototype.impact = function(other) {
+Bullet.prototype.impact = function (other) {
     this.terminate();
 
     if (other instanceof Alien) {

@@ -3,7 +3,7 @@
 
 'use strict';
 
-var updateSizes = function(canvas) {
+var updateSizes = function (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -14,13 +14,13 @@ var updateSizes = function(canvas) {
     canvas.world.height = gl.viewportHeight;
 };
 
-var World = function(canvas) {
+var World = function (canvas) {
     this.canvas = canvas;
     // makes it easy to get to the world back again
     canvas.world = this;
 
     this.resize_handler_id = null;
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         // we need to throttle resizes ... they can be issued very
         // frequently 
         //
@@ -31,7 +31,7 @@ var World = function(canvas) {
             canvas.world.resize_handler_id = null;
         }
 
-        canvas.world.resize_handler_id = setTimeout(function() { 
+        canvas.world.resize_handler_id = setTimeout(function () { 
             World.prototype.resize.call(canvas.world);
         }, 1000);
     });
@@ -49,7 +49,7 @@ var World = function(canvas) {
 
 World.prototype.constructor = World;
 
-World.prototype.setAudio = function(audio_on) {
+World.prototype.setAudio = function (audio_on) {
     this.audio_on = audio_on;
 
     if (this.audio_on) {
@@ -59,12 +59,20 @@ World.prototype.setAudio = function(audio_on) {
         this.music.pause();
     }
 
-    this.sprites.forEach (function(sprite) { 
+    this.sprites.forEach(function (sprite) { 
         sprite.setAudio(audio_on);
     });
 };
 
-World.prototype.sound = function(event) {
+World.prototype.play = function (audio) {
+        if (this.audio_on) {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+        }
+}
+
+World.prototype.sound = function (event) {
     var dx = (this.width - 50) - event.clientX;
     var dy = 50 - (this.height - event.clientY);
     var d = Math.sqrt(dx * dx + dy * dy);
@@ -74,7 +82,7 @@ World.prototype.sound = function(event) {
     }
 }
 
-World.prototype.resize = function() {
+World.prototype.resize = function () {
     if (!this.resize_handler_id) {
         return;
     }
@@ -94,7 +102,7 @@ World.prototype.resize = function() {
     }
 };
 
-World.prototype.reset = function() {
+World.prototype.reset = function () {
     this.sprites = [];
     this.score = 0;
     this.level = 1;
@@ -115,36 +123,36 @@ World.prototype.reset = function() {
     this.last_time = 0;
 }
 
-World.prototype.n_objects = function() {
+World.prototype.n_objects = function () {
     return this.sprites.length;
 }
 
-World.prototype.add = function(sprite) {
+World.prototype.add = function (sprite) {
     this.sprites.push(sprite);
 }
 
-World.prototype.add_player = function() {
+World.prototype.add_player = function () {
     if (!this.player) {
         this.player = new Ship(this);
     }
 }
 
-World.prototype.terminate_asteroids = function() {
-    this.sprites.forEach (function(sprite) { 
+World.prototype.terminate_asteroids = function () {
+    this.sprites.forEach (function (sprite) { 
         if (sprite instanceof Asteroid) {
             sprite.terminate();
         }
     });
 }
 
-World.prototype.add_text = function(string, scale) {
+World.prototype.add_text = function (string, scale) {
     scale = typeof scale !== 'undefined' ? scale : 10;
 
     text_add(this, string, this.width / 2, this.text_y, scale);
     this.text_y -= scale + 50;
 }
 
-World.prototype.update = function() {
+World.prototype.update = function () {
     var time_now = new Date().getTime() - this.t0;
 
     if (this.last_time != 0) {
@@ -237,14 +245,14 @@ World.prototype.update = function() {
         new Alien(this);
     }
 
-    this.sprites.forEach (function(sprite) { 
+    this.sprites.forEach (function (sprite) { 
         sprite.update();
     });
 
     if (this.player && this.player.kill) {
         this.player = null;
     }
-    this.sprites = this.sprites.filter(function(sprite) {
+    this.sprites = this.sprites.filter(function (sprite) {
         return !sprite.kill;
     });
 
@@ -260,7 +268,7 @@ World.prototype.update = function() {
         }
     }
 
-    this.sprites.forEach (function(sprite) { 
+    this.sprites.forEach (function (sprite) { 
         sprite.tested_collision = false;
 
         var x = (sprite.x / map_spacing) | 0;
@@ -276,7 +284,7 @@ World.prototype.update = function() {
         }
     });
 
-    this.sprites.forEach (function(sprite) { 
+    this.sprites.forEach (function (sprite) { 
         // wrap_around() just in case the sprite is outside screenspace 
         var x = wrap_around((sprite.x / map_spacing) | 0, map_width);
         var y = wrap_around((sprite.y / map_spacing) | 0, map_height);
@@ -289,7 +297,7 @@ World.prototype.update = function() {
     });
 }
 
-World.prototype.draw = function() {
+World.prototype.draw = function () {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -298,7 +306,7 @@ World.prototype.draw = function() {
     mat4.translate(mvMatrix, [0, 0, -1]);
 
     setShaderProgram(shaderPrograms[1]);
-    this.sprites.forEach (function(sprite) { 
+    this.sprites.forEach (function (sprite) { 
         mvPushMatrix();
         sprite.draw();
         mvPopMatrix();
@@ -321,14 +329,14 @@ World.prototype.draw = function() {
                         music_scale, music_angle, false); 
 }
 
-World.prototype.draw_hud = function() {
+World.prototype.draw_hud = function () {
     text_draw_immediate("SCORE " + this.score, 
                         20, world.height - 20, 10, 0, false);
     text_draw_immediate("LEVEL " + this.level, 
                         20, world.height - 40, 10, 0, false);
 }
 
-World.prototype.draw_info = function() {
+World.prototype.draw_info = function () {
     text_draw_immediate("FPS " + this.fps_current, 
                         20, 20, 10, 0, false);
     text_draw_immediate("OBJECTS " + world.n_objects(), 

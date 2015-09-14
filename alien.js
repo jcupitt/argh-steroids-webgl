@@ -13,7 +13,7 @@ function alienCreate() {
     alienBuffers = buffersCreate(vertices);
 }
 
-var Alien = function(world) {
+var Alien = function (world) {
     Sprite.call(this, world);
 
     this.buffers = alienBuffers;
@@ -37,14 +37,14 @@ var Alien = function(world) {
 Alien.prototype = Object.create(Sprite.prototype); 
 Alien.prototype.constructor = Alien;
 
-Alien.prototype.terminate = function() {
+Alien.prototype.terminate = function () {
     if (!this.kill) { 
         this.kill = true;
         this.audio.pause();
     }
 }
 
-Alien.prototype.setAudio = function(audio_on) {
+Alien.prototype.setAudio = function (audio_on) {
     if (this.audio) {
         if (audio_on) {
             this.audio.play();
@@ -55,12 +55,12 @@ Alien.prototype.setAudio = function(audio_on) {
     }
 }
 
-Alien.prototype.random_velocity = function() {
+Alien.prototype.random_velocity = function () {
     this.u = this.direction * (Math.random() * 2 + 1);
     this.v = Math.random() * 6 - 3;
 }
 
-Alien.prototype.update = function() {
+Alien.prototype.update = function () {
     var dt = this.world.dt;
 
     this.direction_timer -= dt;
@@ -86,7 +86,7 @@ Alien.prototype.update = function() {
     Sprite.prototype.update.call(this);
 }
 
-Alien.prototype.impact = function(other) {
+Alien.prototype.impact = function (other) {
     this.angle = randint(-90, 90);
     this.world.particles.sparks(this.x, this.y, this.u, this.v);
 

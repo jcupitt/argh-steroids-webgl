@@ -27,7 +27,7 @@ function asteroidsCreate() {
     }
 }
 
-var Asteroid = function(world, scale, max_speed) {
+var Asteroid = function (world, scale, max_speed) {
     Sprite.call(this, world);
 
     this.scale = scale;
@@ -57,7 +57,7 @@ var Asteroid = function(world, scale, max_speed) {
 Asteroid.prototype = Object.create(Sprite.prototype); 
 Asteroid.prototype.constructor = Asteroid;
 
-Asteroid.prototype.terminate = function() {
+Asteroid.prototype.terminate = function () {
     if (!this.kill) { 
         this.kill = true;
         this.world.n_asteroids -= 1;
@@ -78,7 +78,7 @@ Asteroid.prototype.terminate = function() {
     }
 };
 
-Asteroid.prototype.update = function() {
+Asteroid.prototype.update = function () {
     var world = this.world;
     var dt = world.dt;
 
@@ -87,7 +87,7 @@ Asteroid.prototype.update = function() {
     Sprite.prototype.update.call(this);
 };
 
-Asteroid.prototype.collide = function(other) {
+Asteroid.prototype.collide = function (other) {
     if (other instanceof Asteroid) {
         var angular_velocity = other.angular_velocity;
         other.angular_velocity = this.angular_velocity;
