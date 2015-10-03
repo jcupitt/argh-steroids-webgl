@@ -45,7 +45,7 @@ var Ship = function (world) {
     this.engine_audio.volume = 1.0;
     this.engine_audio.loop = true;
 
-    this.audio_sprite = new AudioSprite(this.world, "media/ship_sounds.ogg", {
+    this.audio_sprite = new AudioSprite(this.world, "media/ship_sounds.mp3", {
         lose_bar: {
             volume: 0.8,
             start: 0.0,
