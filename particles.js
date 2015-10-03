@@ -263,7 +263,7 @@ var colour_table = [
 	[ 174, 0, 0 ]
 ];
 
-var Particles = function(world) {
+var Particles = function (world) {
     this.world = world;
 
     // an iphone 4s can just manage 10,000 particles 
@@ -380,11 +380,11 @@ var Particles = function(world) {
 
 Particles.prototype.constructor = Particles;
 
-Particles.prototype.n_particles = function() {
+Particles.prototype.n_particles = function () {
     return this.max_particles - this.n_free;
 }
 
-Particles.prototype.reset = function() {
+Particles.prototype.reset = function () {
     for (var i = 0; i < this.max_particles; i++) {
         this.position[i * 2] = -100.0;
         this.position[i * 2 + 1] = 0.0;
@@ -398,7 +398,7 @@ Particles.prototype.reset = function() {
 };
 
 // scan the particle table and find a few hundred free slots
-Particles.prototype.GC = function() {
+Particles.prototype.GC = function () {
     var world = this.world;
     var ticks = world.ticks;
     var dt = world.dt;
@@ -432,7 +432,7 @@ Particles.prototype.GC = function() {
     this.GC_index = i;
 }
 
-Particles.prototype.emit = function(life, x, y, u, v, 
+Particles.prototype.emit = function (life, x, y, u, v, 
     index, delta, size, damp) {
     if (this.n_free < 1) {
         this.GC();
@@ -460,7 +460,7 @@ Particles.prototype.emit = function(life, x, y, u, v,
     }
 };
 
-Particles.prototype.starfield = function() {
+Particles.prototype.starfield = function () {
     for (var i = 0; i < 30; i++) {
         this.emit(100000000,
                   randint(0, this.world.width), randint(0, this.world.height),
@@ -470,7 +470,7 @@ Particles.prototype.starfield = function() {
     }
 }
 
-Particles.prototype.explosion = function(radius, x, y, u, v) {
+Particles.prototype.explosion = function (radius, x, y, u, v) {
     var base_colour = randint(50, 255);
     var n_points = 10 * radius;
     var delta = 360 / n_points;
@@ -494,7 +494,7 @@ Particles.prototype.explosion = function(radius, x, y, u, v) {
         Math.min(0.3, 0.1 + radius / 500));
 };
 
-Particles.prototype.explosion2 = function(x, y, u, v) {
+Particles.prototype.explosion2 = function (x, y, u, v) {
     var n_points = 3000;
 
     for (var i = 0; i < n_points; i++) {
@@ -512,7 +512,7 @@ Particles.prototype.explosion2 = function(x, y, u, v) {
     this.ship_audio_sprite.play("explosion");  
 };
 
-Particles.prototype.sparks = function(x, y, u, v) {
+Particles.prototype.sparks = function (x, y, u, v) {
     var n_points = 20;
     var delta = 360 / n_points;
     var base_colour = randint(50, 255);
@@ -531,7 +531,7 @@ Particles.prototype.sparks = function(x, y, u, v) {
     this.planet_audio_sprite.play("explosion"); 
 };
 
-Particles.prototype.jet = function(x, y, u, v, angle) {
+Particles.prototype.jet = function (x, y, u, v, angle) {
     var particle_angle = angle + randint(-20, 20) + 180;
     var u1 = 2 * Math.cos(rad(particle_angle));
     var v1 = 2 * Math.sin(rad(particle_angle));
@@ -542,7 +542,7 @@ Particles.prototype.jet = function(x, y, u, v, angle) {
               randint(4, 10), 0);
 };
 
-Particles.prototype.set_buffer = function(attr, buffer, array) {
+Particles.prototype.set_buffer = function (attr, buffer, array) {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     if (this.changed) {
         gl.bufferSubData(gl.ARRAY_BUFFER, buffer, array);
@@ -551,7 +551,7 @@ Particles.prototype.set_buffer = function(attr, buffer, array) {
     gl.vertexAttribPointer(attr, buffer.itemSize, gl.FLOAT, false, 0, 0);
 }
 
-Particles.prototype.draw = function() {
+Particles.prototype.draw = function () {
     setMatrixUniforms();
 
     gl.enable(gl.BLEND);
@@ -587,5 +587,4 @@ Particles.prototype.draw = function() {
     gl.uniform1i(currentProgram.textureUniform, 1);
 
     gl.drawArrays(gl.POINT, 0, this.max_particles);
-
 };
