@@ -45,14 +45,23 @@ var Ship = function (world) {
     this.engine_audio.volume = 1.0;
     this.engine_audio.loop = true;
 
-    this.shot_audio = new Audio("media/shot.mp3");
-    this.shot_audio.volume = 0.3;
-    this.shot_audio.preload = "auto";
-
-    this.lose_bar_audio = new Audio("media/lose_bar.mp3");
-    this.lose_bar_audio.volume = 0.8;
-    this.get_bar_audio = new Audio("media/get_bar.mp3");
-    this.get_bar_audio.volume = 0.3;
+    this.audio_sprite = new AudioSprite(this.world, "media/ship_sounds.ogg", {
+        lose_bar: {
+            volume: 0.8,
+            start: 0.0,
+            length: 2.3
+        },
+        gain_bar: {
+            volume: 0.3,
+            start: 2.5,
+            length: 2.5
+        },
+        shot: {
+            volume: 0.9,
+            start: 5.05,
+            length: 0.9
+        }
+    });
 }
 
 Ship.prototype = Object.create(Sprite.prototype); 
@@ -83,17 +92,14 @@ Ship.prototype.thrust = function () {
         this.world.particles.jet(this.x, this.y, this.u, this.v, this.angle);
         this.jet_timer = 1;
     }
+
+    if (world.audio_on) {
+        this.engine_audio.play();
+    }
 }
 
-Ship.prototype.setAudio = function (audio_on) {
-    if (this.audio) {
-        if (audio_on) {
-            this.engine_audio.play();
-        }
-        else {
-            this.engine_audio.pause();
-        }
-    }
+Ship.prototype.no_thrust = function () {
+    this.engine_audio.pause();
 }
 
 Ship.prototype.fire = function () {
@@ -107,8 +113,8 @@ Ship.prototype.fire = function () {
         bullet.u = this.u + u * 7.0;
         bullet.v = this.v + v * 7.0;
         bullet.angle = this.angle;
-        this.world.play(this.shot_audio); 
-        this.reload_timer = 10;
+        this.reload_timer = 0;
+        this.audio_sprite.play("shot"); 
     }
 }
 
@@ -124,7 +130,7 @@ Ship.prototype.update = function () {
     if (this.regenerate_timer < 0 && this.shields < this.max_shields) {
         this.regenerate_timer = 500;
         this.shields += 1;
-        this.world.play(this.get_bar_audio); 
+        this.audio_sprite.play("get_bar"); 
     }
 
     Sprite.prototype.update.call(this);
@@ -141,7 +147,7 @@ Ship.prototype.impact = function (other) {
         this.world.particles.sparks(this.x, this.y, this.u, this.v);
         this.shields -= 1;
         this.regenerate_timer = 1000;
-        this.world.play(this.lose_bar_audio); 
+        this.audio_sprite.play("lose_bar"); 
 
         if (this.shields < 0) { 
             this.terminate();

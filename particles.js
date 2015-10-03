@@ -359,12 +359,23 @@ var Particles = function(world) {
 
     this.point_texture = loadPointTexture("media/blob.png");
 
-    this.planet_audio = new Audio("media/planet_crush.mp3");
-    this.planet_audio.preload = "auto";
+    this.planet_audio_sprite = new AudioSprite(this.world, 
+        "media/planet_crush.mp3", {
+        explosion: {
+            volume: 0.1,
+            start: 0,
+            length: 5
+        }
+    });
 
-    this.ship_audio = new Audio("media/ship_crush.mp3");
-    this.ship_audio.volume = 0.8;
-    this.ship_audio.preload = "auto";
+    this.ship_audio_sprite = new AudioSprite(this.world, 
+        "media/ship_crush.mp3", {
+        explosion: {
+            volume: 1.0,
+            start: 0,
+            length: 5
+        }
+    });
 };
 
 Particles.prototype.constructor = Particles;
@@ -479,8 +490,8 @@ Particles.prototype.explosion = function(radius, x, y, u, v) {
                   randint(5, size * 10 + radius / 10), 10 + damp * 60);
     }
 
-    this.planet_audio.volume = Math.min(0.3, 0.1 + radius / 500);
-    this.world.play(this.planet_audio); 
+    this.planet_audio_sprite.play("explosion", 
+        Math.min(0.3, 0.1 + radius / 500));
 };
 
 Particles.prototype.explosion2 = function(x, y, u, v) {
@@ -498,7 +509,7 @@ Particles.prototype.explosion2 = function(x, y, u, v) {
                   randint(10, 64), 70); 
     }
 
-    this.world.play(this.ship_audio); 
+    this.ship_audio_sprite.play("explosion");  
 };
 
 Particles.prototype.sparks = function(x, y, u, v) {
@@ -517,8 +528,7 @@ Particles.prototype.sparks = function(x, y, u, v) {
                   randint(5, 10), 50);
     }
 
-    this.planet_audio.volume = 0.1;
-    this.world.play(this.planet_audio); 
+    this.planet_audio_sprite.play("explosion"); 
 };
 
 Particles.prototype.jet = function(x, y, u, v, angle) {

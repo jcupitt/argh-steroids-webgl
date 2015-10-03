@@ -64,14 +64,6 @@ World.prototype.setAudio = function (audio_on) {
     });
 };
 
-World.prototype.play = function (audio) {
-        if (this.audio_on) {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.play();
-        }
-}
-
 World.prototype.sound = function (event) {
     var dx = (this.width - 50) - event.clientX;
     var dy = 50 - (this.height - event.clientY);
@@ -179,6 +171,8 @@ World.prototype.update = function () {
         var movement = Mouse.getMovement();
         var rotate_by = -movement[0] / 5;
 
+        var has_thrusted = false;
+
         if (Key.isDown(Key.LEFT)) {
             rotate_by += 2;
         }
@@ -195,13 +189,7 @@ World.prototype.update = function () {
         if (Key.isDown(Key.UP) || 
             Mouse.isDown(Mouse.RIGHT)) {
             this.player.thrust();
-
-            if (this.audio_on) {
-                this.player.engine_audio.play();
-            }
-        }
-        else {
-            this.player.engine_audio.pause();
+            has_thrusted = true;
         }
 
         var tap = Touch.getTap();
@@ -223,6 +211,11 @@ World.prototype.update = function () {
 
             this.player.rotate_to(angle);
             this.player.thrust();
+            has_thrusted = true;
+        }
+     
+        if (!has_thrusted) {
+            this.player.no_thrust();
         }
 
         /* Useful for testing.

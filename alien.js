@@ -45,13 +45,11 @@ Alien.prototype.terminate = function () {
 }
 
 Alien.prototype.setAudio = function (audio_on) {
-    if (this.audio) {
-        if (audio_on) {
-            this.audio.play();
-        }
-        else {
-            this.audio.pause();
-        }
+    if (audio_on) {
+        this.audio.play();
+    }
+    else {
+        this.audio.pause();
     }
 }
 
