@@ -113,7 +113,7 @@ Ship.prototype.fire = function () {
         bullet.u = this.u + u * 7.0;
         bullet.v = this.v + v * 7.0;
         bullet.angle = this.angle;
-        this.reload_timer = 0;
+        this.reload_timer = 10;
         this.audio_sprite.play("shot"); 
     }
 }
