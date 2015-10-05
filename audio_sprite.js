@@ -47,6 +47,8 @@ AudioSprite.prototype.onTimeUpdate = function () {
 
 AudioSprite.prototype.play = function (effect, volume) {
     if (this.timing[effect] && this.timing[effect].length) {
+        this.audio.pause();
+
         this.current = this.timing[effect];
         this.audio.currentTime = this.current.start;
 

@@ -58,8 +58,8 @@ var Ship = function (world) {
         },
         shot: {
             volume: 0.9,
-            start: 5.05,
-            length: 0.9
+            start: 5.1,
+            length: 0.8
         }
     });
 }
