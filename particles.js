@@ -528,7 +528,7 @@ Particles.prototype.sparks = function (x, y, u, v) {
                   randint(5, 10), 50);
     }
 
-    this.planet_audio_sprite.play("explosion"); 
+    this.planet_audio_sprite.play("explosion", 0.3); 
 };
 
 Particles.prototype.jet = function (x, y, u, v, angle) {
