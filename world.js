@@ -16,7 +16,7 @@ var updateSizes = function (canvas) {
 
 var World = function (canvas) {
     this.canvas = canvas;
-    // makes it easy to get to the world back again
+    // makes it easy to get the world back again
     canvas.world = this;
 
     this.resize_handler_id = null;

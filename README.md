@@ -32,16 +32,16 @@ as well.
 
 * Hold 'S' during level start animation to spawn extra asteroids for testing.
 
-* Hold 'I' to see object and FPS counts.
+* Hold 'I' to see info about object and FPS counts.
 
-* Hold 'P' for slo-mo. Handy for testing. 
+* Hold 'P' to pause into slo-mo. Handy for testing. 
 
 # TODO
 
-* Collision detection is just touching circles, we could look at the geometry
+* Collision detection is just touching circles. We could look at the geometry
   as well to get pixel-perfect detection.
 
-* Collision physics just exchanges the two velocities, we could do true
+* Collision physics just exchanges the two velocities. We could do true
   billiard-ball collisions.
 
 # Minimisation
@@ -74,6 +74,6 @@ In Firefox, go to `about:config` and add `webgl.verbose=true`, you get JS
 warnings for every WebGL error and more. Go to the web console (Ctrl-Shift-K)
 and in the JS tab make sure warnings are enabled. 
  
-# Author
+# Authors
 
-John Cupitt
+Audio, Martin Pixberg. Programming, John Cupitt.

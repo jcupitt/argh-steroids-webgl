@@ -91,10 +91,10 @@ function setShaderProgram(program) {
         currentProgram = program;
         gl.useProgram(currentProgram);
 
-        // turn off all vertex attributes, draw operations need to turn the ones
-        // they need back on
+        // turn off all vertex attributes ... draw operations need to turn the 
+        // ones they need back on
         //
-        // if we don't do this, we see mysterious warnings from welgl on some
+        // if we don't do this we see mysterious warnings from welgl on some
         // platforms due to unused attributes being left on
         var maxVSattribs = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
         for (var i = 0; i < maxVSattribs; i++) {
@@ -178,7 +178,7 @@ function bufferCreate(type, data) {
     return buf;
 }
 
-/* points is a 2D array of like [[x1, y1], [x2, y2], ..], make a 
+/* points is a 2D array like [[x1, y1], [x2, y2], ..] ... make a 
  * draw buffer.
  */
 function buffersCreate(points) {
@@ -206,7 +206,7 @@ function buffersDraw(buffers) {
     gl.drawArrays(gl.LINE_LOOP, 0, buffers.numItems);
 };
 
-/* points is a 2D array like [[x1, y1], [x2, y2], ..], make a pair of
+/* points is a 2D array like [[x1, y1], [x2, y2], ..] ... make a pair of
  * draw buffers which will join pairs of points.
  */
 function buffersCreateDiscontinuous(points) {
@@ -538,7 +538,6 @@ var Touch = {
             if (Touch.onclick) {
                 Touch.onclick(touch);
             }
-
         }
     }, 
 
