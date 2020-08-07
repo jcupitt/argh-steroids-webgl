@@ -268,7 +268,7 @@ var Particles = function (world) {
 
     // an iphone 4s can just manage 10,000 particles 
     // 100,000 looks nice on a desktop
-    this.max_particles = 10000;
+    this.max_particles = 100000;
 
     this.position = new Float32Array(2 * this.max_particles);
     this.velocity = new Float32Array(2 * this.max_particles);
@@ -495,7 +495,7 @@ Particles.prototype.explosion = function (radius, x, y, u, v) {
 };
 
 Particles.prototype.explosion2 = function (x, y, u, v) {
-    var n_points = 3000;
+    var n_points = 30000;
 
     for (var i = 0; i < n_points; i++) {
         var delta = 360.0 / n_points;
