@@ -62,7 +62,8 @@ Asteroid.prototype.terminate = function () {
         this.kill = true;
         this.world.n_asteroids -= 1;
         this.world.particles.explosion(this.scale, 
-                                       this.x, this.y, this.u, this.v);
+                                       this.x, this.y, 
+                                       this.u / 2, this.v / 2);
 
         if (this.scale > 15) { 
             var n = randint(2, Math.max(2, Math.min(5, this.scale / 5)));

@@ -423,8 +423,8 @@ Particles.prototype.GC = function () {
         }
 
         i = wrap_around(i + 1, this.max_particles);
-        if (this.n_free > 30000) {
-            // stop after we've found 30000, enough for the biggest explosion
+        if (this.n_free > 3000) {
+            // stop after we've found enough for the biggest explosion
             break;
         }
     }
