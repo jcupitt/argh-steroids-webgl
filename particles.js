@@ -423,7 +423,7 @@ Particles.prototype.GC = function () {
         }
 
         i = wrap_around(i + 1, this.max_particles);
-        if (this.n_free > 5000) {
+        if (this.n_free > 3000) {
             // stop after we've found enough for the biggest explosion
             break;
         }
@@ -495,7 +495,7 @@ Particles.prototype.explosion = function (radius, x, y, u, v) {
 };
 
 Particles.prototype.explosion2 = function (x, y, u, v) {
-    var n_points = 5000;
+    var n_points = 3000;
 
     for (var i = 0; i < n_points; i++) {
         var delta = 360.0 / n_points;
