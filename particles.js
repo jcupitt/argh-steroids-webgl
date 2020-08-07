@@ -495,7 +495,7 @@ Particles.prototype.explosion = function (radius, x, y, u, v) {
 };
 
 Particles.prototype.explosion2 = function (x, y, u, v) {
-    var n_points = 30000;
+    var n_points = 10000;
 
     for (var i = 0; i < n_points; i++) {
         var delta = 360.0 / n_points;
