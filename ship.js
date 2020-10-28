@@ -82,7 +82,7 @@ Ship.prototype.rotate_to = function (angle) {
 Ship.prototype.thrust = function () {
     var world = this.world;
     var dt = world.dt;
-    var power = 0.03;
+    var power = 0.05;
 
     this.u += dt * power * Math.cos(rad(this.angle));
     this.v += dt * power * Math.sin(rad(this.angle));
@@ -134,6 +134,11 @@ Ship.prototype.update = function () {
     }
 
     Sprite.prototype.update.call(this);
+
+    // damp ship motion slightly
+    this.u *= 0.995;
+    this.v *= 0.995;
+
 }
 
 Ship.prototype.terminate = function () {
@@ -162,11 +167,12 @@ Ship.prototype.draw_at = function (x, y) {
     Sprite.prototype.draw_at.call(this, x, y);
 
     for (var i = 0; i < Math.max(0, this.shields); i++) {
-        var radius = 1.7 + i * 0.7;
+        var radius = 10 + i * 4;
         var angle = ((i & 1) * 2 - 1) * this.shield_tick;
 
         mvPushMatrix();
 
+        mat4.translate(mvMatrix, [x, y, 0]);
         mat4.scale(mvMatrix, [radius, radius, 1]);
         mat4.rotate(mvMatrix, rad(angle), [0, 0, 1]);
         setMatrixUniforms();

@@ -42,6 +42,11 @@ var World = function (canvas) {
     this.music.loop = true;
     this.audio_on = false;
 
+    this.camera_x = 0;
+    this.camera_dx = 0;
+    this.camera_y = 0;
+    this.camera_dy = 0;
+
     this.particles = new Particles(this);
 
     this.reset();
@@ -289,6 +294,32 @@ World.prototype.update = function () {
         // we no longer need to test anything against sprite
         sprite.tested_collision = true;
     });
+
+    if (this.player) {
+        // target x/y for the screen 
+        var target_x = this.player.x - this.width / 2;
+        var target_y = this.player.y - this.height / 2;
+
+        // vector to target, accounting for wrap-around
+        var vector_x = target_x - this.camera_x;
+        vector_x = wrap_around(vector_x + this.width / 2, this.width) - 
+            this.width / 2;
+        var vector_y = target_y - this.camera_y;
+        vector_y = wrap_around(vector_y + this.height / 2, this.height) - 
+            this.height / 2;
+
+        // accelerate gently towards the target
+        this.camera_dx += vector_x * 0.2;
+        this.camera_dy += vector_y * 0.2;
+
+        // and damp
+        this.camera_dx *= 0.2;
+        this.camera_dy *= 0.2;
+    }
+
+    this.camera_x += this.camera_dx * this.dt;
+    this.camera_y += this.camera_dy * this.dt;
+
 }
 
 World.prototype.draw = function () {
