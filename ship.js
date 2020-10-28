@@ -82,7 +82,7 @@ Ship.prototype.rotate_to = function (angle) {
 Ship.prototype.thrust = function () {
     var world = this.world;
     var dt = world.dt;
-    var power = 0.05;
+    var power = 0.03;
 
     this.u += dt * power * Math.cos(rad(this.angle));
     this.v += dt * power * Math.sin(rad(this.angle));
@@ -134,10 +134,6 @@ Ship.prototype.update = function () {
     }
 
     Sprite.prototype.update.call(this);
-
-    // damp ship motion slightly
-    this.u *= 0.995;
-    this.v *= 0.995;
 
 }
 
