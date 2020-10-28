@@ -578,6 +578,12 @@ Particles.prototype.draw = function () {
 
     gl.uniform1f(currentProgram.ticksUniform, this.world.ticks);
 
+    gl.uniform2fv(currentProgram.cameraPos, 
+        [this.world.camera_x / (this.world.width / 2), 
+         this.world.camera_y / (this.world.height / 2)
+        ]
+    );
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.ramp_texture);
     gl.uniform1i(currentProgram.rampUniform, 0);

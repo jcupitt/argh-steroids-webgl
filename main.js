@@ -34,6 +34,9 @@ function initShaders() {
     shaderPrograms[0].textureUniform = 
         gl.getUniformLocation(shaderPrograms[0], "uTexture");
 
+    shaderPrograms[0].cameraPos = 
+        gl.getUniformLocation(shaderPrograms[0], "cameraPos");
+
     shaderPrograms[1] = getProgram("shader-fs-vector", "shader-vs-vector");
 }
 

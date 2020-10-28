@@ -14,7 +14,7 @@ var Sprite = function (world) {
     this.kill = false;
     this.tested_collision = false;
 
-    world.add(this);
+    this.world.add(this);
 };
 
 Sprite.prototype.constructor = Sprite;
@@ -119,44 +119,38 @@ Sprite.prototype.test_collisions = function (possible_sprites) {
     }, this);
 };
 
+// draw in display space 
 Sprite.prototype.draw_at = function (x, y) {
+    mvPushMatrix();
+
     mat4.translate(mvMatrix, [x, y, 0]);
     mat4.scale(mvMatrix, [this.scale, this.scale, 1]);
     mat4.rotate(mvMatrix, rad(this.angle), [0, 0, 1]);
     setMatrixUniforms();
 
     buffersDraw(this.buffers);
+
+    mvPopMatrix();
 };
 
 Sprite.prototype.draw = function () {
-    mvPushMatrix();
-    this.draw_at(this.x, this.y);
-    mvPopMatrix();
+    var world = this.world;
 
-    // if we're near the left edge, draw again on the right
-    if (this.x < this.scale) {
-        mvPushMatrix();
-        this.draw_at(this.x + world.width, this.y);
-        mvPopMatrix();
-    }
-    else if (this.x > this.world.width - this.scale) {
-        mvPushMatrix();
-        this.draw_at(this.x - world.width, this.y);
-        mvPopMatrix();
-    }
+    // to display space
+    var display_x = wrap_around(this.x - world.camera_x, world.width);
+    var display_y = wrap_around(this.y - world.camera_y, world.height);
 
-    if (this.y < this.scale) {
-        mvPushMatrix();
-        this.draw_at(this.x, this.y + world.height);
-        mvPopMatrix();
-    }
-    else if (this.y > this.world.height - this.scale) {
-        mvPushMatrix();
-        this.draw_at(this.x, this.y - world.height);
-        mvPopMatrix();
-    }
+    this.draw_at(display_x, display_y);
 
-    // could add another set of cases for the corners
+    // wrap around edges
+    if (display_x > world.width - this.scale) 
+        this.draw_at(display_x - world.width, display_y);
+    else if (display_x < this.scale) 
+        this.draw_at(display_x + world.width, display_y);
+
+    if (display_y > world.height - this.scale) 
+        this.draw_at(display_x, display_y - world.height);
+    else if (display_y < this.scale) 
+        this.draw_at(display_x, display_y + world.height);
 };
-
 

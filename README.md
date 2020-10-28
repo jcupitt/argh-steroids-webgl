@@ -14,7 +14,7 @@ as well.
 # Features
 
 * Asteroids bump off each other. It uses a map to make collision detection
-  fast. The particle effects are entirely on the GPU and should be fast even
+  fast. The particle effects are entirely on the GPU and should be quick even
   on modest hardware. 
 
 * Your ship has a shield and you can bump into asteroids a few times. The
@@ -51,7 +51,7 @@ try:
 
 ```bash
 java -jar ~/closure/compiler.jar --js glMatrix-0.9.5.min.js webgl-utils.js util.js sprite.js asteroid.js alien.js bullet.js ship.js particles.js text.js world.js main.js --js_output_file argh.js --compilation_level SIMPLE_OPTIMIZATIONS
-```
+`fastfastfastfastfastfastfastfast``
 
 # Developing
 

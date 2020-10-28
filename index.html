@@ -58,34 +58,36 @@
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
     uniform float uTicks;
+    uniform vec2 cameraPos;
     uniform sampler2D uRamp;
 
     varying vec4 vColor;
 
     void main(void) {
-    	float t = uTicks - aVertexBirthticks;
-	float s = t / aVertexLifespan;
+        float t = uTicks - aVertexBirthticks;
+        float s = t / aVertexLifespan;
 
-	if (s > 1.0)
-	    gl_Position = vec4(-100.0, 0.0, 0.0, 0.0);
-	else {
-	    vec2 pos;
+        if (s > 1.0)
+            gl_Position = vec4(-100.0, 0.0, 0.0, 0.0);
+        else {
+            vec2 pos;
+  
+            if (aVertexDamp > 1.0) 
+                pos = aVertexDamp * s * aVertexVelocity + aVertexPosition;
+            else
+                pos = t * aVertexVelocity + aVertexPosition;
+  
+            vec4 spos = uPMatrix * uMVMatrix * vec4(pos, 0.0, 1.0);
+  
+            vec2 spos2 = spos.xy;
+            spos2 = spos2 - cameraPos;
+            // wrap around screen space
+            spos2 = mod(spos2 + 1.0, 2.0) - 1.0;
+  
+            gl_Position = vec4(spos2, 0.0, 1.0);
+        }
 
-	    if (aVertexDamp > 1.0) 
-	        pos = aVertexDamp * s * aVertexVelocity + aVertexPosition;
-	    else
-	        pos = t * aVertexVelocity + aVertexPosition;
-
-	    vec4 spos = uPMatrix * uMVMatrix * vec4(pos, 0.0, 1.0);
-
-	    // wrap around screen space
-	    vec2 spos2 = spos.xy;
-	    spos2 = mod(spos2 + 1.0, 2.0) - 1.0;
-
-	    gl_Position = vec4(spos2, 0.0, 1.0);
-	}
-
-	float index = aVertexColourstart + t * aVertexColourscale;
+        float index = aVertexColourstart + t * aVertexColourscale;
         vColor = texture2D(uRamp, vec2(index / 255.0, 0.5));
 
         gl_PointSize = (1.0 - s) * aVertexSize;
@@ -93,21 +95,21 @@
 </script>
 
 <script id="shader-fs-particle" type="x-shader/x-fragment">
-	precision lowp float;
+    precision lowp float;
 
-	varying vec4 vColor;
+    varying vec4 vColor;
 
-	uniform sampler2D uTexture;
+    uniform sampler2D uTexture;
 
-	void main(void) {
-		vec4 col;
-		col = texture2D(uTexture, gl_PointCoord);
-		if (col.a == 0.0) 
-			discard;
-
-		vec4 tex = vColor * col;
-		gl_FragColor = tex;
-	}
+    void main(void) {
+        vec4 col;
+        col = texture2D(uTexture, gl_PointCoord);
+        if (col.a == 0.0) 
+           discard;
+    
+        vec4 tex = vColor * col;
+        gl_FragColor = tex;
+    }
 </script>
 
 <style>
