@@ -135,10 +135,6 @@ Ship.prototype.update = function () {
 
     Sprite.prototype.update.call(this);
 
-    // damp ship motion slightly
-    this.u *= 0.995;
-    this.v *= 0.995;
-
 }
 
 Ship.prototype.terminate = function () {
