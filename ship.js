@@ -28,8 +28,8 @@ var Ship = function (world) {
     Sprite.call(this, world);
 
     this.buffers = shipBuffers[0];
-    this.x = world.width / 2; 
-    this.y = world.height / 2;
+    this.x = world.width / 2 + world.camera_x; 
+    this.y = world.height / 2 + world.camera_y;
 
     this.scale = 10;
     this.life = 100;

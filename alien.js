@@ -18,7 +18,8 @@ var Alien = function (world) {
 
     this.buffers = alienBuffers;
     this.direction = randint(1, 2) * 2 - 3;
-    this.x = world.width / 2 - this.direction * (world.width / 2 - 2);
+    this.x = world.width / 2 - 
+        this.direction * (world.width / 2 - 2) + world.camera_x;
     this.y = randint(0, world.height);
     this.angle = 0;
     this.scale = 10;
@@ -74,10 +75,12 @@ Alien.prototype.update = function () {
         this.angle += dt;
     }
 
-    if (this.direction == 1 && this.x > this.world.width - 10) {
+    if (this.direction == 1 && 
+        this.x - this.world.camera_x > this.world.width - 10) {
         this.terminate();
     }
-    else if (this.direction == -1 && this.x < 10) {
+    else if (this.direction == -1 && 
+        this.x - this.world.camera_x < 10) {
         this.terminate();
     }
 
