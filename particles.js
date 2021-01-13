@@ -388,6 +388,7 @@ Particles.prototype.reset = function () {
     for (var i = 0; i < this.max_particles; i++) {
         this.lifespan[i] = 1;
         this.size[i] = 0;
+
         this.free[i] = i;
     }
     this.n_free = this.max_particles;
@@ -409,7 +410,7 @@ Particles.prototype.GC = function () {
     var i = this.GC_index;
     for (var n = 0; n < this.max_particles; n++) {
         if (ticks - this.birthticks[i] > this.lifespan[i]) {
-            this.lifespan[i] = 1;
+            // found a dead particle
             this.free[this.n_free] = i;
             this.n_free += 1;
         }
@@ -571,8 +572,8 @@ Particles.prototype.draw = function () {
     gl.uniform1f(currentProgram.ticksUniform, this.world.ticks);
 
     gl.uniform2fv(currentProgram.cameraPos, 
-        [2 * this.world.camera_x / this.world.width, 
-         2 * this.world.camera_y / this.world.height
+        [this.world.camera_x / (this.world.width / 2), 
+         this.world.camera_y / (this.world.height / 2)
         ]
     );
 
