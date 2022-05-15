@@ -1,263 +1,269 @@
 /* Start up everything, run the main loop.
  */
 
-'use strict';
+class Main {
+    constructor() {
+        self.shaderPrograms = [];
+        self.gameover_timer = 0;
+        self.gameover_frames = 100;
+        self.terminate_ok = true;
+        self.levelstart_timer = 0;
+        self.levelstart_frames = 100;
 
-function initShaders() {
-    shaderPrograms[0] = getProgram("shader-fs-particle", "shader-vs-particle");
+        var canvas = document.getElementById("argh-steroids-canvas");
 
-    shaderPrograms[0].vertexVelocityAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexVelocity");
+        Key.attach(canvas);
+        Mouse.attach(canvas);
+        Touch.attach(canvas);
 
-    shaderPrograms[0].vertexBirthticksAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexBirthticks");
+        initGL(canvas);
+        initShaders()
+        asteroidsCreate();
+        alienCreate();
+        bulletCreate();
+        shipCreate();
+        textCreate();
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-    shaderPrograms[0].vertexLifespanAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexLifespan");
+        self.world = new World(canvas);
 
-    shaderPrograms[0].vertexColourstartAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexColourstart");
+        Mouse.onclick = function (event) {
+            self.world.sound(event);
+        };
+        Touch.onclick = function (event) {
+            self.world.sound(event);
+        };
 
-    shaderPrograms[0].vertexColourscaleAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexColourscale");
-
-    shaderPrograms[0].vertexSizeAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexSize");
-
-    shaderPrograms[0].vertexDampAttribute = 
-        gl.getAttribLocation(shaderPrograms[0], "aVertexDamp");
-
-    shaderPrograms[0].ticksUniform = 
-        gl.getUniformLocation(shaderPrograms[0], "uTicks");
-    shaderPrograms[0].rampUniform = 
-        gl.getUniformLocation(shaderPrograms[0], "uRamp");
-    shaderPrograms[0].textureUniform = 
-        gl.getUniformLocation(shaderPrograms[0], "uTexture");
-
-    shaderPrograms[0].cameraPos = 
-        gl.getUniformLocation(shaderPrograms[0], "cameraPos");
-
-    shaderPrograms[1] = getProgram("shader-fs-vector", "shader-vs-vector");
-}
-
-var world;
-
-function epilogue_tick() {
-    world.draw();
-    world.draw_hud(); 
-    if (Key.isDown(Key.I)) { 
-        world.draw_info();
+        startscreen();
+        startscreen_tick();
     }
 
-    text_draw_immediate("ENTER OR DOUBLETAP", 
-                        world.width / 2, world.height / 2 + 20,
-                        20, 0,
-                        true);
-    text_draw_immediate("TO PLAY AGAIN", 
-                        world.width / 2, world.height / 2 - 20,
-                        20, 0,
-                        true);
+    initShaders() {
+        self.shaderPrograms[0] = getProgram("shader-fs-particle", 
+            "shader-vs-particle");
 
-    world.update();
+        self.shaderPrograms[0].vertexVelocityAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexVelocity");
 
-    if (Key.isDown(Key.ENTER) ||
-        Touch.getDoubletap()) {
-        gamestart();
-    }
-    else {
-        requestAnimFrame(epilogue_tick);
-    }
-}
+        self.shaderPrograms[0].vertexBirthticksAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexBirthticks");
 
-function epilogue() {
-    Touch.getDoubletap();
-    epilogue_tick();
-}
+        self.shaderPrograms[0].vertexLifespanAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexLifespan");
 
-var gameover_timer = 0;
-var gameover_frames = 100;
+        self.shaderPrograms[0].vertexColourstartAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexColourstart");
 
-function gameover_tick() {
-    world.draw();
-    world.draw_hud(); 
-    if (Key.isDown(Key.I)) { 
-        world.draw_info();
-    }
+        self.shaderPrograms[0].vertexColourscaleAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexColourscale");
 
-    var t = gameover_timer / gameover_frames;
-    text_draw_immediate("GAME OVER", 
-                        world.width / 2, world.height / 2,
-                        Math.log(t + 0.001) * 150, 180,
-                        true);
+        self.shaderPrograms[0].vertexSizeAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexSize");
 
-    world.update();
+        self.shaderPrograms[0].vertexDampAttribute = 
+            gl.getAttribLocation(shaderPrograms[0], "aVertexDamp");
 
-    gameover_timer -= world.dt;
-    if (gameover_timer < 0) {
-        epilogue();
-    }
-    else {
-        requestAnimFrame(gameover_tick);
-    }
-}
+        self.shaderPrograms[0].ticksUniform = 
+            gl.getUniformLocation(shaderPrograms[0], "uTicks");
+        self.shaderPrograms[0].rampUniform = 
+            gl.getUniformLocation(shaderPrograms[0], "uRamp");
+        self.shaderPrograms[0].textureUniform = 
+            gl.getUniformLocation(shaderPrograms[0], "uTexture");
 
-function gameover() {
-    gameover_timer = gameover_frames;
-    gameover_tick();
-}
+        self.shaderPrograms[0].cameraPos = 
+            gl.getUniformLocation(shaderPrograms[0], "cameraPos");
 
-var terminate_ok = true;
-
-function levelplay_tick() {
-    world.draw();
-    world.draw_hud(); 
-    if (Key.isDown(Key.I)) { 
-        world.draw_info();
+        self.shaderPrograms[1] = getProgram("shader-fs-vector", 
+            "shader-vs-vector");
     }
 
-    // need to debounce N key
-    if (terminate_ok && 
-        Key.isDown(Key.N)) {
-        world.terminate_asteroids();
-        terminate_ok = false;
-    }
-    if (!terminate_ok && 
-        !Key.isDown(Key.N)) {
-        terminate_ok = true;
-    }
-    if (Touch.getTriplehold()) {
-        world.terminate_asteroids();
+    set_program(n) {
     }
 
-    world.update();
+    epilogue_tick() {
+        self.world.draw();
+        self.world.draw_hud(); 
+        if (Key.isDown(Key.I)) { 
+            self.world.draw_info();
+        }
 
-    if (!world.player) {
-        gameover();
+        text_draw_immediate("ENTER OR DOUBLETAP", 
+                            self.world.width / 2, self.world.height / 2 + 20,
+                            20, 0,
+                            true);
+        text_draw_immediate("TO PLAY AGAIN", 
+                            self.world.width / 2, self.world.height / 2 - 20,
+                            20, 0,
+                            true);
+
+        self.world.update();
+
+        if (Key.isDown(Key.ENTER) ||
+            Touch.getDoubletap()) {
+            gamestart();
+        }
+        else {
+            requestAnimFrame(epilogue_tick);
+        }
     }
-    else if (world.n_asteroids == 0) {
-        world.level += 1;
+
+    epilogue() {
+        Touch.getDoubletap();
+        epilogue_tick();
+    }
+
+    gameover_tick() {
+        self.world.draw();
+        self.world.draw_hud(); 
+        if (Key.isDown(Key.I)) { 
+            self.world.draw_info();
+        }
+
+        var t = gameover_timer / gameover_frames;
+        text_draw_immediate("GAME OVER", 
+                            self.world.width / 2, self.world.height / 2,
+                            Math.log(t + 0.001) * 150, 180,
+                            true);
+
+        self.world.update();
+
+        self.gameover_timer -= self.world.dt;
+        if (self.gameover_timer < 0) {
+            epilogue();
+        }
+        else {
+            requestAnimFrame(self.gameover_tick);
+        }
+    }
+
+    gameover() {
+        self.gameover_timer = self.gameover_frames;
+        gameover_tick();
+    }
+
+    levelplay_tick() {
+        self.world.draw();
+        self.world.draw_hud(); 
+        if (Key.isDown(Key.I)) { 
+            self.world.draw_info();
+        }
+
+        // need to debounce N key
+        if (self.terminate_ok && 
+            Key.isDown(Key.N)) {
+            self.world.terminate_asteroids();
+            self.terminate_ok = false;
+        }
+        if (!self.terminate_ok && 
+            !Key.isDown(Key.N)) {
+            self.terminate_ok = true;
+        }
+        if (Touch.getTriplehold()) {
+            self.world.terminate_asteroids();
+        }
+
+        self.world.update();
+
+        if (!world.player) {
+            gameover();
+        }
+        else if (self.world.n_asteroids == 0) {
+            self.world.level += 1;
+            levelstart();
+        }
+        else {
+            requestAnimFrame(levelplay_tick);
+        }
+    }
+
+    levelplay() {
+        for (var i = 0; i < self.world.level * 2; i += 1) 
+            new Asteroid(self.world, 
+                randint(75, 100), 0.5 + self.world.level / 4.0);
+
+        levelplay_tick();
+    }
+
+    levelstart_tick() {
+        self.world.draw();
+        self.world.draw_hud(); 
+        if (Key.isDown(Key.I)) { 
+            self.world.draw_info();
+        }
+        if (Key.isDown(Key.S)) { 
+            new Asteroid(self.world, 
+                randint(75, 100), 0.5 + self.world.level / 4.0);
+        }
+
+        var t = self.levelstart_timer / self.levelstart_frames;
+        text_draw_immediate("LEVEL START", 
+                            self.world.width / 2, self.world.height / 2,
+                            t * 150, t * 200.0, true); 
+
+        self.world.update();
+
+        self.levelstart_timer -= self.world.dt;
+        if (self.levelstart_timer < 0) {
+            levelplay();
+        }
+        else {
+            requestAnimFrame(levelstart_tick);
+        }
+    }
+
+    levelstart() {
+        self.levelstart_timer = self.levelstart_frames;
+        levelstart_tick();
+    }
+
+    gamestart() {
+        self.world.reset();
+        self.world.particles.starfield();
+        self.world.add_player();
+
+        // clear any taps
+        Touch.getTap();
+
         levelstart();
     }
-    else {
-        requestAnimFrame(levelplay_tick);
+
+    startscreen_tick() {
+        self.world.draw();
+        if (Key.isDown(Key.I)) { 
+            self.world.draw_info();
+        }
+
+        self.world.update();
+
+        if (Key.isDown(Key.ENTER) ||
+            Touch.getDoubletap()) {
+            self.world.resize_handler = null;
+            gamestart();
+        }
+        else {
+            requestAnimFrame(startscreen_tick);
+        }
+    }
+
+    startscreen() {
+        self.world.reset();
+        self.world.particles.starfield();
+
+        for (var i = 0; i < 2; i += 1) 
+            new Asteroid(self.world, randint(50, 100), 2);
+
+        world.add_text('ARGH ITS THE ASTEROIDS', 20)
+        world.add_text('PRESS LEFT AND RIGHT TO ROTATE') 
+        world.add_text('PRESS UP FOR THRUST')
+        world.add_text('PRESS SPACE FOR FIRE')
+        world.add_text('OR DOUBLE-CLICK FOR MOUSE CONTROLS') 
+        world.add_text('OR DOUBLE-TAP FOR TOUCH CONTROLS') 
+        world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
+        world.add_text('PRESS ENTER TO START', 20)
+
+        // on a resize, re-run this function
+        self.world.resize_handler = startscreen;
     }
 }
 
-function levelplay() {
-    for (var i = 0; i < world.level * 2; i += 1) 
-        new Asteroid(world, randint(75, 100), 0.5 + world.level / 4.0);
-
-    levelplay_tick();
-}
-
-var levelstart_timer = 0;
-var levelstart_frames = 100;
-
-function levelstart_tick() {
-    world.draw();
-    world.draw_hud(); 
-    if (Key.isDown(Key.I)) { 
-        world.draw_info();
-    }
-    if (Key.isDown(Key.S)) { 
-        new Asteroid(world, randint(75, 100), 0.5 + world.level / 4.0);
-    }
-
-    var t = levelstart_timer / levelstart_frames;
-    text_draw_immediate("LEVEL START", 
-                        world.width / 2, world.height / 2,
-                        t * 150, t * 200.0, true); 
-
-    world.update();
-
-    levelstart_timer -= world.dt;
-    if (levelstart_timer < 0) {
-        levelplay();
-    }
-    else {
-        requestAnimFrame(levelstart_tick);
-    }
-}
-
-function levelstart() {
-    levelstart_timer = levelstart_frames;
-    levelstart_tick();
-}
-
-function gamestart() {
-    world.reset();
-    world.particles.starfield();
-    world.add_player();
-
-    // clear any taps
-    Touch.getTap();
-
-    levelstart();
-}
-
-function startscreen_tick() {
-    world.draw();
-    if (Key.isDown(Key.I)) { 
-        world.draw_info();
-    }
-
-    world.update();
-
-    if (Key.isDown(Key.ENTER) ||
-        Touch.getDoubletap()) {
-        world.resize_handler = null;
-        gamestart();
-    }
-    else {
-        requestAnimFrame(startscreen_tick);
-    }
-}
-
-function startscreen() {
-    world.reset();
-    world.particles.starfield();
-
-    for (var i = 0; i < 2; i += 1) 
-        new Asteroid(world, randint(50, 100), 2);
-
-    world.add_text('ARGH ITS THE ASTEROIDS', 20)
-    world.add_text('PRESS LEFT AND RIGHT TO ROTATE') 
-    world.add_text('PRESS UP FOR THRUST')
-    world.add_text('PRESS SPACE FOR FIRE')
-    world.add_text('OR DOUBLE-CLICK FOR MOUSE CONTROLS') 
-    world.add_text('OR DOUBLE-TAP FOR TOUCH CONTROLS') 
-    world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
-    world.add_text('PRESS ENTER TO START', 20)
-
-    // on a resize, re-run this function
-    world.resize_handler = startscreen;
-}
-
-function arghsteroids() {
-    var canvas = document.getElementById("argh-steroids-canvas");
-
-    Key.attach(canvas);
-    Mouse.attach(canvas);
-    Touch.attach(canvas);
-
-    initGL(canvas);
-    initShaders()
-    asteroidsCreate();
-    alienCreate();
-    bulletCreate();
-    shipCreate();
-    textCreate();
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-    world = new World(canvas);
-
-    Mouse.onclick = function (event) {
-        World.prototype.sound.call(world, event);
-    };
-    Touch.onclick = function (event) {
-        World.prototype.sound.call(world, event);
-    };
-
-    startscreen();
-    startscreen_tick();
-}
+export { Main };

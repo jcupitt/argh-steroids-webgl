@@ -83,7 +83,6 @@ function getProgram(fs_id, vs_id) {
     return program;
 }
 
-var shaderPrograms = [];
 var currentProgram;
 
 function setShaderProgram(program) {
