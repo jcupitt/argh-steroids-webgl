@@ -200,13 +200,13 @@ World.prototype.update = function () {
 
         var tap = Touch.getTap();
         if (tap) {
-            // position in world coordinates
-            var x = wrap_around(tap.x - this.camera_x, this.width);
-            var y = wrap_around(tap.y - this.camera_y, this.height);
+            // ship xy in display coordinates
+            var x = wrap_around(this.player.x - world.camera_x, world.width);
+            var y = wrap_around(this.player.y - world.camera_y, world.height);
 
             // vector to player
-            var dx = x - this.player.x;
-            var dy = (this.height - y) - this.player.y;
+            var dx = tap.x - x;
+            var dy = (this.height - tap.y) - y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);
@@ -216,12 +216,13 @@ World.prototype.update = function () {
 
         var hold = Touch.getHold();
         if (hold) {
-            // position in world coordinates
-            var x = wrap_around(hold.x - this.camera_x, this.width);
-            var y = wrap_around(hold.y - this.camera_y, this.height);
+            // ship xy in display coordinates
+            var x = wrap_around(this.player.x - world.camera_x, world.width);
+            var y = wrap_around(this.player.y - world.camera_y, world.height);
 
-            var dx = x - this.player.x;
-            var dy = (this.height - y) - this.player.y;
+            // vector to player
+            var dx = hold.x - x;
+            var dy = (this.height - hold.y) - y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);
