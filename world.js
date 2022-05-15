@@ -200,8 +200,13 @@ World.prototype.update = function () {
 
         var tap = Touch.getTap();
         if (tap) {
-            var dx = tap.x - this.player.x;
-            var dy = (this.height - tap.y) - this.player.y;
+            // position in world coordinates
+            var x = wrap_around(tap.x - this.camera_x, this.width);
+            var y = wrap_around(tap.y - this.camera_y, this.height);
+
+            // vector to player
+            var dx = x - this.player.x;
+            var dy = (this.height - y) - this.player.y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);
@@ -211,8 +216,12 @@ World.prototype.update = function () {
 
         var hold = Touch.getHold();
         if (hold) {
-            var dx = hold.x - this.player.x;
-            var dy = (this.height - hold.y) - this.player.y;
+            // position in world coordinates
+            var x = wrap_around(hold.x - this.camera_x, this.width);
+            var y = wrap_around(hold.y - this.camera_y, this.height);
+
+            var dx = x - this.player.x;
+            var dy = (this.height - y) - this.player.y;
             var angle = rect_to_polar(dx, dy);
 
             this.player.rotate_to(angle);

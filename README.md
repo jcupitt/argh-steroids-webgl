@@ -55,7 +55,7 @@ java -jar ~/closure/compiler.jar --js glMatrix-0.9.5.min.js webgl-utils.js util.
 
 # Developing
 
-If running locally, you need to tell your browser to allow JS to access 
+To run locally, you need to tell your browser to allow JS to access 
 `file://` URLs. 
   
 For example, in Chrome on Mac:
