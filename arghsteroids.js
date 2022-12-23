@@ -2,7 +2,7 @@
  */
 
 class Main {
-    constructor() {
+    constructor(element) {
         self.shaderPrograms = [];
         self.gameover_timer = 0;
         self.gameover_frames = 100;
@@ -10,11 +10,11 @@ class Main {
         self.levelstart_timer = 0;
         self.levelstart_frames = 100;
 
-        var canvas = document.getElementById("argh-steroids-canvas");
+        var canvas = document.getElementById(element);
 
-        Key.attach(canvas);
-        Mouse.attach(canvas);
-        Touch.attach(canvas);
+        self.key = new Key(canvas);
+        self.mouse = new Mouse(canvas);
+        self.touch = new Touch(canvas);
 
         initGL(canvas);
         initShaders()
@@ -78,6 +78,7 @@ class Main {
     }
 
     set_program(n) {
+        setShaderProgram(self.shaderPrograms[n]);
     }
 
     epilogue_tick() {

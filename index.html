@@ -14,17 +14,7 @@
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
 <script type="text/javascript" src="webgl-utils.js"></script>
 
-<script type="text/javascript" src="util.js"></script>
-<script type="text/javascript" src="sprite.js"></script>
-<script type="text/javascript" src="asteroid.js"></script>
-<script type="text/javascript" src="alien.js"></script>
-<script type="text/javascript" src="bullet.js"></script>
-<script type="text/javascript" src="ship.js"></script>
-<script type="text/javascript" src="particles.js"></script>
-<script type="text/javascript" src="text.js"></script>
-<script type="text/javascript" src="world.js"></script>
-<script type="text/javascript" src="main.js"></script>
-<script type="text/javascript" src="audio_sprite.js"></script>
+<script type="module" crossorigin src="arghsteroids.js"></script>
 
 <script id="shader-vs-vector" type="x-shader/x-vertex">
     attribute vec2 aVertexPosition;
@@ -131,7 +121,7 @@ canvas {
 </style>
 
 </head>
-<body onload="arghsteroids();">
+<body onload="new Arghsteroids('argh-steroids-canvas');">
     <canvas id="argh-steroids-canvas" style="border: none;" 
 	width="500" height="500"></canvas>
 </body>
