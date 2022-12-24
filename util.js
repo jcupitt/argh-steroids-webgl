@@ -203,6 +203,7 @@ function buffersDraw(buffers) {
     gl.enableVertexAttribArray(currentProgram.vertexPositionAttribute);
     gl.vertexAttribPointer(currentProgram.vertexPositionAttribute, 
         buffers.itemSize, gl.FLOAT, false, 0, 0);
+    gl.lineWidth(1.5);
     gl.drawArrays(gl.LINE_LOOP, 0, buffers.numItems);
 };
 

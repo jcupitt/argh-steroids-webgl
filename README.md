@@ -41,9 +41,6 @@ as well.
 * Collision detection is just touching circles. We could look at the geometry
   as well to get pixel-perfect detection.
 
-* Collision physics just exchanges the two velocities. We could do true
-  billiard-ball collisions.
-
 # Minimisation
 
 With the [closure compiler](https://developers.google.com/closure/compiler/),

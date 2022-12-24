@@ -31,6 +31,7 @@ var Asteroid = function (world, scale, max_speed) {
     Sprite.call(this, world);
 
     this.scale = scale;
+    this.mass = scale * scale;
     this.max_speed = max_speed;
     this.buffers = asteroidBuffers[randint(0, asteroidBuffers.length - 1)];
 
@@ -83,7 +84,10 @@ Asteroid.prototype.update = function () {
     var world = this.world;
     var dt = world.dt;
 
-    this.angle = wrap_around(this.angle + dt * this.angular_velocity, 360);
+    // scale angular_velocity by speed, so slower asteroids spin more slowly
+    var speed = Math.sqrt(this.u * this.u + this.v * this.v);
+    var angular_velocity = 0.5 * speed * this.angular_velocity;
+    this.angle = wrap_around(this.angle + dt * angular_velocity, 360);
 
     Sprite.prototype.update.call(this);
 };
