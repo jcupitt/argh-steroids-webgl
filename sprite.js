@@ -14,6 +14,7 @@ var Sprite = function (world) {
     this.mass = 50;
     this.kill = false;
     this.tested_collision = false;
+    this.spark_countdown = 0;
 
     this.world.add(this);
 };
@@ -26,6 +27,10 @@ Sprite.prototype.update = function () {
 
     this.x = wrap_around(this.x + dt * this.u, world.width);
     this.y = wrap_around(this.y + dt * this.v, world.height);
+
+    if (this.spark_countdown >= 0) {
+        this.spark_countdown -= dt;
+    }
 };
 
 Sprite.prototype.setAudio = function (audio_on) {
@@ -50,21 +55,19 @@ Sprite.prototype.collide = function (other) {
     cx /= cmag;
     cy /= cmag;
 
-    // impact of other onto this (imagine this is stationary)
+    // change the frame of reference so that this is stationary, ie. subtract
+    // this.u,v from all velocities
     var cu = other.u - this.u;
     var cv = other.v - this.v;
 
-    // component of impact along unit vector 
-    var i = cx * cu + cy * cv;
+    // component of impact along unit vector times mass to get impulse
+    var i = 0.5 * other.mass * (cx * cu + cy * cv);
 
-    // add a damping factor to ensure we don't get runaway speeds
-    var restitution = 0.5;
-
-    // they are sent in opposite directions
-    other.u -= restitution * i * cx;
-    other.v -= restitution * i * cy;
-    this.u += restitution * other.mass * i * cx / this.mass;
-    this.v += restitution * other.mass * i * cy / this.mass;
+    // they are pushed in opposite directions
+    this.u += i * cx / this.mass;
+    this.v += i * cy / this.mass;
+    other.u -= i * cx / other.mass;
+    other.v -= i * cy / other.mass;
 
 };
 
