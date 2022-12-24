@@ -75,6 +75,7 @@ var Character = function (world, ch, x, y, scale) {
     this.y = y;
     this.angle = 0;
     this.scale = scale;
+    this.mass = scale * scale;
     this.ch = ch;
     this.angular_velocity = 0;
 }

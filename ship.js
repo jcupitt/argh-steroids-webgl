@@ -31,9 +31,9 @@ var Ship = function (world) {
     this.x = world.width / 2 + world.camera_x; 
     this.y = world.height / 2 + world.camera_y;
 
-    this.scale = 10;
-    this.life = 100;
     this.scale = 5;
+    this.mass = 5000;
+    this.life = 100;
     this.reload_timer = 0;
     this.regenerate_timer = 0;
     this.jet_timer = 1;

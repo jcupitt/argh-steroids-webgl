@@ -11,6 +11,7 @@ var Sprite = function (world) {
     this.v = 0;
     this.angle = 0;
     this.scale = 10;
+    this.mass = 50;
     this.kill = false;
     this.tested_collision = false;
 
@@ -42,13 +43,29 @@ Sprite.prototype.impact = function (other) {
 // This is triggered once per collision, so it's for symmetric
 // things, like physics
 Sprite.prototype.collide = function (other) {
-    var u = other.u;
-    other.u = this.u;
-    this.u = u;
+    // unit vector along which the collision takes place
+    var cx = this.x - other.x;
+    var cy = this.y - other.y;
+    var cmag = Math.sqrt(cx * cx + cy * cy);
+    cx /= cmag;
+    cy /= cmag;
 
-    var v = other.v;
-    other.v = this.v;
-    this.v = v;
+    // impact of other onto this (imagine this is stationary)
+    var cu = other.u - this.u;
+    var cv = other.v - this.v;
+
+    // component of impact along unit vector 
+    var i = cx * cu + cy * cv;
+
+    // add a damping factor to ensure we don't get runaway speeds
+    var restitution = 0.5;
+
+    // they are sent in opposite directions
+    other.u -= restitution * i * cx;
+    other.v -= restitution * i * cy;
+    this.u += restitution * other.mass * i * cx / this.mass;
+    this.v += restitution * other.mass * i * cy / this.mass;
+
 };
 
 Sprite.prototype.test_collisions = function (possible_sprites) {
