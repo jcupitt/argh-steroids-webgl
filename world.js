@@ -265,9 +265,14 @@ World.prototype.update = function () {
         return !sprite.kill;
     });
 
+    /* Cells in the map need to be at least 100x100 (the size of the largest
+     * asteroid). If the screen is eg. 250x250, we make cells a bit bigger to
+     * avoid small half-cells at the bottom and right.
+     */
     var map_spacing = 100;
-    var map_width = Math.ceil(this.width / map_spacing);
-    var map_height = Math.ceil(this.height / map_spacing);
+    var map_width = Math.floor(this.width / map_spacing);
+    var map_height = Math.floor(this.height / map_spacing);
+    map_spacing = Math.max(this.width / map_width, this.height / map_height);
 
     var world_map = new Array(map_width);
     for (var x = 0; x < map_width; x++) {
