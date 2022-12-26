@@ -69,6 +69,19 @@ Sprite.prototype.collide = function (other) {
     other.u -= i * cx / other.mass;
     other.v -= i * cy / other.mass;
 
+    // not too many sparks, it looks odd
+    if (i > 3 && this.spark_countdown <= 0) {
+        this.spark_countdown = randint(0, 40);
+
+        // point of impact for sparks
+        var impact_x = other.x + cx * other.scale;
+        var impact_y = other.y + cy * other.scale;
+
+        var n_sparks = Math.min(100, i / 10);
+
+        this.world.particles.sparks(n_sparks, 
+            impact_x, impact_y, other.u, other.v);
+    }
 };
 
 Sprite.prototype.test_collisions = function (possible_sprites) {
