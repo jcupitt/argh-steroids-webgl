@@ -505,8 +505,7 @@ Particles.prototype.explosion2 = function (x, y, u, v) {
     this.ship_audio_sprite.play("explosion");  
 };
 
-Particles.prototype.sparks = function (x, y, u, v) {
-    var n_points = 20;
+Particles.prototype.sparks = function (n_points, x, y, u, v) {
     var delta = 360 / n_points;
     var base_colour = randint(50, 255);
 

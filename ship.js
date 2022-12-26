@@ -145,7 +145,6 @@ Ship.prototype.terminate = function () {
 
 Ship.prototype.impact = function (other) {
     if (other instanceof Alien || other instanceof Asteroid) {
-        this.world.particles.sparks(this.x, this.y, this.u, this.v);
         this.shields -= 1;
         this.regenerate_timer = 1000;
         this.audio_sprite.play("lose_bar"); 

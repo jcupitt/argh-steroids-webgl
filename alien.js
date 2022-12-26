@@ -88,14 +88,7 @@ Alien.prototype.update = function () {
 }
 
 Alien.prototype.impact = function (other) {
-    // not too many sparks, it looks odd
-    if (this.spark_countdown <= 0) {
-        this.spark_countdown = randint(0, 40);
-
-        this.angle = randint(-90, 90);
-        this.world.particles.sparks(this.x, this.y, this.u, this.v);
-    }
-
+    this.angle = randint(-90, 90);
     Sprite.prototype.impact.call(this, other);
 }
 
