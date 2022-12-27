@@ -297,7 +297,7 @@ World.prototype.update = function () {
 
             /// avoid /0 issues
             if (d > 5) {
-                var f = world.G * (sprite.mass + other.mass) / (d * d);
+                var f = world.G * sprite.mass * other.mass / d;
                 var du = f * dx / d;
                 var dv = f * dy / d;
 
