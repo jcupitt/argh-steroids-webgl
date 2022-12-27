@@ -310,6 +310,26 @@ World.prototype.update = function () {
         sprite.tested_collision = true;
     });
 
+    /* Gravity, sort-of
+    this.sprites.forEach (function (sprite) { 
+        var x = wrap_around((sprite.x / map_spacing) | 0, map_width);
+        var y = wrap_around((sprite.y / map_spacing) | 0, map_height);
+
+        var others = world_map[x][y];
+        others.forEach (function (other) { 
+            if (other != sprite) {
+                var dx = sprite.x - other.x;
+                var dy = sprite.y - other.y;
+                var d = Math.sqrt(dx * dx + dy * dy);
+                var f = 0.01 * (sprite.mass + other.mass) / (d * d);
+
+                sprite.u -= f * dx / d;
+                sprite.v -= f * dy / d;
+            }
+        });
+    });
+     */
+
     if (this.player) {
         // target x/y for the screen 
         var target_x = this.player.x - this.width / 2;

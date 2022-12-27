@@ -80,7 +80,7 @@ Sprite.prototype.collide = function (other) {
         var n_sparks = Math.min(100, i / 10);
 
         this.world.particles.sparks(n_sparks, 
-            impact_x, impact_y, other.u, other.v);
+            impact_x, impact_y, 20 * this.u, 20 * this.v );
     }
 };
 
