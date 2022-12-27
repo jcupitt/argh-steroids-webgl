@@ -84,72 +84,68 @@ Sprite.prototype.collide = function (other) {
     }
 };
 
-Sprite.prototype.test_collisions = function (possible_sprites) {
-    possible_sprites.forEach (function (other) { 
-        if (other != this && !other.tested_collision) {
-            var world = this.world;
-            var width = world.width;
-            var height = world.height;
+Sprite.prototype.test_collision = function (other) {
+    var world = this.world;
+    var width = world.width;
+    var height = world.height;
 
-            var dx = this.x - other.x;
-            var dy = this.y - other.y;
+    var dx = this.x - other.x;
+    var dy = this.y - other.y;
 
-            // we need to do wrap-around testing
-            //
-            // we know that possible_sprites is only other sprites in the
-            // immediate neighbourhood, therefore if dx > half screen width,
-            // then this and other must be on opposite sides of the screen and
-            // must be possibly colliding via warp-around
-            //
-            // in this case, notionally move down by a screen width 
-            if (dx > width / 2) {
-                dx -= width;
-            }
-            else if (dx < -width / 2) {
-                dx += width;
-            }
+    // we need to do wrap-around testing
+    //
+    // we know that possible_sprites is only other sprites in the
+    // immediate neighbourhood, therefore if dx > half screen width,
+    // then this and other must be on opposite sides of the screen and
+    // must be possibly colliding via warp-around
+    //
+    // in this case, notionally move down by a screen width 
+    if (dx > width / 2) {
+        dx -= width;
+    }
+    else if (dx < -width / 2) {
+        dx += width;
+    }
 
-            if (dy > height / 2) {
-                dy -= height;
-            }
-            else if (dy < -height / 2) {
-                dy += height;
-            }
+    if (dy > height / 2) {
+        dy -= height;
+    }
+    else if (dy < -height / 2) {
+        dy += height;
+    }
 
-            var d2 = dx * dx + dy * dy;
-            var t = this.scale + other.scale;
-            var t2 = t * t ;
+    var d2 = dx * dx + dy * dy;
+    var t = this.scale + other.scale;
+    var t2 = t * t ;
 
-            if (d2 < t2) {
-                // unit vector
-                var d = Math.sqrt(d2);
-                if (d == 0) {
-                    d = 0.0001;
-                }
-                var u = dx / d;
-                var v = dy / d;
-                
-                // amount of overlap
-                var overlap = d - t;
-
-                // displace by overlap in that direction
-                other.x += u * overlap;
-                other.x = wrap_around(other.x, width);
-                other.y += v * overlap;
-                other.y = wrap_around(other.y, height);
-
-                // tell the objects they have collided ... both objects 
-                // need to be told
-                this.impact(other);
-                other.impact(this);
-
-                // don't do the physics if either object is now dead
-                if (!this.kill && !other.kill) {
-                    this.collide(other);
-                }
-            }
+    if (d2 < t2) {
+        // unit vector
+        var d = Math.sqrt(d2);
+        if (d == 0) {
+            d = 0.0001;
         }
-    }, this);
+        var u = dx / d;
+        var v = dy / d;
+        
+        // amount of overlap
+        var overlap = d - t;
+
+        // displace by overlap in that direction
+        other.x += u * overlap;
+        other.x = wrap_around(other.x, width);
+        other.y += v * overlap;
+        other.y = wrap_around(other.y, height);
+
+        // tell the objects they have collided ... both objects 
+        // need to be told
+        this.impact(other);
+        other.impact(this);
+
+        // don't do the physics if either object is now dead
+        if (!this.kill && !other.kill) {
+            this.collide(other);
+        }
+    }
 };
 
 // draw in display space 

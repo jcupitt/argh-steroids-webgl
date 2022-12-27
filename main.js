@@ -187,6 +187,7 @@ function levelstart() {
 function gamestart() {
     world.reset();
     world.particles.starfield();
+    world.G = 0.01;
     world.add_player();
 
     // clear any taps
@@ -216,6 +217,7 @@ function startscreen_tick() {
 function startscreen() {
     world.reset();
     world.particles.starfield();
+    world.G = 0.0001;
 
     for (var i = 0; i < 2; i += 1) 
         new Asteroid(world, randint(50, 100), 2);
