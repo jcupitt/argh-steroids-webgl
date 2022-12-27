@@ -49,6 +49,8 @@ var World = function (canvas) {
 
     this.particles = new Particles(this);
 
+    this.G = 0.001;
+
     this.reset();
 }
 
@@ -265,44 +267,44 @@ World.prototype.update = function () {
         return !sprite.kill;
     });
 
-    var map_spacing = 100;
-    var map_width = Math.ceil(this.width / map_spacing);
-    var map_height = Math.ceil(this.height / map_spacing);
-
-    var world_map = new Array(map_width);
-    for (var x = 0; x < map_width; x++) {
-        world_map[x] = new Array(map_height);
-        for (var y = 0; y < map_height; y++) {
-            world_map[x][y] = [];
-        }
-    }
+    /* Cells in the map need to be at least 100x100 (the size of the largest
+     * asteroid).
+     */
+    var map = new Map(this, 100);
 
     this.sprites.forEach (function (sprite) { 
         sprite.tested_collision = false;
-
-        var x = (sprite.x / map_spacing) | 0;
-        var y = (sprite.y / map_spacing) | 0;
-
-        for (var a = x - 1; a <= x + 1; a++ ) {
-            for (var b = y - 1; b <= y + 1; b++ ) {
-                var map_x = wrap_around(a, map_width);
-                var map_y = wrap_around(b, map_height);
-
-                world_map[map_x][map_y].push(sprite);
+    });
+    this.sprites.forEach (function (sprite) { 
+        map.nearby(sprite, 100, function (other) {
+            if (!other.tested_collision) {
+                sprite.test_collision(other);
             }
-        }
+        });
+
+        // now we've tested sprite against everything it could possibly 
+        // touch, we no longer need to test anything against sprite
+        sprite.tested_collision = true;
     });
 
+    /* Gravity, sort-of.
+     */
     this.sprites.forEach (function (sprite) { 
-        // wrap_around() just in case the sprite is outside screenspace 
-        var x = wrap_around((sprite.x / map_spacing) | 0, map_width);
-        var y = wrap_around((sprite.y / map_spacing) | 0, map_height);
+        map.nearby(sprite, 200, function (other) {
+            var dx = sprite.x - other.x;
+            var dy = sprite.y - other.y;
+            var d = Math.sqrt(dx * dx + dy * dy);
 
-        sprite.test_collisions(world_map[x][y]);
+            /// avoid /0 issues
+            if (d > 5) {
+                var f = world.G * sprite.mass * other.mass / d;
+                var du = f * dx / d;
+                var dv = f * dy / d;
 
-        // now we've tested sprite against everything it could possibly touch, 
-        // we no longer need to test anything against sprite
-        sprite.tested_collision = true;
+                sprite.u -= du;
+                sprite.v -= dv;
+            }
+        });
     });
 
     if (this.player) {

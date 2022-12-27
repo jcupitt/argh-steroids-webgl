@@ -511,13 +511,14 @@ Particles.prototype.sparks = function (n_points, x, y, u, v) {
 
     for (var i = 0; i < n_points; i++) {
         var angle = i * delta + randint(-delta / 2, delta / 2);
-        var speed = Math.random() * 2.0;
+        var speed = Math.random() * 20.0;
         this.emit(randint(50, 100),
                   x, y,
                   u + speed * Math.cos(rad(angle)),
                   v + speed * Math.sin(rad(angle)),
-                  base_colour - randint(1, 200), -113, 
-                  randint(5, 10), 50);
+                  base_colour - randint(1, 200), 
+                  randint(1, 10), 
+                  randint(10, 30), 5);
     }
 
     this.planet_audio_sprite.play("explosion", 0.3); 

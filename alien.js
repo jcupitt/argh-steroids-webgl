@@ -23,6 +23,7 @@ var Alien = function (world) {
     this.y = randint(0, world.height);
     this.angle = 0;
     this.scale = 10;
+    this.mass = 100;
     this.direction_timer = randint(10, 50);
     this.random_velocity();
 
