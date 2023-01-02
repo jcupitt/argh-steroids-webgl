@@ -187,7 +187,7 @@ function levelstart() {
 function gamestart() {
     world.reset();
     world.particles.starfield();
-    world.G = 0.00000001;
+    world.G = 0.0005;
     world.add_player();
 
     // clear any taps
@@ -217,7 +217,7 @@ function startscreen_tick() {
 function startscreen() {
     world.reset();
     world.particles.starfield();
-    world.G = 0.00000001;
+    world.G = 0.000001;
 
     for (var i = 0; i < 2; i += 1) 
         new Asteroid(world, randint(50, 100), 2);
@@ -228,7 +228,7 @@ function startscreen() {
     world.add_text('PRESS SPACE FOR FIRE')
     world.add_text('OR DOUBLE-CLICK FOR MOUSE CONTROLS') 
     world.add_text('OR DOUBLE-TAP FOR TOUCH CONTROLS') 
-    world.add_text('WATCH OUT FOR ALLEN THE ALIEN')
+    world.add_text('WATCH OUT FOR ALAN THE ALIEN')
     world.add_text('PRESS ENTER TO START', 20)
 
     // on a resize, re-run this function

@@ -67,14 +67,21 @@ Asteroid.prototype.terminate = function () {
                                        this.u / 2, this.v / 2);
 
         if (this.scale > 15) { 
-            var n = randint(2, Math.max(2, Math.min(5, this.scale / 5)));
+            var n_fragments = 
+                randint(2, Math.max(2, Math.min(5, this.scale / 5)));
+            var new_scale = this.scale / n_fragments;
+            var delta = 360 / n_fragments;
 
-            for (var i = 0; i < n; i++) {
-                var new_asteroid = new Asteroid(this.world, this.scale / n, 1);
-                new_asteroid.x = this.x;
-                new_asteroid.y = this.y;
-                new_asteroid.u += this.u;
-                new_asteroid.v += this.v;
+            for (var i = 0; i < n_fragments; i++) {
+                var angle = i * delta;
+                var u = Math.cos(rad(angle));
+                var v = Math.sin(rad(angle));
+
+                var new_asteroid = new Asteroid(this.world, new_scale, 1);
+                new_asteroid.x = this.x + 1.5 * u * new_scale;
+                new_asteroid.y = this.y + 1.5 * v * new_scale;
+                new_asteroid.u = -2 * u + this.u;
+                new_asteroid.v = -2 * v + this.v;
             }
         }
     }
@@ -85,19 +92,19 @@ Asteroid.prototype.update = function () {
     var dt = world.dt;
 
     // scale angular_velocity by speed, so slower asteroids spin more slowly
-    var speed = Math.sqrt(this.u * this.u + this.v * this.v);
-    var angular_velocity = 0.5 * speed * this.angular_velocity;
+    var speed = this.u * this.u + this.v * this.v;
+    var angular_velocity = 0.1 * speed * this.angular_velocity;
     this.angle = wrap_around(this.angle + dt * angular_velocity, 360);
 
     Sprite.prototype.update.call(this);
 };
 
-Asteroid.prototype.collide = function (other) {
+Asteroid.prototype.impact = function (other) {
     if (other instanceof Asteroid) {
         var angular_velocity = other.angular_velocity;
         other.angular_velocity = this.angular_velocity;
         this.angular_velocity = angular_velocity;
     }
 
-    Sprite.prototype.collide.call(this, other);
+    Sprite.prototype.impact.call(this, other);
 }

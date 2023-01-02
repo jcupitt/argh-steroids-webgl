@@ -83,10 +83,10 @@ var Character = function (world, ch, x, y, scale) {
 Character.prototype = Object.create(Sprite.prototype); 
 Character.prototype.constructor = Character;
 
-Character.prototype.impact = function (other) {
+Character.prototype.impact = function (other, ux, uy, d) {
     this.angular_velocity = Math.random() * 2 - 1;
 
-    Sprite.prototype.impact.call(this, other);
+    Sprite.prototype.impact.call(this, other, ux, uy, d);
 }
 
 Character.prototype.update = function () {
@@ -120,7 +120,7 @@ function text_add(world, string, x, y, scale) {
         if (textBuffers[ch]) {
             new Character(world, ch, x, y, scale);
         }
-        x += scale * kern;
+        x += scale * kern + 0.1;
     }
 }
 

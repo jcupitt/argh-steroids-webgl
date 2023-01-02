@@ -32,7 +32,7 @@ var Ship = function (world) {
     this.y = world.height / 2 + world.camera_y;
 
     this.scale = 5;
-    this.mass = 5000;
+    this.mass = 1000;
     this.life = 100;
     this.reload_timer = 0;
     this.regenerate_timer = 0;
@@ -108,8 +108,8 @@ Ship.prototype.fire = function () {
         var v = Math.sin(rad(this.angle));
 
         var bullet = new Bullet(self.world);
-        bullet.x = this.x + u * this.scale;
-        bullet.y = this.y + v * this.scale;
+        bullet.x = this.x + u * (this.scale + 5);
+        bullet.y = this.y + v * (this.scale + 5);
         bullet.u = this.u + u * 7.0;
         bullet.v = this.v + v * 7.0;
         bullet.angle = this.angle;

@@ -32,6 +32,9 @@ var Map = function (world, cell_size) {
         var x = (sprite.x / this.cell_width) | 0;
         var y = (sprite.y / this.cell_height) | 0;
 
+        x = wrap_around(x, this.n_cells_across);
+        y = wrap_around(y, this.n_cells_down);
+
         this.map[x][y].push(sprite);
     }, this);
 };
@@ -54,7 +57,7 @@ Map.prototype.nearby = function (sprite, r, func) {
 
             this.map[cell_x][cell_y].forEach (function(other) {
                 if (sprite != other) {
-                    func(other);
+                    func.call(sprite, other);
                 }
             });
         }

@@ -532,7 +532,6 @@ var Touch = {
                 }, 100)
             };
 
-
             // things like audio play can only be started from callbacks ... 
             // so we have to have a hook here for the startscreen to use for 
             // the music on/off button
