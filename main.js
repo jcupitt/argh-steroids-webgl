@@ -217,7 +217,7 @@ function startscreen_tick() {
 function startscreen() {
     world.reset();
     world.particles.starfield();
-    world.G = 0.000001;
+    world.G = 0.00001;
 
     for (var i = 0; i < 2; i += 1) 
         new Asteroid(world, randint(50, 100), 2);

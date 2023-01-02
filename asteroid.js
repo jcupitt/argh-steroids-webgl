@@ -97,7 +97,7 @@ Asteroid.prototype.update = function () {
     this.angle = wrap_around(this.angle + dt * angular_velocity, 360);
 
     Sprite.prototype.update.call(this);
-};
+}
 
 Asteroid.prototype.impact = function (other) {
     if (other instanceof Asteroid) {

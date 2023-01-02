@@ -26,6 +26,7 @@ var Alien = function (world) {
     this.mass = 100;
     this.direction_timer = randint(10, 50);
     this.random_velocity();
+    this.angular_velocity = 0;
 
     this.audio = new Audio("media/alien_engine.mp3");
     this.audio.volume = 0.3;
