@@ -151,6 +151,10 @@ World.prototype.add_text = function (string, scale) {
     this.text_y -= scale + 50;
 }
 
+// two masses at distance d2 (distance squared), 
+World.prototype.update = function (m1, m2, d2, r) {
+}
+
 World.prototype.update = function () {
     var time_now = new Date().getTime() - this.t0;
 
@@ -173,6 +177,9 @@ World.prototype.update = function () {
         this.fps_current = this.fps_count;
         this.fps_count = 0;
     }
+
+    // make the collision map we will use for this frame
+    this.map = new Map(this, 100);
 
     if (this.player) {
         var movement = Mouse.getMovement();
@@ -257,6 +264,104 @@ World.prototype.update = function () {
     }
 
     this.sprites.forEach (function (sprite) { 
+        sprite.in_impact = false;
+        sprite.impact_other = null;
+        sprite.impact_ux = 0;
+        sprite.impact_uy = 0;
+        sprite.impact_d = 0;
+    });
+
+    /* Recompute all forces.
+     */
+    this.sprites.forEach (function (sprite) { 
+        if (sprite.kill) {
+            return;
+        }
+
+        this.map.nearby(sprite, 200, function (other) {
+            if (other.kill) {
+                return;
+            }
+
+            var dx = sprite.x - other.x;
+            var dy = sprite.y - other.y;
+
+            // we need to do wrap-around testing
+            //
+            // we know that possible_sprites is only other sprites in the
+            // immediate neighbourhood, therefore if dx > half screen width,
+            // then this and other must be on opposite sides of the screen and
+            // must be possibly colliding via warp-around
+            //
+            // in this case, notionally move down by a screen width 
+            if (dx > world.width / 2) {
+                dx -= world.width;
+            }
+            else if (dx < -world.width / 2) {
+                dx += world.width;
+            }
+
+            if (dy > world.height / 2) {
+                dy -= world.height;
+            }
+            else if (dy < -world.height / 2) {
+                dy += world.height;
+            }
+
+            // unit vector, avoiding /0
+            var d = Math.sqrt(dx * dx + dy * dy);
+            d = Math.max(0.1, d);
+            var ux = dx / d;
+            var uy = dy / d;
+
+            // d at which we flip from attraction to repulsion
+            var t = this.scale + other.scale;
+            
+            if (d >= t) {
+                // gravitational attraction
+                this.u -= ux * world.G * other.mass / d;
+                this.v -= uy * world.G * other.mass / d;
+            }
+            else {
+                // collision ... a negative force
+                var f = (t - d) / t;
+                this.u += other.mass * f * ux / this.mass;
+                this.v += other.mass * f * uy / this.mass;
+
+                // note the impact on both objects
+                this.in_impact = true;
+                this.impact_other = other;
+                this.impact_ux = ux;
+                this.impact_uy = uy;
+                this.impact_d = d;
+                this.impact_f = f;
+
+                other.in_impact = true;
+                other.impact_other = this;
+                other.impact_ux = ux;
+                other.impact_uy = uy;
+                other.impact_d = d;
+                other.impact_f = f;
+            }
+
+            // slight friction ... alan will put some energy back in
+            this.u *= 0.99999;
+            this.v *= 0.99999;
+        });
+    }, this);
+
+    this.sprites.forEach (function (sprite) { 
+        if (sprite.in_impact && !sprite.was_impact) {
+            // a new impact
+            sprite.impact(sprite.impact_other);
+        }
+
+        sprite.was_impact = sprite.in_impact;
+    });
+
+    /* All movement.
+     */
+    this.sprites.forEach (function (sprite) { 
         sprite.update();
     });
 
@@ -265,46 +370,6 @@ World.prototype.update = function () {
     }
     this.sprites = this.sprites.filter(function (sprite) {
         return !sprite.kill;
-    });
-
-    /* Cells in the map need to be at least 100x100 (the size of the largest
-     * asteroid).
-     */
-    var map = new Map(this, 100);
-
-    this.sprites.forEach (function (sprite) { 
-        sprite.tested_collision = false;
-    });
-    this.sprites.forEach (function (sprite) { 
-        map.nearby(sprite, 100, function (other) {
-            if (!other.tested_collision) {
-                sprite.test_collision(other);
-            }
-        });
-
-        // now we've tested sprite against everything it could possibly 
-        // touch, we no longer need to test anything against sprite
-        sprite.tested_collision = true;
-    });
-
-    /* Gravity, sort-of.
-     */
-    this.sprites.forEach (function (sprite) { 
-        map.nearby(sprite, 200, function (other) {
-            var dx = sprite.x - other.x;
-            var dy = sprite.y - other.y;
-            var d = Math.sqrt(dx * dx + dy * dy);
-
-            /// avoid /0 issues
-            if (d > 5) {
-                var f = world.G * sprite.mass * other.mass / d;
-                var du = f * dx / d;
-                var dv = f * dy / d;
-
-                sprite.u -= du;
-                sprite.v -= dv;
-            }
-        });
     });
 
     if (this.player) {

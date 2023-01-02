@@ -38,6 +38,11 @@ as well.
 
 # TODO
 
+* Move collision detection + gravity into sprite (why is this in world) and do 
+  move + detect at the same time so we can back out of overlaps
+
+* Add a little friction and reduce collision damping?
+
 * Collision detection is just touching circles. We could look at the geometry
   as well to get pixel-perfect detection.
 

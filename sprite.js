@@ -13,7 +13,8 @@ var Sprite = function (world) {
     this.scale = 10;
     this.mass = 50;
     this.kill = false;
-    this.tested_collision = false;
+    this.in_impact = false;
+    this.was_impact = false;
     this.spark_countdown = 0;
 
     this.world.add(this);
@@ -40,110 +41,19 @@ Sprite.prototype.terminate = function () {
     this.kill = true;
 };
 
-// This is triggered for each object in a collision, so it's for asymmetric
-// things, like something blowing up
-Sprite.prototype.impact = function (other) {
-};
-
-// This is triggered once per collision, so it's for symmetric
-// things, like physics
-Sprite.prototype.collide = function (other) {
-    // unit vector along which the collision takes place
-    var cx = this.x - other.x;
-    var cy = this.y - other.y;
-    var cmag = Math.sqrt(cx * cx + cy * cy);
-    cx /= cmag;
-    cy /= cmag;
-
-    // change the frame of reference so that this is stationary, ie. subtract
-    // this.u,v from all velocities
-    var cu = other.u - this.u;
-    var cv = other.v - this.v;
-
-    // component of impact along unit vector times mass to get impulse
-    var i = 0.5 * other.mass * (cx * cu + cy * cv);
-
-    // they are pushed in opposite directions
-    this.u += i * cx / this.mass;
-    this.v += i * cy / this.mass;
-    other.u -= i * cx / other.mass;
-    other.v -= i * cy / other.mass;
-
+Sprite.prototype.impact = function () {
     // not too many sparks, it looks odd
-    if (i > 3 && this.spark_countdown <= 0) {
+    if (this.spark_countdown <= 0) {
         this.spark_countdown = randint(0, 40);
 
-        // point of impact for sparks
-        var impact_x = other.x + cx * other.scale;
-        var impact_y = other.y + cy * other.scale;
+        if (this.impact_f > 0.01) {
+            // point of impact for sparks
+            var impact_x = this.x + this.impact_ux * this.scale;
+            var impact_y = this.y + this.impact_uy * this.scale;
+            var n_sparks = 3 * this.impact_f;
 
-        var n_sparks = Math.min(100, i / 10);
-
-        this.world.particles.sparks(n_sparks, 
-            impact_x, impact_y, 20 * this.u, 20 * this.v );
-    }
-};
-
-Sprite.prototype.test_collision = function (other) {
-    var world = this.world;
-    var width = world.width;
-    var height = world.height;
-
-    var dx = this.x - other.x;
-    var dy = this.y - other.y;
-
-    // we need to do wrap-around testing
-    //
-    // we know that possible_sprites is only other sprites in the
-    // immediate neighbourhood, therefore if dx > half screen width,
-    // then this and other must be on opposite sides of the screen and
-    // must be possibly colliding via warp-around
-    //
-    // in this case, notionally move down by a screen width 
-    if (dx > width / 2) {
-        dx -= width;
-    }
-    else if (dx < -width / 2) {
-        dx += width;
-    }
-
-    if (dy > height / 2) {
-        dy -= height;
-    }
-    else if (dy < -height / 2) {
-        dy += height;
-    }
-
-    var d2 = dx * dx + dy * dy;
-    var t = this.scale + other.scale;
-    var t2 = t * t ;
-
-    if (d2 < t2) {
-        // unit vector
-        var d = Math.sqrt(d2);
-        if (d == 0) {
-            d = 0.0001;
-        }
-        var u = dx / d;
-        var v = dy / d;
-        
-        // amount of overlap
-        var overlap = d - t;
-
-        // displace by overlap in that direction
-        other.x += u * overlap;
-        other.x = wrap_around(other.x, width);
-        other.y += v * overlap;
-        other.y = wrap_around(other.y, height);
-
-        // tell the objects they have collided ... both objects 
-        // need to be told
-        this.impact(other);
-        other.impact(this);
-
-        // don't do the physics if either object is now dead
-        if (!this.kill && !other.kill) {
-            this.collide(other);
+            this.world.particles.sparks(n_sparks,
+                impact_x, impact_y, 20 * this.u, 20 * this.v);
         }
     }
 };
