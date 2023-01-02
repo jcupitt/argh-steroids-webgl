@@ -20,6 +20,7 @@ var Bullet = function (world) {
     this.scale = 2;
     this.life = 100;
     this.mass = 0;
+    this.angular_velocity = 0;
 }
 
 Bullet.prototype = Object.create(Sprite.prototype); 

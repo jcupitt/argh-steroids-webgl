@@ -40,6 +40,7 @@ var Ship = function (world) {
     this.max_shields = 3;
     this.shields = this.max_shields;
     this.shield_tick = 0;
+    this.angular_velocity = 0;
 
     this.engine_audio = new Audio("media/starship_engine.mp3");
     this.engine_audio.volume = 1.0;

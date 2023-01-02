@@ -90,7 +90,13 @@ Character.prototype.impact = function (other, ux, uy, d) {
 }
 
 Character.prototype.update = function () {
-    this.angle += this.angular_velocity;
+    var world = this.world;
+    var dt = world.dt;
+
+    // scale angular_velocity by speed, so slower chars spin more slowly
+    var speed = this.u * this.u + this.v * this.v;
+    var angular_velocity = 0.1 * speed * this.angular_velocity;
+    this.angle = wrap_around(this.angle + dt * angular_velocity, 360);
 
     Sprite.prototype.update.call(this);
 }

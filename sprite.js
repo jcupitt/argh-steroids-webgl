@@ -26,12 +26,12 @@ Sprite.prototype.update = function () {
     var world = this.world;
     var dt = world.dt;
 
-    this.x = wrap_around(this.x + dt * this.u, world.width);
-    this.y = wrap_around(this.y + dt * this.v, world.height);
-
     if (this.spark_countdown >= 0) {
         this.spark_countdown -= dt;
     }
+
+    this.x = wrap_around(this.x + dt * this.u, world.width);
+    this.y = wrap_around(this.y + dt * this.v, world.height);
 };
 
 Sprite.prototype.setAudio = function (audio_on) {
