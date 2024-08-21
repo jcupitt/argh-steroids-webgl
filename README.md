@@ -53,7 +53,8 @@ try:
 
 ```bash
 java -jar ~/closure/compiler.jar --js glMatrix-0.9.5.min.js webgl-utils.js util.js sprite.js asteroid.js alien.js bullet.js ship.js particles.js text.js world.js main.js --js_output_file argh.js --compilation_level SIMPLE_OPTIMIZATIONS
-`fastfastfastfastfastfastfastfast``
+`fastfastfastfastfastfastfastfast`
+```
 
 # Developing
 
